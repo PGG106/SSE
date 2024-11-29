@@ -217,6 +217,8 @@ void UciLoop(int argc, char** argv) {
 
         else if (!strcmp(token, "ponder")) {
             next_token(input, &input_index, token);
+            // play the best move so our position matches
+            MakeMove(true, return_bestmove, &td.pos);
             Move ponder_move = ParseMove(token, &td.pos);
             Ponder(ponder_move, &td);
         }

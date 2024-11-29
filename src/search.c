@@ -63,12 +63,10 @@ void RootSearch(int depth, struct ThreadData* td) {
 }
 
 void Ponder(Move ponderMove, struct ThreadData* td) {
-    MakeMove(true, return_bestmove, &td->pos);
+    // play the ponder move
     MakeMove(true, ponderMove, &td->pos);
-    // MainThread search
+    // spin indefinitely
     SearchPosition(1, MAXDEPTH, td);
-    UnmakeMove(ponderMove, &td->pos);
-    UnmakeMove(return_bestmove, &td->pos);
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
