@@ -197,7 +197,7 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 
 void NNUE_init() {
     // open the nn file
-    FILE* nn = fopen("nn.net", "rb");
+    FILE* nn = fopen("//kaggle_simulations//agent//nn.net", "rb");
 
     // if it's not invalid read the config values from it
     if (nn) {
