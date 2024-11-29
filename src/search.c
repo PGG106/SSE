@@ -62,6 +62,13 @@ void RootSearch(int depth, struct ThreadData* td) {
 #endif
 }
 
+void Ponder(Move ponderMove, struct ThreadData* td) {
+    MakeMove(true, ponderMove, &td->pos);
+    // MainThread search
+    SearchPosition(1, MAXDEPTH, td);
+    UnmakeMove(ponderMove, &td->pos);
+}
+
 // Returns true if the position is a 2-fold repetition, false otherwise
 bool IsRepetition(const struct Position* pos) {
     assert(pos->hisPly >= Position_get50MrCounter(pos));
@@ -414,6 +421,12 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
+        td->info.stopped = true;
+        return 0;
+    }
+
+    if((info->nodes & 4096)
+       && InputWaiting()){
         td->info.stopped = true;
         return 0;
     }

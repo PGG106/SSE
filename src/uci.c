@@ -214,11 +214,17 @@ void UciLoop(int argc, char** argv) {
                 ParsePosition("position startpos", &td.pos);
             }
             // call parse go function
-            bool search = ParseGo(input, &td.info, &td.pos);
+            ParseGo(input, &td.info, &td.pos);
             // Start search in a separate thread
-            if (search) {
-                RootSearch(MAXDEPTH, &td);
-            }
+
+            RootSearch(MAXDEPTH, &td);
+
+        }
+
+        else if (!strcmp(token, "ponder")) {
+            next_token(input, &input_index, token);
+            Move ponder_move = ParseMove(token, &td.pos);
+            Ponder(ponder_move, &td);
         }
 
 #if FULL
@@ -247,7 +253,5 @@ void UciLoop(int argc, char** argv) {
             InitNewGame(&td);
         }
 #endif
-
-        else printf("Unknown command: %s\n", input);
     }
 }

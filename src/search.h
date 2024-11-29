@@ -42,6 +42,8 @@ extern "C" {
     // ClearForSearch handles the cleaning of the thread data from a clean state
     void ClearForSearch(struct ThreadData* td);
 
+    void Ponder(Move ponderMove, struct ThreadData* td);
+
     // Starts the search process, this is ideally the point where you can start a multithreaded search
     void RootSearch(int depth, struct ThreadData* td);
 
