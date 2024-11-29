@@ -69,13 +69,14 @@ void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_A
     }
 }
 
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm) {
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm, const int bucket) {
     // this function takes the net output for the current accumulators and returns the eval of the position
     // according to the net
 
     const int16_t* us = board_accumulator->perspective[stm].values;
     const int16_t* them = board_accumulator->perspective[stm ^ 1].values;
-    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[0], net.L1Biases[0]);
+    const int32_t bucketOffset = 2 * L1_SIZE * bucket;
+    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[bucketOffset], net.L1Biases[bucket]);
 }
 
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos) {
@@ -197,7 +198,7 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 
 void NNUE_init() {
     // open the nn file
-    FILE* nn = fopen("//kaggle_simulations//agent//nn.net", "rb");
+    FILE* nn = fopen("nn.net", "rb");
 
     // if it's not invalid read the config values from it
     if (nn) {
@@ -208,4 +209,16 @@ void NNUE_init() {
         // after reading the config we can close the file
         fclose(nn);
     }
+
+    int16_t transposedL1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
+    for (int weight = 0; weight < 2 * L1_SIZE; ++weight)
+    {
+        for (int bucket = 0; bucket < OUTPUT_BUCKETS; ++bucket)
+        {
+            const int srcIdx = weight * OUTPUT_BUCKETS + bucket;
+            const int dstIdx = bucket * 2 * L1_SIZE + weight;
+            transposedL1Weights[dstIdx] = net.L1Weights[srcIdx];
+        }
+    }
+    memcpy(net.L1Weights, transposedL1Weights, L1_SIZE * sizeof(int16_t) * 2 * OUTPUT_BUCKETS);
 }
