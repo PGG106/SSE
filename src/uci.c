@@ -170,7 +170,6 @@ void UciLoop(int argc, char** argv) {
     }
 #endif
 
-    bool parsed_position = false;
     struct ThreadData td;
     init_thread_data(&td);
 
@@ -205,20 +204,15 @@ void UciLoop(int argc, char** argv) {
         if (!strcmp(token, "position")) {
             // call parse position function
             ParsePosition(input, &td.pos);
-            parsed_position = true;
         }
 
         // parse UCI "go" command
         else if (!strcmp(token, "go")) {
-            if (!parsed_position) { // call parse position function
-                ParsePosition("position startpos", &td.pos);
-            }
             // call parse go function
             ParseGo(input, &td.info, &td.pos);
             // Start search in a separate thread
 
             RootSearch(MAXDEPTH, &td);
-
         }
 
         else if (!strcmp(token, "ponder")) {

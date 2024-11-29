@@ -4,8 +4,6 @@
 #include <string>
 #endif
 
-#define NAME "Alexandria-7.1.1"
-
 extern int see_margin[64][2];
 
 #ifdef __cplusplus

@@ -1,10 +1,10 @@
-import subprocess,os
+import subprocess as sp ,os
 p=None
 def chess_bot(obs):
     global p
-    f="./Alexandria" if os.path.exists("./Alexandria") else "/kaggle_simulations/agent/Alexandria"
+    f= "/kaggle_simulations/agent/Alexandria"
     if not p or p.poll()!=None:
-        p=subprocess.Popen(f,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=1)
+        p=sp.Popen(f,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE,text=1)
     t=obs.remainingOverageTime*1000
     p.stdin.write(f"stop\n")
     p.stdin.flush()

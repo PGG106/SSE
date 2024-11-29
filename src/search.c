@@ -63,10 +63,12 @@ void RootSearch(int depth, struct ThreadData* td) {
 }
 
 void Ponder(Move ponderMove, struct ThreadData* td) {
+    MakeMove(true, return_bestmove, &td->pos);
     MakeMove(true, ponderMove, &td->pos);
     // MainThread search
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponderMove, &td->pos);
+    UnmakeMove(return_bestmove, &td->pos);
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -363,13 +365,6 @@ int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
     return score;
 }
 
-static int get_complexity(const int eval, const int rawEval) {
-    if (eval == 0 || rawEval == 0)
-        return 0;
-
-    return 100 * abs(eval - rawEval) / abs(eval);
-}
-
 static bool get_improving(const struct SearchStack *const ss, const bool inCheck) {
     if (inCheck)
         return false;
@@ -409,10 +404,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         // If position is a draw return a draw score
         if (IsDraw(pos))
             return 0;
-
-        // If we reached maxdepth we return a static evaluation of the position
-        if (ss->ply >= MAXDEPTH - 1)
-            return inCheck ? 0 : EvalPosition(pos);
     }
 
     // recursion escape condition
@@ -429,14 +420,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
        && InputWaiting()){
         td->info.stopped = true;
         return 0;
-    }
-
-    if (!rootNode) {
-        // Mate distance pruning
-        alpha = max(alpha, -MATE_SCORE + ss->ply);
-        beta = min(beta, MATE_SCORE - ss->ply - 1);
-        if (alpha >= beta)
-            return alpha;
     }
 
     // Probe the TT for useful previous search informations, we avoid doing so if we are searching a singular extension
@@ -490,8 +473,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
 
-    const int complexity = get_complexity(eval, rawEval);
-
     // Improving is a very important modifier to many heuristics. It checks if our static eval has improved since our last move.
     // As we don't evaluate in check, we look for the first ply we weren't in check between 2 and 4 plies ago. If we find that
     // static eval has improved, or that we were in check both 2 and 4 plies ago, we set improving to true.
@@ -534,26 +515,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 if (nmpScore > MATE_FOUND)
                     nmpScore = beta;
 
-                // If we don't have to do a verification search just return the score
-                if (td->nmpPlies || depth < 15)
-                    return nmpScore;
-
-                // Verification search to avoid zugzwangs: if we are at an high enough depth we perform another reduced search without nmp for at least nmpPlies
-                td->nmpPlies = ss->ply + (depth - R) * 2 / 3;
-                int verificationScore = Negamax(beta - 1, beta, depth - R, false, td, ss);
-                td->nmpPlies = 0;
-
-                // If the verification search holds return the score
-                if (verificationScore >= beta)
-                    return nmpScore;
+                return nmpScore;
             }
-        }
-        // Razoring
-        if (depth <= 5 && eval + 256 * depth < alpha)
-        {
-            const int razorScore = Quiescence(alpha, beta, td, ss);
-            if (razorScore <= alpha)
-                return razorScore;
         }
     }
 
@@ -705,9 +668,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 // Reduce less if we have been on the PV
                 if (ttPv)
                     depthReduction -= 1 + cutNode;
-
-                if (complexity > 50)
-                    depthReduction -= 1;
 
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
                 depthReduction -= moveHistory / 8192;
@@ -896,15 +856,6 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
         totalMoves++;
 
-        // Futility pruning. If static eval is far below alpha, only search moves that win material.
-        if (bestScore > -MATE_FOUND
-            && !inCheck) {
-            const int futilityBase = ss->staticEval + 192;
-            if (futilityBase <= alpha && !SEE(pos, move, 1)) {
-                bestScore = max(futilityBase, bestScore);
-                continue;
-            }
-        }
         // Speculative prefetch of the TT entry
         TTPrefetch(keyAfter(pos, move));
         ss->move = move;
