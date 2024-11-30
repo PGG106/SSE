@@ -32,7 +32,10 @@ ifeq ($(FULL), true)
 	CFLAGS += -DFULL
 endif
 
-ifneq ($(STDLIB), true)
+ifeq ($(STDLIB), true)
+	CXXFLAGS += -DSTDLIB
+	CFLAGS += -DSTDLIB
+else
 	CXXFLAGS += -nostdlib
 	CFLAGS += -nostdlib
 endif
