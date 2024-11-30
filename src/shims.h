@@ -72,8 +72,12 @@ inline static int strlen(const char* const restrict string) {
     return length;
 }
 
+static void write(int fd, void* data, int count) {
+    _sys(1, fd, (size_t)data, count);
+}
+
 inline static void puts(const char* const restrict string) {
-    _sys(1, stdout, (ssize_t)string, strlen(string));
+    write(stdout, string, strlen(string));
 }
 
 inline static void fflush(int fd) {
@@ -115,7 +119,7 @@ inline static void _printf(const char* format, const size_t* args) {
             break;
         }
         if (*format != '%') {
-            _sys(1, stdout, (ssize_t)format, 1);
+            write(stdout, format, 1);
             format++;
             continue;
         }
@@ -124,6 +128,9 @@ inline static void _printf(const char* format, const size_t* args) {
         switch (*format++) {
         case 's':
             puts((char*)*args);
+            break;
+        case 'c':
+            write(1, args, 1);
             break;
         case 'i':
             value = *args;
