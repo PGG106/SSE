@@ -2,38 +2,14 @@
 
 struct TTable TT;
 
-// This include breaks on non x86 target platforms
-#if defined(__INTEL_COMPILER) || defined(_MSC_VER)
-#include <xmmintrin.h>
-#endif
-
-#if defined(__linux__) && !defined(__ANDROID__)
-#include <sys/mman.h>
-#define USE_MADVISE
-#elif defined(__APPLE__)
-#define USE_POSIX_MEMALIGN
-#else
 #include "shims.h"
-#endif
 
 void* AlignedMalloc(size_t size, size_t alignment) {
-#if defined(USE_MADVISE)
-    return aligned_alloc(alignment, size);
-#elif defined(USE_POSIX_MEMALIGN)
-    void* mem = nullptr;
-    posix_memalign(&mem, alignment, size);
-    return mem;
-#else
-    return _aligned_malloc(size, alignment);
-#endif
+    return malloc(size);
 }
 
 void AlignedFree(void* src) {
-#if defined(USE_MADVISE) || defined(USE_POSIX_MEMALIGN)
     free(src);
-#else
-    _aligned_free(src);
-#endif
 }
 
 void ClearTT() {
