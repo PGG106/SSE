@@ -236,43 +236,38 @@ inline static char* strstr(const char* haystack, const char* needle) {
 
 void* memset(void* ptr, int value, size_t n);
 
-// Helper function to compute the log of (1 + x) for 0 < x <= 1
-static double log_taylor_series(double x) {
-    double result = 0.0;
-    double term = x;
-    int n = 1;
-
-    // Use a reasonable number of terms for precision
-    while (term > 1e-10 || term < -1e-10) {
-        result += term / n;
-        term *= -x; // Alternating series
-        n++;
-    }
-
-    return result;
-}
-
 inline static double log(double x) {
-    if (x <= 0) {
-        // Logarithm is undefined for non-positive values
-        return -1.0 / 0.0; // Return negative infinity
+    const int M_SQRT1_2 = 0.7071067811865476;
+    const int M_SQRT2 = 1.4142135623730951;
+
+    // Extract bits of the double
+    uint64_t bits = *(uint64_t*)&x;
+
+    // Extract exponent and mantissa
+    int exponent = (int)((bits >> 52) & 0x7FF) - 1023; // Unbiased exponent
+    uint64_t mantissa = bits & 0xFFFFFFFFFFFFF; // 52 bits of mantissa
+
+    // Normalize mantissa to [1, 2)
+    double m = (double)(mantissa) / (double)(1ULL << 52) + 1.0;
+
+    // Range reduction: m in [sqrt(0.5), sqrt(2)]
+    if (m < M_SQRT1_2) {
+        m *= 2.0;
+        exponent -= 1;
+    }
+    else if (m > M_SQRT2) {
+        m *= 0.5;
+        exponent += 1;
     }
 
-    double result = 0.0;
+    // Polynomial approximation of log(m)
+    double t = m - 1.0;
+    double p = t * (1.0 - 0.5 * t + t * t * (0.33333333333333333 - 0.25 * t));
+    double ln_m = p;
 
-    // Reduce x to a number in the range (0, 2]
-    while (x > 2.0) {
-        x /= 2.718281828459045; // Divide by e
-        result += 1.0;
-    }
-
-    while (x < 1.0) {
-        x *= 2.718281828459045; // Multiply by e
-        result -= 1.0;
-    }
-
-    // At this point, 0 < x <= 2
-    result += log_taylor_series(x - 1.0); // Convert to log(1 + (x-1))
+    // Combine results
+    double ln2 = 0.6931471805599453;
+    double result = ln_m + exponent * ln2;
 
     return result;
 }
