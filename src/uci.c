@@ -235,10 +235,6 @@ void UciLoop(int argc, char** argv) {
             fflush(stdout);
         }
 
-        else if (!strcmp(token, "bench")) {
-            StartBench(14);
-        }
-
         // parse UCI "ucinewgame" command
         else if (!strcmp(token, "ucinewgame")) {
             InitNewGame(&td);
