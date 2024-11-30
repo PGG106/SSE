@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/mman.h>
 
 inline uint64_t GetTimeMs() {
     struct timespec t;
@@ -59,8 +60,8 @@ inline ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     return ret;
 }
 
-inline void exit() {
-    _sys(60, 0, 0, 0);
+inline void exit(const int returnCode) {
+    _sys(60, returnCode, 0, 0);
 }
 
 inline int strlen(const char* const restrict string) {
