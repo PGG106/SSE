@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdint.h>
 #include "move.h"
+
+#include "shims.h"
 
 struct Position;
 struct SearchInfo;

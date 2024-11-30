@@ -1,13 +1,13 @@
 #include "bench.h"
 
-#include <stdio.h>
-
 #if FULL
 #include "ttable.h"
 #include "init.h"
 #include "eval.h"
 #include "search.h"
 #include "misc.h"
+
+#include "shims.h"
 
 // Benchmarks from Bitgenie
 #define bench_count 52

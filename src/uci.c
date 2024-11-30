@@ -1,9 +1,5 @@
 #include "uci.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "bench.h"
 #include "init.h"
 #include "migration.h"
@@ -12,6 +8,8 @@
 #include "position.h"
 #include "time_manager.h"
 #include "search.h"
+
+#include "shims.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 Move ParseMove(const char* moveString, struct Position* pos) {

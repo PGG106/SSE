@@ -13,7 +13,7 @@ struct TTable TT;
 #elif defined(__APPLE__)
 #define USE_POSIX_MEMALIGN
 #else
-#include <stdlib.h>
+#include "shims.h"
 #endif
 
 void* AlignedMalloc(size_t size, size_t alignment) {

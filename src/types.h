@@ -1,8 +1,6 @@
 #pragma once
-#include <stdint.h>
-#ifdef __cplusplus
-#include <string>
-#endif
+
+#include "shims.h"
 
 #define NAME "Alexandria-7.1.1"
 

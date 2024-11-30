@@ -1,18 +1,8 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <array>
-#include <vector>
-#else
-#include <stdio.h>
-#endif
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <assert.h>
-
 #include "simd.h"
 #include "types.h"
+#include "shims.h"
 
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
 #define NUM_INPUTS 768
