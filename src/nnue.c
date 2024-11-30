@@ -197,15 +197,23 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 
 void NNUE_init() {
     // open the nn file
-    FILE* nn = fopen("nn.net", "rb");
-
-    // if it's not invalid read the config values from it
-    if (nn) {
-        fread(net.FTWeights, sizeof(int16_t), NUM_INPUTS * L1_SIZE, nn);
-        fread(net.FTBiases, sizeof(int16_t), L1_SIZE, nn);
-        fread(net.L1Weights, sizeof(int16_t), L1_SIZE * 2 * OUTPUT_BUCKETS, nn);
-        fread(net.L1Biases, sizeof(int16_t), OUTPUT_BUCKETS, nn);
-        // after reading the config we can close the file
-        fclose(nn);
+    int nn = open("nn.net", 0, 0644); // Default permissions: -rw-r--r--
+    if (nn < 0)
+    {
+        puts("Unable to open NN file");
+        exit(1);
     }
+
+    const size_t FTWeights_offset = 0;
+    const size_t FTBiases_offset = FTWeights_offset + NUM_INPUTS * L1_SIZE;
+    const size_t L1Weights_offset = FTBiases_offset + L1_SIZE;
+    const size_t L1Biases_offset = L1Weights_offset + L1_SIZE * 2 * OUTPUT_BUCKETS;
+    const size_t len = L1Biases_offset + OUTPUT_BUCKETS;
+
+    uint16_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 1, nn, 0);
+
+    net.FTWeights = ptr;
+    net.FTBiases = ptr + FTBiases_offset;
+    net.L1Weights = ptr + L1Weights_offset;
+    net.L1Biases = ptr + L1Biases_offset;
 }
