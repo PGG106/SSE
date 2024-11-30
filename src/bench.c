@@ -84,7 +84,7 @@ void StartBench(int depth) {
     }
     auto end = GetTimeMs();
     auto totalTime = end - start;
-    printf("\n%lld nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
+    printf("\n%d nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
 }
 
 #else

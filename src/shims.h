@@ -132,6 +132,7 @@ inline static void _printf(const char* format, const size_t* args) {
         case 'c':
             write(1, args, 1);
             break;
+        case 'd':
         case 'i':
             value = *args;
             if (value < 0) {
