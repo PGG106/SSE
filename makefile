@@ -27,6 +27,11 @@ ifeq ($(FULL), true)
 	CFLAGS += -DFULL
 endif
 
+ifneq ($(STDLIB), true)
+	CXXFLAGS += -nostdlib
+	CFLAGS += -nostdlib
+endif
+
 # Detect Clang
 ifeq ($(CXX), clang++)
 CXXFLAGS = -funroll-loops -O3 -flto -fuse-ld=lld -fno-exceptions -std=gnu++2a -DNDEBUG
