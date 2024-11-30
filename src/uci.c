@@ -128,7 +128,7 @@ void ParsePosition(const char* command, struct Position* pos) {
         }
     }
 
-#if FULL
+#if UCI
     // if there are moves to be played in the fen play them
     if (strstr(command, "moves") != NULL) {
         pos->played_positions_size = 0;
@@ -161,7 +161,7 @@ void UciLoop() {
 
     // main loop
     while (true) {
-#if FULL
+#if UCI
         char input[8192];
 #else
         char input[256];
@@ -206,7 +206,7 @@ void UciLoop() {
             }
         }
 
-#if FULL
+#if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");

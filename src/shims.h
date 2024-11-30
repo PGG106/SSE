@@ -78,6 +78,11 @@ static void write(int fd, void* data, int count) {
 
 inline static void puts(const char* const restrict string) {
     write(stdout, string, strlen(string));
+    write(stdout, "\n", 1);
+}
+
+inline static void puts_nonewline(const char* const restrict string) {
+    write(stdout, string, strlen(string));
 }
 
 inline static void fflush(int fd) {
@@ -127,7 +132,7 @@ inline static void _printf(const char* format, const size_t* args) {
         format++;
         switch (*format++) {
         case 's':
-            puts((char*)*args);
+            puts_nonewline((char*)*args);
             break;
         case 'c':
             write(1, args, 1);
@@ -136,7 +141,7 @@ inline static void _printf(const char* format, const size_t* args) {
         case 'i':
             value = *args;
             if (value < 0) {
-                puts("-");
+                puts_nonewline("-");
                 value *= -1;
             }
             string = buffer + sizeof buffer - 1;

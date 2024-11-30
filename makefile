@@ -40,10 +40,10 @@ else
 	CFLAGS += -nostdlib
 endif
 
-#FULL build
-ifeq ($(FULL), true)
-	CXXFLAGS += -DFULL
-	CFLAGS += -DFULL
+#UCI build
+ifeq ($(UCI), true)
+	CXXFLAGS += -DUCI
+	CFLAGS += -DUCI
 endif
 
 ifeq ($(STDLIB), true)
