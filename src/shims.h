@@ -270,4 +270,30 @@ inline static double log(double x) {
     return result;
 }
 
+inline static int read(int fd, void* data, int count) {
+    return _sys(0, fd, (size_t)data, count);
+}
+
+inline static char* fgets(char* string0, int count, int file)
+{
+    char* string;
+    int result;
+    (void)count;
+
+    string = string0;
+    for (;;)
+    {
+        result = read(file, string, 1);
+        if (result < 1)
+        {
+            if (string == string0) return NULL;
+            break;
+        }
+        string++;
+        if (string[-1] == '\n') break;
+    }
+    *string = 0;
+    return string0;
+}
+
 #endif
