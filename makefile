@@ -21,6 +21,11 @@ NAME      := Alexandria
 
 TMPDIR = .tmp
 
+#KAGGLE build
+ifeq ($(KAGGLE), true)
+	CFLAGS += -DKAGGLE
+endif
+
 #FULL build
 ifeq ($(FULL), true)
 	CXXFLAGS += -DFULL
