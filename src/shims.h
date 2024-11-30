@@ -154,4 +154,34 @@ inline size_t GetTimeMs() {
     return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
 
+//inline void* mmap(size_t size, unsigned long fd)
+void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
+{
+    unsigned long call = 9;          // syscall number for mmap
+
+    unsigned long ret;
+    asm volatile(
+        "mov %5, %%r10\n\t"
+        "mov %6, %%r8\n\t"
+        "mov %7, %%r9\n\t"
+        "syscall"
+        : "=a"(ret)  // Output operand: return value in rax
+        : "a"(call), // Input operands
+        "D"(addr),
+        "S"(len),
+        "d"(prot),
+        "r"(flags),
+        "r"(fd),
+        "r"(offset)
+        : "r10", "r8", "r9", "rcx", "r11", "memory"  // Clobbered registers
+        );
+
+    return (void*)ret;
+}
+
+inline void* malloc(size_t len)
+{
+    return mmap(NULL, len, 3, 0x22, -1, 0);
+}
+
 #endif
