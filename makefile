@@ -21,15 +21,37 @@ NAME      := Alexandria
 
 TMPDIR = .tmp
 
+
 #KAGGLE build
 ifeq ($(KAGGLE), true)
 	CFLAGS += -DKAGGLE
 endif
 
-#FULL build
-ifeq ($(FULL), true)
-	CXXFLAGS += -DFULL
-	CFLAGS += -DFULL
+ifeq ($(BENCH), true)
+	CXXFLAGS += -DBENCH
+	CFLAGS += -DBENCH
+endif
+
+ifeq ($(STDLIB), true)
+	CXXFLAGS += -DSTDLIB
+	CFLAGS += -DSTDLIB
+else
+	CXXFLAGS += -nostdlib
+	CFLAGS += -nostdlib
+endif
+
+#UCI build
+ifeq ($(UCI), true)
+	CXXFLAGS += -DUCI
+	CFLAGS += -DUCI
+endif
+
+ifeq ($(STDLIB), true)
+	CXXFLAGS += -DSTDLIB
+	CFLAGS += -DSTDLIB
+else
+	CXXFLAGS += -nostdlib
+	CFLAGS += -nostdlib
 endif
 
 # Detect Clang

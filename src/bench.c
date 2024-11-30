@@ -1,13 +1,12 @@
 #include "bench.h"
 
-#include <stdio.h>
-
-#if FULL
+#if BENCH
 #include "ttable.h"
 #include "init.h"
 #include "eval.h"
 #include "search.h"
-#include "misc.h"
+
+#include "shims.h"
 
 // Benchmarks from Bitgenie
 #define bench_count 52
@@ -85,7 +84,7 @@ void StartBench(int depth) {
     }
     auto end = GetTimeMs();
     auto totalTime = end - start;
-    printf("\n%lld nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
+    printf("\n%d nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
 }
 
 #else

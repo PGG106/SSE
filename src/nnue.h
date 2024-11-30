@@ -1,18 +1,8 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <array>
-#include <vector>
-#else
-#include <stdio.h>
-#endif
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <assert.h>
-
-#include "simd.h"
+//#include "simd.h"
 #include "types.h"
+#include "shims.h"
 
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
 #define NUM_INPUTS 768
@@ -34,10 +24,15 @@ typedef size_t NNUEIndices[2];
 //using NNUEIndices = std::array<std::size_t, 2>;
 
 struct Network {
-    int16_t FTWeights[INPUT_BUCKETS * NUM_INPUTS * L1_SIZE];
-    int16_t FTBiases[L1_SIZE];
-    int16_t L1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
-    int16_t L1Biases[OUTPUT_BUCKETS];
+    //int16_t FTWeights[INPUT_BUCKETS * NUM_INPUTS * L1_SIZE];
+    //int16_t FTBiases[L1_SIZE];
+    //int16_t L1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
+    //int16_t L1Biases[OUTPUT_BUCKETS];
+
+    int16_t *FTWeights;
+    int16_t *FTBiases;
+    int16_t *L1Weights;
+    int16_t *L1Biases;
 };
 
 #ifdef __cplusplus

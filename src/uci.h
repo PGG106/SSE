@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdint.h>
 #include "move.h"
+
+#include "shims.h"
 
 struct Position;
 struct SearchInfo;
@@ -18,7 +19,7 @@ extern "C" {
     bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos);
 
     // main UCI loop
-    void UciLoop(int argc, char** argv);
+    void UciLoop();
 #ifdef __cplusplus
 }
 #endif

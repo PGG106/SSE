@@ -1,14 +1,12 @@
 #include "position.h"
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "attack.h"
 #include "hyperbola.h"
 #include "init.h"
-#include "makemove.h"
 #include "migration.h"
 #include "piece_data.h"
+
+#include "shims.h"
 
 const int castling_rights[64] = {
      7, 15, 15, 15,  3, 15, 15, 11,
@@ -348,7 +346,7 @@ void restorePreviousBoardState(struct Position* pos)
 }
 
 void parse_moves(const char* moves, struct Position* pos) {
-#if FULL
+#if UCI
     char move_str[6];
     int token_index = 0;
 
