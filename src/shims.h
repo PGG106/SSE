@@ -51,7 +51,7 @@ enum {
 #define assert(condition)
 #endif
 
-inline ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
+inline static ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     ssize_t ret;
     asm volatile("syscall"
         : "=a"(ret)
@@ -60,11 +60,11 @@ inline ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     return ret;
 }
 
-inline void exit(const int returnCode) {
+inline static void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);
 }
 
-inline int strlen(const char* const restrict string) {
+inline static int strlen(const char* const restrict string) {
     int length = 0;
     while (string[length]) {
         length++;
@@ -72,12 +72,12 @@ inline int strlen(const char* const restrict string) {
     return length;
 }
 
-inline void puts(const char* const restrict string) {
+inline static void puts(const char* const restrict string) {
     _sys(1, stdout, (ssize_t)string, strlen(string));
 }
 
 
-inline bool strcmp(const char* restrict lhs,
+inline static bool strcmp(const char* restrict lhs,
     const char* restrict rhs) {
     while (*lhs || *rhs) {
         if (*lhs != *rhs) {
@@ -89,7 +89,7 @@ inline bool strcmp(const char* restrict lhs,
     return false;
 }
 
-inline atoi(const char* restrict string) {
+inline static atoi(const char* restrict string) {
     size_t result = 0;
     while (true) {
         if (!*string) {
@@ -103,7 +103,7 @@ inline atoi(const char* restrict string) {
 
 #define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
 
-inline void _printf(const char* format, const size_t* args) {
+inline static void _printf(const char* format, const size_t* args) {
     int value;
     char buffer[16], * string;
 
@@ -150,14 +150,14 @@ struct timespec {
     ssize_t tv_nsec; // nanoseconds
 };
 
-inline size_t GetTimeMs() {
+inline static size_t GetTimeMs() {
     struct timespec ts;
     _sys(228, 1, (ssize_t)&ts, 0);
     return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
 
 //inline void* mmap(size_t size, unsigned long fd)
-void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
+inline static void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
 {
     unsigned long call = 9; // syscall number for mmap
 
@@ -181,16 +181,16 @@ void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
     return (void*)ret;
 }
 
-inline void* malloc(size_t len)
+inline static void* malloc(size_t len)
 {
     return mmap(NULL, len, 3, 0x22, -1, 0);
 }
 
-inline ssize_t open(const char* const restrict pathname, const int flags, const int mode) {
+inline static ssize_t open(const char* const restrict pathname, const int flags, const int mode) {
     return _sys(2, (ssize_t)pathname, flags, mode);
 }
 
-inline ssize_t fopen(const char* const restrict pathname, const char* const restrict mode) {
+inline static ssize_t fopen(const char* const restrict pathname, const char* const restrict mode) {
     int flags = 0;
     int file_mode = 0644; // Default permissions: -rw-r--r--
 

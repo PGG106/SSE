@@ -19,7 +19,7 @@ extern "C" {
     bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos);
 
     // main UCI loop
-    void UciLoop(int argc, char** argv);
+    void UciLoop(int argc);
 #ifdef __cplusplus
 }
 #endif
