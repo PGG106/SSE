@@ -101,7 +101,7 @@ inline static bool strcmp(const char* restrict lhs,
     return false;
 }
 
-inline static atoi(const char* restrict string) {
+inline static int atoi(const char* restrict string) {
     size_t result = 0;
     while (true) {
         if (!*string) {
