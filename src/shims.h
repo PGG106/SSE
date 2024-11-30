@@ -76,6 +76,9 @@ inline static void puts(const char* const restrict string) {
     _sys(1, stdout, (ssize_t)string, strlen(string));
 }
 
+inline static void fflush(int fd) {
+    
+}
 
 inline static bool strcmp(const char* restrict lhs,
     const char* restrict rhs) {
@@ -157,7 +160,7 @@ inline static size_t GetTimeMs() {
 }
 
 //inline void* mmap(size_t size, unsigned long fd)
-inline static void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
+inline static void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t offset)
 {
     unsigned long call = 9; // syscall number for mmap
 
@@ -195,6 +198,86 @@ inline static ssize_t fopen(const char* const restrict pathname, const char* con
     int file_mode = 0644; // Default permissions: -rw-r--r--
 
     return open(pathname, flags, file_mode);
+}
+
+inline static char* strstr(const char* haystack, const char* needle) {
+    // If needle is empty, return haystack
+    if (*needle == '\0') {
+        return (char*)haystack;
+    }
+
+    // Iterate through haystack
+    for (; *haystack != '\0'; haystack++) {
+        // Start matching needle with haystack
+        const char* h = haystack;
+        const char* n = needle;
+
+        while (*n != '\0' && *h == *n) {
+            h++;
+            n++;
+        }
+
+        // If the entire needle is matched
+        if (*n == '\0') {
+            return (char*)haystack;
+        }
+    }
+
+    // If no match is found, return NULL
+    return NULL;
+}
+
+inline static void* memset(void* ptr, int value, size_t n) {
+    // Cast the void pointer to an unsigned char pointer for byte-wise operations
+    unsigned char* p = (unsigned char*)ptr;
+
+    // Fill n bytes with the value
+    while (n--) {
+        *p++ = (unsigned char)value;
+    }
+
+    return ptr;
+}
+
+// Helper function to compute the log of (1 + x) for 0 < x <= 1
+static double log_taylor_series(double x) {
+    double result = 0.0;
+    double term = x;
+    int n = 1;
+
+    // Use a reasonable number of terms for precision
+    while (term > 1e-10 || term < -1e-10) {
+        result += term / n;
+        term *= -x; // Alternating series
+        n++;
+    }
+
+    return result;
+}
+
+inline static double my_log(double x) {
+    if (x <= 0) {
+        // Logarithm is undefined for non-positive values
+        return -1.0 / 0.0; // Return negative infinity
+    }
+
+    double result = 0.0;
+
+    // Reduce x to a number in the range (0, 2]
+    while (x > 2.0) {
+        x /= 2.718281828459045; // Divide by e
+        result += 1.0;
+    }
+
+    while (x < 1.0) {
+        x *= 2.718281828459045; // Multiply by e
+        result -= 1.0;
+    }
+
+    // At this point, 0 < x <= 2
+    result += log_taylor_series(x - 1.0); // Convert to log(1 + (x-1))
+
+    return result;
 }
 
 #endif
