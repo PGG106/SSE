@@ -75,6 +75,7 @@ inline void puts(const char* const restrict string) {
     _sys(1, stdout, (ssize_t)string, strlen(string));
 }
 
+
 inline bool strcmp(const char* restrict lhs,
     const char* restrict rhs) {
     while (*lhs || *rhs) {
@@ -157,7 +158,7 @@ inline size_t GetTimeMs() {
 //inline void* mmap(size_t size, unsigned long fd)
 void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
 {
-    unsigned long call = 9;          // syscall number for mmap
+    unsigned long call = 9; // syscall number for mmap
 
     unsigned long ret;
     asm volatile(
@@ -182,6 +183,17 @@ void* mmap(void* addr, size_t len, int prot, int flags, int fd, size_t offset)
 inline void* malloc(size_t len)
 {
     return mmap(NULL, len, 3, 0x22, -1, 0);
+}
+
+inline ssize_t open(const char* const restrict pathname, const int flags, const int mode) {
+    return _sys(2, (ssize_t)pathname, flags, mode);
+}
+
+inline ssize_t fopen(const char* const restrict pathname, const char* const restrict mode) {
+    int flags = 0;
+    int file_mode = 0644; // Default permissions: -rw-r--r--
+
+    return open(pathname, flags, file_mode);
 }
 
 #endif
