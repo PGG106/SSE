@@ -227,17 +227,7 @@ inline static char* strstr(const char* haystack, const char* needle) {
     return NULL;
 }
 
-inline static void* memset(void* ptr, int value, size_t n) {
-    // Cast the void pointer to an unsigned char pointer for byte-wise operations
-    unsigned char* p = (unsigned char*)ptr;
-
-    // Fill n bytes with the value
-    while (n--) {
-        *p++ = (unsigned char)value;
-    }
-
-    return ptr;
-}
+void* memset(void* ptr, int value, size_t n);
 
 // Helper function to compute the log of (1 + x) for 0 < x <= 1
 static double log_taylor_series(double x) {
@@ -255,7 +245,7 @@ static double log_taylor_series(double x) {
     return result;
 }
 
-inline static double my_log(double x) {
+inline static double log(double x) {
     if (x <= 0) {
         // Logarithm is undefined for non-positive values
         return -1.0 / 0.0; // Return negative infinity
