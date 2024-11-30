@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-#include <stdbool.h>
+#include "shims.h"
 
 struct Position;
 struct SearchData;

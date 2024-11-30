@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-#include <time.h>
+#include "shims.h"
 
 inline uint64_t GetTimeMs() {
     struct timespec t;

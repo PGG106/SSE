@@ -3,7 +3,8 @@
 #include "stdint.h"
 #include "history.h"
 #include "position.h"
-#include "uci.h"
+
+#include "shims.h"
 
 struct SearchStack {
     // don't init. search will init before entering the negamax method

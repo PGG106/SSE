@@ -1,7 +1,6 @@
 #pragma once
-#ifdef __cplusplus
-#include <cstdint>
-#endif
+
+#include "shims.h"
 
 #if defined(USE_SIMD)
 #include <immintrin.h>

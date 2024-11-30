@@ -26,9 +26,6 @@ inline bool next_token(const char* str, int* index, char* token)
     }
 }
 
-//#include <stddef.h>
-//#include <stdlib.h>
-//
 //typedef struct {
 //    size_t* data;       // Pointer to the array
 //    size_t size;     // Number of elements currently in the array

@@ -1,7 +1,5 @@
 #include "search.h"
 
-#include <string.h>
-
 #include "attack.h"
 #include "movegen.h"
 #include "eval.h"
@@ -13,6 +11,8 @@
 #include "movepicker.h"
 #include "time_manager.h"
 #include "math.h"
+
+#include "shims.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #define max(a,b) (((a) > (b)) ? (a) : (b))

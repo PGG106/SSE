@@ -1,21 +1,11 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <cassert>
-#include <cctype>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <cstdint>
-#else
-#include <assert.h>
-#endif
-
 #include "bitboard.h"
 #include "nnue.h"
-#include "move.h"
 #include "types.h"
 #include "uci.h"
+
+#include "shims.h"
 
 #ifdef __GNUC__
 #define PACK(__Declaration__) __Declaration__ __attribute__((__packed__))
