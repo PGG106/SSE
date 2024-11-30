@@ -4,9 +4,8 @@
 #include <string>
 #endif
 
-#define NAME "Alexandria-7.1.1"
-
 extern int see_margin[64][2];
+extern int reductions[2][64][64];
 
 #ifdef __cplusplus
 static const std::string start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
