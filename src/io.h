@@ -2,6 +2,8 @@
 #include "position.h"
 #include "piece_data.h"
 
+#include "shims.h"
+
 // print move (for UCI purposes)
 inline void PrintMove(const Move move) {
     const char* from = square_to_coordinates[From(move)];

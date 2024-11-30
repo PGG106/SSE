@@ -1,4 +1,4 @@
-#if !STDLIB
+//#if !STDLIB
 #include "shims.h"
 
 void* memset(void* ptr, int value, size_t n) {
@@ -12,4 +12,4 @@ void* memset(void* ptr, int value, size_t n) {
 
     return ptr;
 }
-#endif
+//#endif

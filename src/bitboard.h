@@ -1,7 +1,7 @@
 #pragma once
 
-#include "shims.h"
 #include "types.h"
+#include "shims.h"
 
 // set/get/pop bit macros
 inline void set_bit(Bitboard *bitboard, const int square) { *bitboard |= (1ULL << square); }
