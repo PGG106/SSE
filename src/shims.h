@@ -1,15 +1,15 @@
 #pragma once
 
 //#if STDLIB
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <sys/mman.h>
+//#include <assert.h>
+//#include <stdbool.h>
+//#include <stdint.h>
+//#include <time.h>
+//#include <string.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <math.h>
+//#include <sys/mman.h>
 
 //inline uint64_t GetTimeMs() {
 //    struct timespec t;
@@ -18,38 +18,42 @@
 //}
 //#else
 
-//typedef char bool;
-//typedef char int8_t;
-//typedef unsigned char uint8_t;
-//typedef short int16_t;
-//typedef unsigned short uint16_t;
-//typedef int int32_t;
-//typedef unsigned int uint32_t;
-//typedef long long int64_t;
-//typedef unsigned long long uint64_t;
-//typedef int64_t ssize_t;
-//typedef uint64_t size_t;
+typedef long bool;
+typedef char int8_t;
+typedef unsigned char uint8_t;
+typedef short int16_t;
+typedef unsigned short uint16_t;
+typedef int int32_t;
+typedef unsigned int uint32_t;
+typedef long long int64_t;
+typedef unsigned long long uint64_t;
+typedef int64_t ssize_t;
+typedef uint64_t size_t;
+
 //
-//enum {
-//    stdin = 0,
-//    stdout = 1,
-//    stderr = 2
-//};
+enum {
+    stdin = 0,
+    stdout = 1,
+    stderr = 2
+};
 //
-//#define false 0
-//#define true 1
-//#define NULL ((void *)0)
+#define false 0
+#define true 1
+#define NULL ((void *)0)
 //
-//#if !NDEBUG
-//#define assert(condition)                                                      \
-//  if (!(condition)) {                                                          \
-//    printf("Assert failed on line %i: ", __LINE__);                            \
-//    puts(#condition "\n");                                                     \
-//    _sys(60, 1, 0, 0);                                                         \
-//  }
-//#else
-//#define assert(condition)
-//#endif
+#if !NDEBUG
+#define assert(condition)                                                      \
+  if (!(condition)) {                                                          \
+    printf("Assert failed on line %i: ", __LINE__);                            \
+    puts(#condition "\n");                                                     \
+    _sys(60, 1, 0, 0);                                                         \
+  }
+#else
+#define assert(condition)
+#endif
+
+#define stdin stdinbla
+extern int stdin;
 
 inline static ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     ssize_t ret;
@@ -60,9 +64,10 @@ inline static ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg
     return ret;
 }
 
-//inline static void exit(const int returnCode) {
-//    _sys(60, returnCode, 0, 0);
-//}
+#define exit exitbla
+inline static void exit(const int returnCode) {
+    _sys(60, returnCode, 0, 0);
+}
 
 #define strlen strlenbla
 inline static int strlen(const char* const restrict string) {
@@ -116,10 +121,10 @@ inline static atoi(const char* restrict string) {
 }
 
 
-//struct timespec {
-//    ssize_t tv_sec;  // seconds
-//    ssize_t tv_nsec; // nanoseconds
-//};
+struct timespec {
+    ssize_t tv_sec;  // seconds
+    ssize_t tv_nsec; // nanoseconds
+};
 
 inline static size_t GetTimeMs() {
     struct timespec ts;
