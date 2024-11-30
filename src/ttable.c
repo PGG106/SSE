@@ -8,10 +8,6 @@ void* AlignedMalloc(size_t size, size_t alignment) {
     return malloc(size);
 }
 
-void AlignedFree(void* src) {
-    free(src);
-}
-
 void ClearTT() {
     for (uint64_t i = 0; i < TT.paddedSize / sizeof(struct TTBucket); ++i) {
         TTBucket_init(&TT.pTable[i]);
@@ -24,7 +20,6 @@ void InitTT(uint64_t MB) {
     const uint64_t ONE_MB = ONE_KB * 1024;
     const uint64_t hashSize = ONE_MB * MB;
     TT.numBuckets = (hashSize / sizeof(struct TTBucket)) - 3;
-    if (TT.pTable != NULL) AlignedFree(TT.pTable);
 
     // We align to 2MB on Linux (huge pages), otherwise assume that 4KB is the page size
 #if defined(USE_MADVISE)
