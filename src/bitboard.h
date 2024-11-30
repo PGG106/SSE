@@ -1,9 +1,6 @@
 #pragma once
-#ifdef __cplusplus
-#include <cassert>
-#else
-#include "assert.h"
-#endif
+
+#include "shims.h"
 #include "types.h"
 
 // set/get/pop bit macros

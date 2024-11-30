@@ -1,7 +1,7 @@
 #include "attack.h"
 #include "hyperbola.h"
 
-#include <assert.h>
+#include "shims.h"
 
 // not A file constant
 static Bitboard not_a_file = 18374403900871474942ULL;
