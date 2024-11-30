@@ -9,11 +9,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+inline uint64_t GetTimeMs() {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return t.tv_sec * 1000 + t.tv_nsec / 1000000;
+}
 #else
 
 typedef char bool;
+typedef char int8_t;
 typedef unsigned char uint8_t;
+typedef short int16_t;
 typedef unsigned short uint16_t;
+typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef long long int64_t;
 typedef unsigned long long uint64_t;
@@ -29,7 +38,16 @@ enum {
 #define false 0
 #define true 1
 
-#define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
+#if !NDEBUG
+#define assert(condition)                                                      \
+  if (!(condition)) {                                                          \
+    printf("Assert failed on line %i: ", __LINE__);                            \
+    puts(#condition "\n");                                                     \
+    _sys(60, 1, 0, 0);                                                         \
+  }
+#else
+#define assert(condition)
+#endif
 
 inline ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     ssize_t ret;
@@ -80,6 +98,8 @@ inline atoi(const char* restrict string) {
     }
 }
 
+#define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
+
 inline void _printf(const char* format, const size_t* args) {
     int value;
     char buffer[16], * string;
@@ -120,6 +140,17 @@ inline void _printf(const char* format, const size_t* args) {
         }
         args++;
     }
+}
+
+struct timespec {
+    ssize_t tv_sec;  // seconds
+    ssize_t tv_nsec; // nanoseconds
+};
+
+inline size_t GetTimeMs() {
+    struct timespec ts;
+    _sys(228, 1, (ssize_t)&ts, 0);
+    return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
 
 #endif

@@ -5,7 +5,6 @@
 #include "eval.h"
 #include "hyperbola.h"
 #include "makemove.h"
-#include "misc.h"
 #include "ttable.h"
 #include "io.h"
 #include "movepicker.h"
