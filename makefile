@@ -21,9 +21,23 @@ NAME      := Alexandria
 
 TMPDIR = .tmp
 
+
 #KAGGLE build
 ifeq ($(KAGGLE), true)
 	CFLAGS += -DKAGGLE
+endif
+
+ifeq ($(BENCH), true)
+	CXXFLAGS += -DBENCH
+	CFLAGS += -DBENCH
+endif
+
+ifeq ($(STDLIB), true)
+	CXXFLAGS += -DSTDLIB
+	CFLAGS += -DSTDLIB
+else
+	CXXFLAGS += -nostdlib
+	CFLAGS += -nostdlib
 endif
 
 #FULL build

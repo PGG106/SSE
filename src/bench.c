@@ -68,7 +68,6 @@ const char* benchmarkfens[bench_count] = {
 
 void StartBench(int depth) {
     // init all
-    puts("A");
     struct ThreadData td;
 
     init_thread_data(&td);
