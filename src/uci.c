@@ -148,13 +148,11 @@ void ParsePosition(const char* command, struct Position* pos) {
 }
 
 // main UCI loop
-void UciLoop(int argc) {
-#if FULL
-    if (argc > 1) {
-        int benchDepth = 14;
-        StartBench(benchDepth);
-        return;
-    }
+void UciLoop() {
+#if BENCH
+    int benchDepth = 14;
+    StartBench(benchDepth);
+    return;
 #endif
 
     bool parsed_position = false;

@@ -2,15 +2,15 @@
 #include "uci.h"
 
 #if STDLIB
-int main(int argc, char** argv) {
+int main() {
 #else
-void _start(int argc) {
+void _start() {
 #endif
 
     // Tables for move generation and precompute reduction values
     InitAll();
     // connect to the GUI
-    UciLoop(argc);
+    UciLoop();
 
 #if !STDLIB
     exit(0);
