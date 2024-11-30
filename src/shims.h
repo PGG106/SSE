@@ -154,7 +154,7 @@ inline static void _printf(const char* format, const size_t* args) {
                 }
                 string--;
             }
-            puts(string);
+            puts_nonewline(string);
             break;
         }
         args++;
