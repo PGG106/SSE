@@ -1,3 +1,5 @@
+#pragma once
+
 #if STDLIB
 #include <assert.h>
 #include <stdbool.h>
@@ -6,8 +8,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #else
 
+typedef char bool;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
@@ -22,8 +26,8 @@ enum {
     stderr = 2
 };
 
-#define false 0;
-#define true 1;
+#define false 0
+#define true 1
 
 #define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
 

@@ -10,7 +10,6 @@
 #include "io.h"
 #include "movepicker.h"
 #include "time_manager.h"
-#include "math.h"
 
 #include "shims.h"
 

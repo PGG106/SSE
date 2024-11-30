@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stdint.h"
 #include "history.h"
 #include "position.h"
 
