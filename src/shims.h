@@ -238,8 +238,8 @@ inline static char* strstr(const char* haystack, const char* needle) {
 void* memset(void* ptr, int value, size_t n);
 
 inline static double log(double x) {
-    const int M_SQRT1_2 = 0.7071067811865476;
-    const int M_SQRT2 = 1.4142135623730951;
+    const double M_SQRT1_2 = 0.70710678118654752440;
+    const double M_SQRT2 = 1.41421356237309504880;
 
     // Extract bits of the double
     uint64_t bits = *(uint64_t*)&x;
