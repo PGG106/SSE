@@ -37,6 +37,7 @@ enum {
 
 #define false 0
 #define true 1
+#define NULL ((void *)0)
 
 #if !NDEBUG
 #define assert(condition)                                                      \
