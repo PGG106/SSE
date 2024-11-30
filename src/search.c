@@ -587,7 +587,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
             if (!skipQuiets) {
 
-                const int lmplimit = improving ? 3.0 + 1.0 * pow(depth, 2.0) : 1.5 + 0.5 * pow(depth, 2.0);
+                const int lmplimit = improving ? 3.0 + 1.0 * depth * depth : 1.5 + 0.5 * depth * depth;
 
                 // Movecount pruning: if we searched enough moves and we are not in check we skip the rest
                 if (totalMoves > lmplimit) {
