@@ -59,7 +59,7 @@ Move ParseMove(const char* moveString, struct Position* pos) {
             return move;
         }
     }
-    printf("Illegal move parsed: %s", moveString);
+    printf("Illegal move parsed: %s", (size_t)moveString);
 
     // return illegal move
     return NOMOVE;
@@ -229,6 +229,6 @@ void UciLoop() {
         }
 #endif
 
-        else printf("Unknown command: %s\n", input);
+        else printf("Unknown command: %s\n", (size_t)input);
     }
 }

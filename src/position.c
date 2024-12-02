@@ -5,6 +5,7 @@
 #include "init.h"
 #include "migration.h"
 #include "piece_data.h"
+#include "makemove.h"
 
 #include "shims.h"
 

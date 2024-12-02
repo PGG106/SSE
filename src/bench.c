@@ -78,7 +78,7 @@ void StartBench(int depth) {
     auto start = GetTimeMs();
     for (int positions = 0; positions < bench_count; positions++) {
         ParseFen(benchmarkfens[positions], &td.pos);
-        printf("\nPosition: %d fen: %s \n", positions + 1, benchmarkfens[positions]);
+        printf("\nPosition: %d fen: %s \n", positions + 1, (const size_t)benchmarkfens[positions]);
         RootSearch(depth, &td);
         totalNodes += td.info.nodes;
     }
