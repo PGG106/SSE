@@ -38,6 +38,7 @@ void RootSearch(int depth, struct ThreadData* td) {
     SearchPosition(1, depth, td);
     printf("bestmove ");
     PrintMove(return_bestmove);
+    printf("\n");
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
