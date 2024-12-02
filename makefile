@@ -36,8 +36,8 @@ ifeq ($(STDLIB), true)
 	CXXFLAGS += -DSTDLIB
 	CFLAGS += -DSTDLIB
 else
-	CXXFLAGS += -nostdlib
-	CFLAGS += -nostdlib
+	CXXFLAGS += -nostdlib -ffreestanding
+	CFLAGS += -nostdlib -ffreestanding
 endif
 
 #UCI build

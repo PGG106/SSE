@@ -8,6 +8,7 @@
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
+#define abs(x) ((x) < 0 ? -(x) : (x))
 
 
 /* History updating works in the same way for all histories, we have 3 methods:

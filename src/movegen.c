@@ -8,6 +8,8 @@
 
 #include "shims.h"
 
+#define abs(x) ((x) < 0 ? -(x) : (x))
+
 // function that adds a (not yet scored) move to a move list
 void AddMoveNonScored(const Move move, struct MoveList* list) {
     list->moves[list->count].move = move;
