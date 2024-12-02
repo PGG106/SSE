@@ -14,6 +14,5 @@ def chess_bot(obs):
         line = p.stdout.readline()
         if line != "\n":
             break
-    ponder_move = line.split()[-1]
-    best_move = line.split()[-2]
+    best_move = line.split()[-1]
     return best_move
