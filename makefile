@@ -7,7 +7,6 @@ CXX       := g++-9
 CC        := gcc-9
 TARGET    := Alexandria
 WARNINGS   = -Wall -Wcast-qual -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wnull-dereference -Wlogical-op -Wold-style-cast -Wundef -pedantic
-CXXFLAGS  :=  -O3 -flto -fno-exceptions -std=gnu++2a -fno-stack-protector -DNDEBUG $(WARNINGS)
 CFLAGS  :=  -O3 -flto -fno-exceptions -fno-stack-protector -DNDEBUG $(WARNINGS)
 NATIVE     	 = -march=native
 AVX2FLAGS    = -DUSE_AVX2 -DUSE_SIMD -mavx2 -mbmi -mfma
@@ -28,13 +27,12 @@ endif
 
 #FULL build
 ifeq ($(FULL), true)
-	CXXFLAGS += -DFULL
 	CFLAGS += -DFULL
 endif
 
 # Detect Clang
-ifeq ($(CXX), clang++)
-CXXFLAGS = -funroll-loops -O3 -flto -fuse-ld=lld -fno-exceptions -std=gnu++2a -DNDEBUG
+ifeq ($(CC), clang)
+#CFLAGS = -funroll-loops -O3 -flto -fuse-ld=lld -fno-exceptions -std=gnu++2a -DNDEBUG // TODO: restore clang
 endif
 
 # Detect Windows
@@ -53,7 +51,7 @@ endif
 ifeq ($(OS), Windows_NT)
 	uname_S := Windows
 	SUFFIX  := .exe
-	CXXFLAGS += -static
+	CFLAGS += -static
 else
 	SUFFIX  :=
 	uname_S := $(shell uname -s)
@@ -61,7 +59,7 @@ endif
 
 
 FLAGS_DETECTED =
-PROPERTIES = $(shell echo | $(CXX) -march=native -E -dM -)
+PROPERTIES = $(shell echo | $(CC) -march=native -E -dM -)
 
 ifneq ($(findstring __AVX2__, $(PROPERTIES)),)
 	FLAGS_DETECTED = $(AVX2FLAGS)
@@ -85,7 +83,7 @@ endif
 ifdef build
 	NATIVE =
 else
-	CXXFLAGS += $(FLAGS_DETECTED)
+	CFLAGS += $(FLAGS_DETECTED)
 endif
 
 # SPECIFIC BUILDS
@@ -98,7 +96,7 @@ endif
 ifeq ($(build), native)
 	NATIVE     = -march=native
 	ARCH       = -x86-64-native
-	CXXFLAGS += $(FLAGS_DETECTED)
+	CFLAGS += $(FLAGS_DETECTED)
 endif
 
 ifeq ($(build), x86-64)
@@ -116,29 +114,29 @@ endif
 ifeq ($(build), x86-64-avx2)
 	NATIVE    = -march=bdver4 -mno-tbm -mno-sse4a -mno-bmi2
 	ARCH      = -x86-64-avx2
-	CXXFLAGS += $(AVX2FLAGS)
+	CFLAGS += $(AVX2FLAGS)
 endif
 
 ifeq ($(build), x86-64-bmi2)
 	NATIVE    = -march=haswell
 	ARCH      = -x86-64-bmi2
-	CXXFLAGS += $(BMI2FLAGS)
+	CFLAGS += $(BMI2FLAGS)
 endif
 
 ifeq ($(build), x86-64-avx512)
 	NATIVE    = -march=x86-64-v4 -mtune=znver4
 	ARCH      = -x86-64-avx512
-	CXXFLAGS += $(AVX512FLAGS)
+	CFLAGS += $(AVX512FLAGS)
 endif
 
 ifeq ($(build), x86-64-vnni512)
 	NATIVE    = -march=x86-64-v4 -mtune=znver4
 	ARCH      = -x86-64-vnni512
-	CXXFLAGS += $(VNNI512FLAGS)
+	CFLAGS += $(VNNI512FLAGS)
 endif
 
 # Add network name and Evalfile
-CXXFLAGS += -DNETWORK_NAME=\"$(NETWORK_NAME)\" -DEVALFILE=\"$(EVALFILE)\"
+CFLAGS += -DNETWORK_NAME=\"$(NETWORK_NAME)\" -DEVALFILE=\"$(EVALFILE)\"
 
 SOURCES := $(wildcard src/*.c) $(wildcard src/*.cpp)
 OBJECTS := $(patsubst %,$(TMPDIR)/%.o,$(SOURCES))
@@ -150,10 +148,7 @@ clean:
 	@rm -rf $(TMPDIR) *.o  $(DEPENDS) *.d
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(NATIVE) -MMD -MP -o $(EXE) $^ $(FLAGS)
-
-$(TMPDIR)/%.cpp.o: %.cpp | $(TMPDIR)
-	$(CXX) $(CXXFLAGS) $(NATIVE) -MMD -MP -c $< -o $@ $(FLAGS)
+	$(CC) $(CFLAGS) $(NATIVE) -MMD -MP -o $(EXE) $^ $(FLAGS) -lm
 
 $(TMPDIR)/%.c.o: %.c | $(TMPDIR)
 	$(CC) $(CFLAGS) $(NATIVE) -MMD -MP -c $< -o $@ $(FLAGS)
