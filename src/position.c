@@ -32,19 +32,23 @@ const char* const square_to_coordinates[] = {
 };
 
 // Reset the position to a clean state
+#pragma GCC push_options
+#pragma GCC optimize("O2")
 void ResetBoard(struct Position* const pos) {
     // reset board position (pos->pos->bitboards)
-    memset(pos->bitboards, 0ULL, sizeof(pos->bitboards));
+    memset(pos->bitboards, 0, sizeof(pos->bitboards));
 
     // reset pos->occupancies (pos->pos->bitboards)
-    memset(pos->occupancies, 0ULL, sizeof(pos->occupancies));
+    memset(pos->occupancies, 0, sizeof(pos->occupancies));
 
+    memset(&pos->pieces, 0, sizeof(Bitboard) * 12);
     for (int index = 0; index < 64; ++index) {
         pos->pieces[index] = EMPTY;
     }
     pos->state.castlePerm = 0;
     pos->state.plyFromNull = 0;
 }
+#pragma GCC pop_options
 
 void ResetInfo(struct SearchInfo* const info) {
     info->depth = 0;
@@ -180,6 +184,8 @@ ZobristKey keyAfter(const struct Position* pos, const Move move) {
 }
 
 // parse FEN string
+#pragma GCC push_options
+#pragma GCC optimize("O2")
 void ParseFen(const char* command, struct Position* pos) {
 
     ResetBoard(pos);
@@ -336,6 +342,7 @@ void ParseFen(const char* command, struct Position* pos) {
     NNUE_accumulate(&pos->accumStack[0], pos);
     pos->accumStackHead = 1;
 }
+#pragma GCC pop_options
 
 void saveBoardState(struct Position* pos) {
     pos->history[pos->historyStackHead] = pos->state;

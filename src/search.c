@@ -118,9 +118,10 @@ void init_thread_data(struct ThreadData* td)
     td->pos.blackNonPawnKey = 0ULL;
     td->pos.historyStackHead = 0ULL;
 
-    for (int i = 0; i < 12; i++) {
-        td->pos.bitboards[i] = 0;
-    }
+    memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
+    //for (int i = 0; i < 12; i++) {
+    //    td->pos.bitboards[i] = 0;
+    //}
 
     for (int i = 0; i < 2; i++) {
         td->pos.occupancies[i] = 0;

@@ -32,7 +32,7 @@ endif
 ifeq ($(STDLIB), true)
 	CFLAGS += -DSTDLIB
 else
-	CFLAGS += -nostdlib -ffreestanding
+	CFLAGS += -nostdlib
 endif
 
 #UCI build
@@ -44,7 +44,7 @@ ifeq ($(STDLIB), true)
 	CFLAGS += -DSTDLIB
 	CFLAGS += -lm
 else
-	CFLAGS += -nostdlib
+	CFLAGS += -nostdlib -fno-builtin-memset
 endif
 
 # Detect Clang
@@ -175,8 +175,4 @@ $(TMPDIR):
 
 -include $(DEPENDS)
 small: clean all
-	ls -la $(EXE)
-	sstrip $(EXE)
-	ls -la $(EXE)
-	upx -9 $(EXE)
 	ls -la $(EXE)
