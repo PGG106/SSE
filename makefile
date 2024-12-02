@@ -8,7 +8,7 @@ CC        := clang
 TARGET    := Alexandria
 WARNINGS   = -Wall -Wcast-qual -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wnull-dereference -Wlogical-op -Wold-style-cast -Wundef -pedantic
 CXXFLAGS  :=  -O3 -flto -fno-exceptions -std=gnu++2a -fno-stack-protector -DNDEBUG $(WARNINGS)
-CFLAGS  :=  -O3 -flto -fno-exceptions -std=gnu23 -fno-stack-protector -DNDEBUG $(WARNINGS)
+CFLAGS  :=  -O3 -flto -fno-exceptions -fno-stack-protector -DNDEBUG $(WARNINGS)
 NATIVE     	 = -march=native
 AVX2FLAGS    = -DUSE_AVX2 -DUSE_SIMD -mavx2 -mbmi -mfma
 BMI2FLAGS    = -DUSE_AVX2 -DUSE_SIMD -mavx2 -mbmi -mbmi2 -mfma

@@ -18,6 +18,7 @@ inline uint64_t GetTimeMs() {
 }
 #else
 
+typedef long bool;
 typedef char int8_t;
 typedef unsigned char uint8_t;
 typedef short int16_t;
@@ -36,6 +37,8 @@ enum {
 };
 
 #define NULL ((void *)0)
+#define true 1
+#define false 0
 
 #if !NDEBUG
 #define assert(condition)                                                      \

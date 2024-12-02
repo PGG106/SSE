@@ -13,11 +13,11 @@ void Optimum(struct SearchInfo* info, int time, int inc) {
     if (info->timeset) {
         int basetime = time * 0.054 + inc * 0.85;
         // Never use more than 76% of the total time left for a single move
-        const auto maxtimeBound = 0.76 * time;
+        const double maxtimeBound = 0.76 * time;
         // optime is the time we use to stop if we just cleared a depth
-        const auto optime = min(0.76 * basetime, maxtimeBound);
+        const double optime = min(0.76 * basetime, maxtimeBound);
         // maxtime is the absolute maximum time we can spend on a search (unless it is bigger than the bound)
-        const auto maxtime = min(3.04 * basetime, maxtimeBound);
+        const double maxtime = min(3.04 * basetime, maxtimeBound);
         info->stoptimeMax = info->starttime + maxtime;
         info->stoptimeBaseOpt = optime;
         info->stoptimeOpt = info->starttime + info->stoptimeBaseOpt;

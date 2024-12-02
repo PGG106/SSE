@@ -122,13 +122,13 @@ void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Posi
         accumulator->values[i] = net.FTBiases[i];
     }
 
-    const auto kingSq = KingSQ(pos, accumulator->pov);
+    const int kingSq = KingSQ(pos, accumulator->pov);
     const bool flip = get_file(KingSQ(pos, accumulator->pov)) > 3;
 
     for (int square = 0; square < 64; square++) {
         const bool input = pos->pieces[square] != EMPTY;
         if (!input) continue;
-        const auto Idx = Pov_Accumulator_GetIndex(accumulator, Position_PieceOn(pos, square), square, kingSq, flip);
+        const int Idx = Pov_Accumulator_GetIndex(accumulator, Position_PieceOn(pos, square), square, kingSq, flip);
         const int16_t* const Add = &net.FTWeights[Idx * L1_SIZE];
         for (int j = 0; j < L1_SIZE; j++) {
             accumulator->values[j] += Add[j];
@@ -141,9 +141,9 @@ int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const in
     const size_t PIECE_STRIDE = 64;
     const int piecetype = GetPieceType(piece);
     const int pieceColor = Color[piece];
-    auto pieceColorPov = accumulator->pov == WHITE ? pieceColor : (pieceColor ^ 1);
+    int pieceColorPov = accumulator->pov == WHITE ? pieceColor : (pieceColor ^ 1);
     // Get the final indexes of the updates, accounting for hm
-    auto squarePov = accumulator->pov == WHITE ? (square ^ 0b111000) : square;
+    int squarePov = accumulator->pov == WHITE ? (square ^ 0b111000) : square;
     if (flip) squarePov ^= 0b000111;
     size_t Idx = pieceColorPov * COLOR_STRIDE + piecetype * PIECE_STRIDE + squarePov;
     return Idx;
