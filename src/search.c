@@ -34,23 +34,11 @@ void ClearForSearch(struct ThreadData* td) {
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 void RootSearch(int depth, struct ThreadData* td) {
-    Move ponder_move = NOMOVE;
     // MainThread search
     SearchPosition(1, depth, td);
     printf("bestmove ");
     PrintMove(return_bestmove);
-    printf(" ");
-    // get ponder move
-    MakeMove(true, return_bestmove, &td->pos);
-    struct TTEntry tte;
-    bool probed = ProbeTTEntry(td->pos.posKey, &tte);
-    if (probed)
-        ponder_move = MoveFromTT(&td->pos, tte.move);
-    UnmakeMove(return_bestmove, &td->pos);
-    PrintMove(ponder_move);
-    printf("\n");
     fflush(stdout);
-    // TODO: flush?
 
     // Hack for Kaggle for full repetition detection
 #if !FULL
