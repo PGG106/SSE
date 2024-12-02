@@ -55,7 +55,7 @@ enum {
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3);
 void exit(const int returnCode);
-strlen(const char* const restrict string);
+int strlen(const char* const restrict string);
 void puts(const char* const restrict string);
 void puts_nonewline(const char* const restrict string);
 void fflush(int fd);
