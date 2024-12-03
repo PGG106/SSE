@@ -1,5 +1,7 @@
 #pragma once
 
+#if STDLIB
+
 #include "shims.h"
 
 #if defined(USE_SIMD)
@@ -53,4 +55,5 @@ inline int32_t vec_reduce_add_epi32(const vepi32 vec) {
     // Return the bottom 32 bits of sum32
     return _mm_cvtsi128_si32(sum32);
 }
+#endif
 #endif

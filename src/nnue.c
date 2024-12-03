@@ -150,7 +150,7 @@ int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const in
 }
 
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias) {
-#if defined(USE_SIMD)
+#if defined(USE_SIMD) && STDLIB
     vepi32 sum = vec_zero_epi32();
     const vepi16 Zero = vec_zero_epi16();
     const vepi16 One = vec_set1_epi16(FT_QUANT);
