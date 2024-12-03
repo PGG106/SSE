@@ -1,17 +1,14 @@
 #include "uci.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "bench.h"
 #include "init.h"
 #include "migration.h"
-#include "misc.h"
 #include "movegen.h"
 #include "position.h"
 #include "time_manager.h"
 #include "search.h"
+
+#include "shims.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 Move ParseMove(const char* moveString, struct Position* pos) {
@@ -62,7 +59,7 @@ Move ParseMove(const char* moveString, struct Position* pos) {
             return move;
         }
     }
-    printf("Illegal move parsed: %s", moveString);
+    printf("Illegal move parsed: %s", (size_t)moveString);
 
     // return illegal move
     return NOMOVE;
@@ -131,7 +128,7 @@ void ParsePosition(const char* command, struct Position* pos) {
         }
     }
 
-#if FULL
+#if UCI
     // if there are moves to be played in the fen play them
     if (strstr(command, "moves") != NULL) {
         pos->played_positions_size = 0;
@@ -151,23 +148,11 @@ void ParsePosition(const char* command, struct Position* pos) {
 }
 
 // main UCI loop
-void UciLoop(int argc, char** argv) {
-#if FULL
-    if (argv[1] && strncmp(argv[1], "bench", 5) == 0) {
-        int benchDepth = 14;
-        // If there's an additional input try to parse it as a bench depth
-        if (argc == 3) {
-            if (atoi(argv[2]) > 0) {
-                benchDepth = atoi(argv[2]);
-            }
-            else {
-                puts("Invalid bench depth");
-                return;
-            }
-        }
-        StartBench(benchDepth);
-        return;
-    }
+void UciLoop() {
+#if BENCH
+    int benchDepth = 14;
+    StartBench(benchDepth);
+    return;
 #endif
 
     bool parsed_position = false;
@@ -176,7 +161,7 @@ void UciLoop(int argc, char** argv) {
 
     // main loop
     while (true) {
-#if FULL
+#if UCI
         char input[8192];
 #else
         char input[256];
@@ -221,7 +206,7 @@ void UciLoop(int argc, char** argv) {
             }
         }
 
-#if FULL
+#if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
@@ -238,16 +223,12 @@ void UciLoop(int argc, char** argv) {
             fflush(stdout);
         }
 
-        else if (!strcmp(token, "bench")) {
-            StartBench(14);
-        }
-
         // parse UCI "ucinewgame" command
         else if (!strcmp(token, "ucinewgame")) {
             InitNewGame(&td);
         }
 #endif
 
-        else printf("Unknown command: %s\n", input);
+        else printf("Unknown command: %s\n", (size_t)input);
     }
 }

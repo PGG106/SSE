@@ -1,10 +1,20 @@
 #include "init.h"
 #include "uci.h"
 
-int main(int argc, char** argv) {
+#if NOSTDLIB
+void _start() {
+#else
+int main() {
+#endif
+
     // Tables for move generation and precompute reduction values
     InitAll();
     // connect to the GUI
-    UciLoop(argc, argv);
+    UciLoop();
+
+#if NOSTDLIB
+    exit(0);
+#else
     return 0;
+#endif
 }

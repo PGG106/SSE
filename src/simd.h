@@ -1,7 +1,8 @@
 #pragma once
-#ifdef __cplusplus
-#include <cstdint>
-#endif
+
+#if !NOSTDLIB
+
+#include "shims.h"
 
 #if defined(USE_SIMD)
 #include <immintrin.h>
@@ -9,7 +10,7 @@
 
 #if defined(USE_AVX512)
 typedef __m512i vepi16;
-typedef __m512iusing vepi32;
+typedef __m512i vepi32;
 
 inline vepi16  vec_zero_epi16() { return _mm512_setzero_si512(); }
 inline vepi32  vec_zero_epi32() { return _mm512_setzero_si512(); }
@@ -54,4 +55,5 @@ inline int32_t vec_reduce_add_epi32(const vepi32 vec) {
     // Return the bottom 32 bits of sum32
     return _mm_cvtsi128_si32(sum32);
 }
+#endif
 #endif

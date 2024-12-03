@@ -28,8 +28,10 @@ struct TTBucket {
     uint16_t padding;
 } __attribute__((aligned(32)));
 
+#if !NOSTDLIB
 static_assert(sizeof(struct TTEntry) == 10);
 static_assert(sizeof(struct TTBucket) == 32);
+#endif
 
 struct TTable {
     struct TTBucket *pTable;

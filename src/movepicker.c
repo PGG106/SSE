@@ -2,6 +2,8 @@
 
 #include "movegen.h"
 
+#include "shims.h"
+
 // ScoreMoves takes a list of move as an argument and assigns a score to each move
 void ScoreMoves(struct Movepicker* mp) {
     struct MoveList* moveList = &mp->moveList;

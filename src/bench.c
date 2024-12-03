@@ -1,13 +1,12 @@
 #include "bench.h"
 
-#include <stdio.h>
-
-#if FULL
+#if BENCH
 #include "ttable.h"
 #include "init.h"
 #include "eval.h"
 #include "search.h"
-#include "misc.h"
+
+#include "shims.h"
 
 // Benchmarks from Bitgenie
 #define bench_count 52
@@ -76,16 +75,16 @@ void StartBench(int depth) {
     uint64_t totalNodes = 0;
     InitTT(64);
     InitNewGame(&td);
-    auto start = GetTimeMs();
+    size_t start = GetTimeMs();
     for (int positions = 0; positions < bench_count; positions++) {
         ParseFen(benchmarkfens[positions], &td.pos);
-        printf("\nPosition: %d fen: %s \n", positions + 1, benchmarkfens[positions]);
+        printf("\nPosition: %d fen: %s \n", positions + 1, (const size_t)benchmarkfens[positions]);
         RootSearch(depth, &td);
         totalNodes += td.info.nodes;
     }
-    auto end = GetTimeMs();
-    auto totalTime = end - start;
-    printf("\n%lld nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
+    size_t end = GetTimeMs();
+    size_t totalTime = end - start;
+    printf("\n%d nodes %d nps\n", totalNodes, (int)(totalNodes / (totalTime + 1) * 1000));
 }
 
 #else

@@ -1,6 +1,7 @@
 #pragma once
 #include "search.h"
-#include <stdint.h>
+
+#include "shims.h"
 
 struct MoveList;
 

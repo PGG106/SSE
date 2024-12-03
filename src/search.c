@@ -1,18 +1,16 @@
 #include "search.h"
 
-#include <string.h>
-
 #include "attack.h"
 #include "movegen.h"
 #include "eval.h"
 #include "hyperbola.h"
 #include "makemove.h"
-#include "misc.h"
 #include "ttable.h"
 #include "io.h"
 #include "movepicker.h"
 #include "time_manager.h"
-#include "math.h"
+
+#include "shims.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #define max(a,b) (((a) > (b)) ? (a) : (b))
@@ -120,9 +118,10 @@ void init_thread_data(struct ThreadData* td)
     td->pos.blackNonPawnKey = 0ULL;
     td->pos.historyStackHead = 0ULL;
 
-    for (int i = 0; i < 12; i++) {
-        td->pos.bitboards[i] = 0;
-    }
+    memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
+    //for (int i = 0; i < 12; i++) {
+    //    td->pos.bitboards[i] = 0;
+    //}
 
     for (int i = 0; i < 2; i++) {
         td->pos.occupancies[i] = 0;
@@ -578,7 +577,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
             if (!skipQuiets) {
 
-                const int lmplimit = improving ? 3.0 + 1.0 * pow(depth, 2.0) : 1.5 + 0.5 * pow(depth, 2.0);
+                const int lmplimit = improving ? 3.0 + 1.0 * depth * depth : 1.5 + 0.5 * depth * depth;
 
                 // Movecount pruning: if we searched enough moves and we are not in check we skip the rest
                 if (totalMoves > lmplimit) {
@@ -659,7 +658,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
             int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
                 : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
-
 
             if (isQuiet) {
                 // Fuck

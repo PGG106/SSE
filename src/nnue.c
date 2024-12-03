@@ -1,6 +1,7 @@
 #include "nnue.h"
 
 #include "position.h"
+#include "simd.h"
 
 struct Network net;
 
@@ -122,13 +123,13 @@ void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Posi
         accumulator->values[i] = net.FTBiases[i];
     }
 
-    const auto kingSq = KingSQ(pos, accumulator->pov);
+    const int kingSq = KingSQ(pos, accumulator->pov);
     const bool flip = get_file(KingSQ(pos, accumulator->pov)) > 3;
 
     for (int square = 0; square < 64; square++) {
         const bool input = pos->pieces[square] != EMPTY;
         if (!input) continue;
-        const auto Idx = Pov_Accumulator_GetIndex(accumulator, Position_PieceOn(pos, square), square, kingSq, flip);
+        const int Idx = Pov_Accumulator_GetIndex(accumulator, Position_PieceOn(pos, square), square, kingSq, flip);
         const int16_t* const Add = &net.FTWeights[Idx * L1_SIZE];
         for (int j = 0; j < L1_SIZE; j++) {
             accumulator->values[j] += Add[j];
@@ -141,16 +142,16 @@ int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const in
     const size_t PIECE_STRIDE = 64;
     const int piecetype = GetPieceType(piece);
     const int pieceColor = Color[piece];
-    auto pieceColorPov = accumulator->pov == WHITE ? pieceColor : (pieceColor ^ 1);
+    int pieceColorPov = accumulator->pov == WHITE ? pieceColor : (pieceColor ^ 1);
     // Get the final indexes of the updates, accounting for hm
-    auto squarePov = accumulator->pov == WHITE ? (square ^ 0b111000) : square;
+    int squarePov = accumulator->pov == WHITE ? (square ^ 0b111000) : square;
     if (flip) squarePov ^= 0b000111;
     size_t Idx = pieceColorPov * COLOR_STRIDE + piecetype * PIECE_STRIDE + squarePov;
     return Idx;
 }
 
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias) {
-#if defined(USE_SIMD)
+#if defined(USE_SIMD) && !NOSTDLIB
     vepi32 sum = vec_zero_epi32();
     const vepi16 Zero = vec_zero_epi16();
     const vepi16 One = vec_set1_epi16(FT_QUANT);
@@ -197,20 +198,29 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 
 void NNUE_init() {
     // open the nn file
+
 #if KAGGLE
     const char* nnpath = "//kaggle_simulations//agent//nn.net";
 #else
     const char* nnpath = "nn.net";
 #endif
-    FILE* nn = fopen(nnpath, "rb");
-
-    // if it's not invalid read the config values from it
-    if (nn) {
-        fread(net.FTWeights, sizeof(int16_t), NUM_INPUTS * L1_SIZE, nn);
-        fread(net.FTBiases, sizeof(int16_t), L1_SIZE, nn);
-        fread(net.L1Weights, sizeof(int16_t), L1_SIZE * 2 * OUTPUT_BUCKETS, nn);
-        fread(net.L1Biases, sizeof(int16_t), OUTPUT_BUCKETS, nn);
-        // after reading the config we can close the file
-        fclose(nn);
+    int nn = open(nnpath, 0, 0644); // Default permissions: -rw-r--r--
+    if (nn < 0)
+    {
+        puts("Unable to open NN file");
+        exit(1);
     }
+
+    const size_t FTWeights_offset = 0;
+    const size_t FTBiases_offset = FTWeights_offset + NUM_INPUTS * L1_SIZE;
+    const size_t L1Weights_offset = FTBiases_offset + L1_SIZE;
+    const size_t L1Biases_offset = L1Weights_offset + L1_SIZE * 2 * OUTPUT_BUCKETS;
+    const size_t len = L1Biases_offset + OUTPUT_BUCKETS;
+
+    uint16_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 1, nn, 0);
+
+    net.FTWeights = ptr;
+    net.FTBiases = ptr + FTBiases_offset;
+    net.L1Weights = ptr + L1Weights_offset;
+    net.L1Biases = ptr + L1Biases_offset;
 }

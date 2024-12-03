@@ -1,12 +1,14 @@
 #include "movegen.h"
 
-#include <stdlib.h>
-
 #include "attack.h"
 #include "hyperbola.h"
 #include "makemove.h"
 #include "move.h"
 #include "position.h"
+
+#include "shims.h"
+
+#define abs(x) ((x) < 0 ? -(x) : (x))
 
 // function that adds a (not yet scored) move to a move list
 void AddMoveNonScored(const Move move, struct MoveList* list) {
