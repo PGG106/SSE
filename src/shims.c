@@ -11,7 +11,7 @@ ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
 }
 
 #pragma GCC push_options
-#pragma GCC optimize("O2")
+#pragma GCC optimize("O1")
 void* memset(void* ptr, int value, size_t n) {
     unsigned char* p = (unsigned char*)ptr;
     while (n-- > 0) {

@@ -3,7 +3,7 @@ NETWORK_NAME = nn.net
 _THIS     := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 _ROOT     := $(_THIS)
 EVALFILE   = $(NETWORK_NAME)
-CC        := gcc-9
+CC        := gcc-11
 TARGET    := Alexandria
 WARNINGS   = -Wall -Wcast-qual -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wnull-dereference -Wlogical-op -Wold-style-cast -Wundef -pedantic
 CFLAGS  :=  -O3 -flto -fno-exceptions -fno-stack-protector -DNDEBUG $(WARNINGS)
@@ -30,7 +30,7 @@ ifeq ($(BENCH), true)
 endif
 
 ifeq ($(NOSTDLIB), true)
-	CFLAGS += -nostdlib -fno-builtin-memset -DNOSTDLIB
+	CFLAGS += -nostdlib -fno-builtin-memset -static -DNOSTDLIB
 else
 	CFLAGS += -lm
 endif
@@ -173,5 +173,5 @@ small: clean all
 	ls -la $(EXE)
 	tar -cf submission.tar $(EXE) nn.net main.py
 	ls -la submission.tar
-	gzip -9 -k submission.tar
+	zopfli --i1000 submission.tar
 	ls -la submission.tar.gz
