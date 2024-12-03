@@ -29,22 +29,15 @@ ifeq ($(BENCH), true)
 	CFLAGS += -DBENCH
 endif
 
-ifeq ($(STDLIB), true)
-	CFLAGS += -DSTDLIB
+ifeq ($(NOSTDLIB), true)
+	CFLAGS += -nostdlib -fno-builtin-memset -DNOSTDLIB
 else
-	CFLAGS += -nostdlib
+	CFLAGS += -lm
 endif
 
 #UCI build
 ifeq ($(UCI), true)
 	CFLAGS += -DUCI
-endif
-
-ifeq ($(STDLIB), true)
-	CFLAGS += -DSTDLIB
-	CFLAGS += -lm
-else
-	CFLAGS += -nostdlib -fno-builtin-memset
 endif
 
 # Detect Clang

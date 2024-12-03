@@ -1,6 +1,6 @@
 #pragma once
 
-#if STDLIB
+#if !NOSTDLIB
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>

@@ -1,4 +1,4 @@
-#if !STDLIB
+#if NOSTDLIB
 #include "shims.h"
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
