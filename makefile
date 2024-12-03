@@ -155,7 +155,7 @@ EXE     := $(NAME)$(SUFFIX)
 
 all: $(TARGET)
 clean:
-	@rm -rf $(TMPDIR) *.o  $(DEPENDS) *.d
+	@rm -rf $(TMPDIR) *.o  $(DEPENDS) *.d *.tar *.gz
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(NATIVE) -MMD -MP -o $(EXE) $^ $(FLAGS) -lm
@@ -167,5 +167,11 @@ $(TMPDIR):
 	$(MKDIR) "$(TMPDIR)" "$(TMPDIR)/src"
 
 -include $(DEPENDS)
+
 small: clean all
+	sstrip $(EXE)
 	ls -la $(EXE)
+	tar -rf submission.tar $(EXE) nn.net main.py
+	ls -la submission.tar
+	gzip -9 -k submission.tar
+	ls -la submission.tar.gz
