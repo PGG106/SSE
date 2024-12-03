@@ -171,7 +171,7 @@ $(TMPDIR):
 small: clean all
 	sstrip $(EXE)
 	ls -la $(EXE)
-	tar -rf submission.tar $(EXE) nn.net main.py
+	tar -cf submission.tar $(EXE) nn.net main.py
 	ls -la submission.tar
 	gzip -9 -k submission.tar
 	ls -la submission.tar.gz
