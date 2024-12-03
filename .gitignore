@@ -1,3 +1,7 @@
+#Custom
+*.tar
+*.tar.gz
+
 # Prerequisites
 *.d
 
