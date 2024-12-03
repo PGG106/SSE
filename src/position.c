@@ -367,3 +367,70 @@ void parse_moves(const char* moves, struct Position* pos) {
     }
 #endif
 }
+
+// Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
+Bitboard Position_GetPieceColorBB(struct Position const * const position, const int piecetype, const int color) {
+    return position->bitboards[piecetype + color * 6];
+}
+
+struct Accumulator* Position_AccumulatorTop(struct Position *position) {
+    assert(position->accumStackHead <= MAXPLY);
+    return &position->accumStack[position->accumStackHead - 1];
+}
+
+Bitboard Position_Occupancy(const struct Position* const pos, const int occupancySide) {
+    assert(occupancySide >= WHITE && occupancySide <= BOTH);
+    if (occupancySide == BOTH)
+        return pos->occupancies[WHITE] | pos->occupancies[BLACK];
+    else
+        return pos->occupancies[occupancySide];
+}
+
+int Position_PieceCount(const struct Position* const pos) {
+    return CountBits(Position_Occupancy(pos, BOTH));
+}
+
+int Position_PieceOn(const struct Position* const pos, const int square) {
+    assert(square >= 0 && square <= 63);
+    return pos->pieces[square];
+}
+
+ZobristKey Position_getPoskey(const struct Position* const pos) {
+    return pos->posKey;
+}
+
+int Position_get50MrCounter(const struct Position* const pos) {
+    return pos->state.fiftyMove;
+}
+
+int Position_getCastlingPerm(const struct Position* const pos) {
+    return pos->state.castlePerm;
+}
+
+int Position_getEpSquare(const struct Position* const pos) {
+    return pos->state.enPas;
+}
+
+int Position_getPlyFromNull(const struct Position* const pos) {
+    return pos->state.plyFromNull;
+}
+
+Bitboard Position_getCheckers(const struct Position* const pos) {
+    return pos->state.checkers;
+}
+
+Bitboard Position_getCheckmask(const struct Position* const pos) {
+    return pos->state.checkMask;
+}
+
+Bitboard Position_getPinnedMask(const struct Position* const pos) {
+    return pos->state.pinned;
+}
+
+int Position_getCapturedPiece(const struct Position* const pos) {
+    return pos->history[pos->historyStackHead].capture;
+}
+
+void Position_ChangeSide(struct Position* const pos) {
+    pos->side ^= 1;
+}

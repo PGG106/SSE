@@ -35,11 +35,7 @@ struct Network {
     int16_t *L1Biases;
 };
 
-#ifdef __cplusplus
-extern Network net;
-#else
 extern struct Network net;
-#endif
 
 struct Position;
 
@@ -55,60 +51,26 @@ struct Pov_Accumulator {
     bool needsRefresh;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
-    int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
-    void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
-    void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
-    void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
-    void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
-#ifdef __cplusplus
-}
-#endif
-
-inline bool Pov_Accumulator_isClean(const struct Pov_Accumulator *accumulator) {
-    return accumulator->NNUEAdd_size == 0;
-}
+void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
+int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
+void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
+void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
+void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
+void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
+bool Pov_Accumulator_isClean(const struct Pov_Accumulator* accumulator);
 
 // final total accumulator that holds the 2 povs
 struct Accumulator {
     struct Pov_Accumulator perspective[2];
 };
 
-inline void Accumulator_AppendAddIndex(struct Accumulator *accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
-    assert(accumulator->perspective[WHITE].NNUEAdd_size <= 1);
-    assert(accumulator->perspective[BLACK].NNUEAdd_size <= 1);
-    accumulator->perspective[WHITE].NNUEAdd[accumulator->perspective[WHITE].NNUEAdd_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
-    accumulator->perspective[BLACK].NNUEAdd[accumulator->perspective[BLACK].NNUEAdd_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
-}
+void Accumulator_AppendAddIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
+void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
+void Accumulator_ClearAddIndex(struct Accumulator* accumulator);
+void Accumulator_ClearSubIndex(struct Accumulator* accumulator);
 
-inline void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
-    assert(accumulator->perspective[WHITE].NNUESub_size() <= 1);
-    assert(accumulator->perspective[BLACK].NNUESub_size() <= 1);
-    accumulator->perspective[WHITE].NNUESub[accumulator->perspective[WHITE].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
-    accumulator->perspective[BLACK].NNUESub[accumulator->perspective[BLACK].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
-}
-
-inline void Accumulator_ClearAddIndex(struct Accumulator* accumulator) {
-    accumulator->perspective[WHITE].NNUEAdd_size = 0;
-    accumulator->perspective[BLACK].NNUEAdd_size = 0;
-}
-
-inline void Accumulator_ClearSubIndex(struct Accumulator* accumulator) {
-    accumulator->perspective[WHITE].NNUESub_size = 0;
-    accumulator->perspective[BLACK].NNUESub_size = 0;
-}
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void NNUE_init();
-    void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
-    void NNUE_update(struct Accumulator* acc, struct Position* pos);
-    int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
-    int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
-#ifdef __cplusplus
-}
-#endif
+void NNUE_init();
+void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
+void NNUE_update(struct Accumulator* acc, struct Position* pos);
+int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);

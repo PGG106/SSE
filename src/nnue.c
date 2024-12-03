@@ -150,6 +150,10 @@ int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const in
     return Idx;
 }
 
+bool Pov_Accumulator_isClean(const struct Pov_Accumulator* accumulator) {
+    return accumulator->NNUEAdd_size == 0;
+}
+
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias) {
 #if defined(USE_SIMD) && !NOSTDLIB
     vepi32 sum = vec_zero_epi32();
@@ -195,6 +199,29 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 #endif
 }
 
+void Accumulator_AppendAddIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
+    assert(accumulator->perspective[WHITE].NNUEAdd_size <= 1);
+    assert(accumulator->perspective[BLACK].NNUEAdd_size <= 1);
+    accumulator->perspective[WHITE].NNUEAdd[accumulator->perspective[WHITE].NNUEAdd_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
+    accumulator->perspective[BLACK].NNUEAdd[accumulator->perspective[BLACK].NNUEAdd_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
+}
+
+void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
+    assert(accumulator->perspective[WHITE].NNUESub_size() <= 1);
+    assert(accumulator->perspective[BLACK].NNUESub_size() <= 1);
+    accumulator->perspective[WHITE].NNUESub[accumulator->perspective[WHITE].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
+    accumulator->perspective[BLACK].NNUESub[accumulator->perspective[BLACK].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
+}
+
+void Accumulator_ClearAddIndex(struct Accumulator* accumulator) {
+    accumulator->perspective[WHITE].NNUEAdd_size = 0;
+    accumulator->perspective[BLACK].NNUEAdd_size = 0;
+}
+
+void Accumulator_ClearSubIndex(struct Accumulator* accumulator) {
+    accumulator->perspective[WHITE].NNUESub_size = 0;
+    accumulator->perspective[BLACK].NNUESub_size = 0;
+}
 
 void NNUE_init() {
     // open the nn file

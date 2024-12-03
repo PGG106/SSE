@@ -40,29 +40,13 @@ enum {
 };
 
 // Lookup to get the rank of a square
-static const uint8_t get_rank[64] = { 7, 7, 7, 7, 7, 7, 7, 7,
-                               6, 6, 6, 6, 6, 6, 6, 6,
-                               5, 5, 5, 5, 5, 5, 5, 5,
-                               4, 4, 4, 4, 4, 4, 4, 4,
-                               3, 3, 3, 3, 3, 3, 3, 3,
-                               2, 2, 2, 2, 2, 2, 2, 2,
-                               1, 1, 1, 1, 1, 1, 1, 1,
-                               0, 0, 0, 0, 0, 0, 0, 0 };
+extern const uint8_t get_rank[64];
 
 // Lookup to get the file of a square
-inline uint8_t get_file(const int square){
-    return square % 8;
-}
+uint8_t get_file(const int square);
 
 // Lookup to get the diagonal of a square
-static const uint8_t get_diagonal[64] = { 14, 13, 12, 11, 10,  9,  8,  7,
-                                   13, 12, 11, 10,  9,  8,  7,  6,
-                                   12, 11, 10,  9,  8,  7,  6,  5,
-                                   11, 10,  9,  8,  7,  6,  5,  4,
-                                   10,  9,  8,  7,  6,  5,  4,  3,
-                                    9,  8,  7,  6,  5,  4,  3,  2,
-                                    8,  7,  6,  5,  4,  3,  2,  1,
-                                    7,  6,  5,  4,  3,  2,  1,  0 };
+extern const uint8_t get_diagonal[64];
 
 #define get_antidiagonal(sq) (get_rank[sq] + get_file(sq))
 
@@ -100,13 +84,7 @@ enum {
 };
 
 // Lookup to get the color from a piece
-static const int Color[12] = { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-                            BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
-
-static const int PieceType[12] = { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
-                                PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
-
+extern const int Color[12];
+extern const int PieceType[12];
 // Contains the material Values of the pieces
-static const int SEEValue[15] = { 100, 422, 422, 642, 1015, 0,
-                               100, 422, 422, 642, 1015, 0, 0, 0, 0 };
-
+extern const int SEEValue[15];
