@@ -148,7 +148,7 @@ endif
 # Add network name and Evalfile
 CFLAGS += -DNETWORK_NAME=\"$(NETWORK_NAME)\" -DEVALFILE=\"$(EVALFILE)\"
 
-SOURCES := $(wildcard src/*.c) $(wildcard src/*.cpp)
+SOURCES := $(wildcard src/*.c)
 OBJECTS := $(patsubst %,$(TMPDIR)/%.o,$(SOURCES))
 DEPENDS := $(patsubst %,$(TMPDIR)/%.d,$(SOURCES))
 EXE     := $(NAME)$(SUFFIX)

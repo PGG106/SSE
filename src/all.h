@@ -108,7 +108,7 @@ enum {
 extern const uint8_t get_rank[64];
 
 // Lookup to get the file of a square
-uint8_t get_file(const int square);
+static uint8_t get_file(const int square);
 
 // Lookup to get the diagonal of a square
 extern const uint8_t get_diagonal[64];
@@ -155,13 +155,13 @@ extern const int PieceType[12];
 extern const int SEEValue[15];
 
 // generate pawn attacks
-Bitboard MaskPawnAttacks(int side, int square);
+static Bitboard MaskPawnAttacks(int side, int square);
 
 // generate knight attacks
-Bitboard MaskKnightAttacks(int square);
+static Bitboard MaskKnightAttacks(int square);
 
 // generate king attacks
-Bitboard MaskKingAttacks(int square);
+static Bitboard MaskKingAttacks(int square);
 
 // pawn attacks table [side][square]
 extern Bitboard pawn_attacks[2][64];
@@ -172,21 +172,21 @@ extern Bitboard knight_attacks[64];
 // king attacks table [square]
 extern Bitboard king_attacks[64];
 
-Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ);
+static Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ);
 
 // set occupancies
-Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask);
+static Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask);
 
 // starts a bench for alexandria, searching a set of positions up to a set depth
-void StartBench(int depth);
+static void StartBench(int depth);
 
 // set/get/pop bit macros
-void set_bit(Bitboard* bitboard, const int square);
-int get_bit(const Bitboard bitboard, const int square);
-void pop_bit(Bitboard* bitboard, const int square);
-int GetLsbIndex(Bitboard bitboard);
-int popLsb(Bitboard* bitboard);
-int CountBits(Bitboard bitboard);
+static void set_bit(Bitboard* bitboard, const int square);
+static int get_bit(const Bitboard bitboard, const int square);
+static void pop_bit(Bitboard* bitboard, const int square);
+static int GetLsbIndex(Bitboard bitboard);
+static int popLsb(Bitboard* bitboard);
+static int CountBits(Bitboard bitboard);
 
 struct Position;
 
@@ -208,38 +208,38 @@ enum Movetype {
     knightCapturePromo, bishopCapturePromo, rookCapturePromo, queenCapturePromo
 };
 
-Move encode_move(const int source, const int target, const int piece, const int movetype);
+static Move encode_move(const int source, const int target, const int piece, const int movetype);
 
-int From(const Move move);
-int To(const Move move);
-int FromTo(const Move move);
-int Piece(const Move move);
-int PieceTo(const Move move);
-int PieceTypeTo(const Move move);
-int GetMovetype(const Move move);
-int getPromotedPiecetype(const Move move);
-bool isEnpassant(const Move move);
-bool isDP(const Move move);
-bool isCastle(const Move move);
-bool isCapture(const Move move);
-bool isQuiet(const Move move);
-bool isPromo(const Move move);
+static int From(const Move move);
+static int To(const Move move);
+static int FromTo(const Move move);
+static int Piece(const Move move);
+static int PieceTo(const Move move);
+static int PieceTypeTo(const Move move);
+static int GetMovetype(const Move move);
+static int getPromotedPiecetype(const Move move);
+static bool isEnpassant(const Move move);
+static bool isDP(const Move move);
+static bool isCastle(const Move move);
+static bool isCapture(const Move move);
+static bool isQuiet(const Move move);
+static bool isPromo(const Move move);
 // Shorthand for captures + any promotion no matter if quiet or not 
-bool isTactical(const Move move);
+static bool isTactical(const Move move);
 
 struct Position;
 struct SearchInfo;
 
 // Parse a move from algebraic notation to the engine's internal encoding
-Move ParseMove(const char* move_string, struct Position* pos);
+static Move ParseMove(const char* move_string, struct Position* pos);
 // parse UCI "position" command
-void ParsePosition(const char* command, struct Position* pos);
+static void ParsePosition(const char* command, struct Position* pos);
 
 // parse UCI "go" command
-bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos);
+static bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos);
 
 // main UCI loop
-void UciLoop();
+static void UciLoop();
 
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
 #define NUM_INPUTS 768
@@ -326,29 +326,29 @@ struct Pov_Accumulator {
     bool needsRefresh;
 };
 
-void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
-int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
-void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
-void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
-void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
-void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
-bool Pov_Accumulator_isClean(const struct Pov_Accumulator* accumulator);
+static void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
+static int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
+static void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
+static void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
+static void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
+static void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
+static bool Pov_Accumulator_isClean(const struct Pov_Accumulator* accumulator);
 
 // final total accumulator that holds the 2 povs
 struct Accumulator {
     struct Pov_Accumulator perspective[2];
 };
 
-void Accumulator_AppendAddIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
-void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
-void Accumulator_ClearAddIndex(struct Accumulator* accumulator);
-void Accumulator_ClearSubIndex(struct Accumulator* accumulator);
+static void Accumulator_AppendAddIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
+static void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]);
+static void Accumulator_ClearAddIndex(struct Accumulator* accumulator);
+static void Accumulator_ClearSubIndex(struct Accumulator* accumulator);
 
-void NNUE_init();
-void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
-void NNUE_update(struct Accumulator* acc, struct Position* pos);
-int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
+static void NNUE_init();
+static void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
+static void NNUE_update(struct Accumulator* acc, struct Position* pos);
+static int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
+static int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
 
 #ifdef __GNUC__
 #define PACK(__Declaration__) __Declaration__ __attribute__((__packed__))
@@ -401,21 +401,21 @@ struct Position {
 };
 
 // Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
-Bitboard Position_GetPieceColorBB(struct Position const* const position, const int piecetype, const int color);
-struct Accumulator* Position_AccumulatorTop(struct Position* position);
-Bitboard Position_Occupancy(const struct Position* const pos, const int occupancySide);
-int Position_PieceCount(const struct Position* const pos);
-int Position_PieceOn(const struct Position* const pos, const int square);
-ZobristKey Position_getPoskey(const struct Position* const pos);
-int Position_get50MrCounter(const struct Position* const pos);
-int Position_getCastlingPerm(const struct Position* const pos);
-int Position_getEpSquare(const struct Position* const pos);
-int Position_getPlyFromNull(const struct Position* const pos);
-Bitboard Position_getCheckers(const struct Position* const pos);
-Bitboard Position_getCheckmask(const struct Position* const pos);
-Bitboard Position_getPinnedMask(const struct Position* const pos);
-int Position_getCapturedPiece(const struct Position* const pos);
-void Position_ChangeSide(struct Position* const pos);
+static Bitboard Position_GetPieceColorBB(struct Position const* const position, const int piecetype, const int color);
+static struct Accumulator* Position_AccumulatorTop(struct Position* position);
+static Bitboard Position_Occupancy(const struct Position* const pos, const int occupancySide);
+static int Position_PieceCount(const struct Position* const pos);
+static int Position_PieceOn(const struct Position* const pos, const int square);
+static ZobristKey Position_getPoskey(const struct Position* const pos);
+static int Position_get50MrCounter(const struct Position* const pos);
+static int Position_getCastlingPerm(const struct Position* const pos);
+static int Position_getEpSquare(const struct Position* const pos);
+static int Position_getPlyFromNull(const struct Position* const pos);
+static Bitboard Position_getCheckers(const struct Position* const pos);
+static Bitboard Position_getCheckmask(const struct Position* const pos);
+static Bitboard Position_getPinnedMask(const struct Position* const pos);
+static int Position_getCapturedPiece(const struct Position* const pos);
+static void Position_ChangeSide(struct Position* const pos);
 
 extern Bitboard SQUARES_BETWEEN_BB[64][64];
 
@@ -446,50 +446,50 @@ extern const int castling_rights[64];
 // convert squares to coordinates
 extern const char* const square_to_coordinates[64];
 
-void ResetBoard(struct Position* pos);
-void ResetInfo(struct SearchInfo* info);
-ZobristKey GeneratePosKey(const struct Position* const pos);
-ZobristKey GeneratePawnKey(const struct Position* pos);
-ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
+static void ResetBoard(struct Position* pos);
+static void ResetInfo(struct SearchInfo* info);
+static ZobristKey GeneratePosKey(const struct Position* const pos);
+static ZobristKey GeneratePawnKey(const struct Position* pos);
+static ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
 
-Bitboard RayBetween(int square1, int square2);
-void UpdatePinsAndCheckers(struct Position* pos, const int side);
+static Bitboard RayBetween(int square1, int square2);
+static void UpdatePinsAndCheckers(struct Position* pos, const int side);
 
 // Get on what square of the board the king of color c resides
-int KingSQ(const struct Position* pos, const int c);
+static int KingSQ(const struct Position* pos, const int c);
 
 // Parse a string of moves in coordinate format and plays them
-void parse_moves(const char* moves, struct Position* pos);
+static void parse_moves(const char* moves, struct Position* pos);
 
 // Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
-Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
+static Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
 
 // parse FEN string
-void ParseFen(const char* command, struct Position* pos);
+static void ParseFen(const char* command, struct Position* pos);
 
 // Return a piece based on the type and the color
-int GetPiece(const int piecetype, const int color);
+static int GetPiece(const int piecetype, const int color);
 
 // Returns the piece_type of a piece
-int GetPieceType(const int piece);
+static int GetPieceType(const int piece);
 
 // Returns true if side has at least one piece on the board that isn't a pawn, false otherwise
-bool BoardHasNonPawns(const struct Position* pos, const int side);
+static bool BoardHasNonPawns(const struct Position* pos, const int side);
 
-ZobristKey keyAfter(const struct Position* pos, const Move move);
+static ZobristKey keyAfter(const struct Position* pos, const Move move);
 
-void saveBoardState(struct Position* pos);
+static void saveBoardState(struct Position* pos);
 
-void restorePreviousBoardState(struct Position* pos);
+static void restorePreviousBoardState(struct Position* pos);
 
 // if we don't have enough material to mate consider the position a draw
-bool MaterialDraw(const struct Position* pos);
+static bool MaterialDraw(const struct Position* pos);
 
-int ScaleMaterial(const struct Position* pos, int eval);
-int EvalPositionRaw(struct Position* pos);
+static int ScaleMaterial(const struct Position* pos, int eval);
+static int EvalPositionRaw(struct Position* pos);
 
 // position evaluation
-int EvalPosition(struct Position* pos);
+static int EvalPosition(struct Position* pos);
 
 struct Position;
 struct SearchData;
@@ -504,38 +504,38 @@ const static int CORRHIST_GRAIN = 256;
 const static int CORRHIST_MAX = 16384;
 
 // Functions used to update the history heuristics
-void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const int depth, const Move bestMove, const struct MoveList* quietMoves, const struct MoveList* noisyMoves, const bool rootNode);
+static void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const int depth, const Move bestMove, const struct MoveList* quietMoves, const struct MoveList* noisyMoves, const bool rootNode);
 
 // Fuction that returns the history bonus
-int history_bonus(const int depth);
+static int history_bonus(const int depth);
 
 // Getters for the history heuristics
-int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move);
-int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, const Move move);
-int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move);
+static int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move);
+static int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, const Move move);
+static int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move);
 // Clean all the history tables
-void CleanHistories(struct SearchData* sd);
+static void CleanHistories(struct SearchData* sd);
 // Updates history heuristics for a single move
-void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
-void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
+static void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
+static void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
 
 // Corrhist stuff
-void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff);
-int  adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval);
+static void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff);
+static int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval);
 
 extern const Bitboard file_bbs[8];
 extern const Bitboard rank_bbs[8];
 extern const Bitboard diagonal_bbs[15];
 extern const Bitboard antidiagonal_bbs[15];
 
-Bitboard ReverseBits(Bitboard bitboard);
-Bitboard MaskedSlide(const Bitboard allPieces, const Bitboard pieceBitboard, const Bitboard mask);
+static Bitboard ReverseBits(Bitboard bitboard);
+static Bitboard MaskedSlide(const Bitboard allPieces, const Bitboard pieceBitboard, const Bitboard mask);
 // get bishop attacks
-Bitboard GetBishopAttacks(int square, Bitboard occupancy);
+static Bitboard GetBishopAttacks(int square, Bitboard occupancy);
 // get rook attacks
-Bitboard GetRookAttacks(int square, Bitboard occupancy);
+static Bitboard GetRookAttacks(int square, Bitboard occupancy);
 // get queen attacks
-Bitboard GetQueenAttacks(const int square, Bitboard occupancy);
+static Bitboard GetQueenAttacks(const int square, Bitboard occupancy);
 
 struct ThreadData;
 
@@ -544,31 +544,31 @@ extern Bitboard enpassant_keys[64];
 extern Bitboard SideKey;
 extern Bitboard CastleKeys[16];
 
-void InitNewGame(struct ThreadData* td);
+static void InitNewGame(struct ThreadData* td);
 
 // init slider piece's attack tables
-void InitAttackTables();
+static void InitAttackTables();
 
-void InitAll();
+static void InitAll();
 
 // print move (for UCI purposes)
-void PrintMove(const Move move);
+static void PrintMove(const Move move);
 
-void ClearPiece(const bool UPDATE, const int piece, const int from, struct Position* pos);
+static void ClearPiece(const bool UPDATE, const int piece, const int from, struct Position* pos);
 
-void AddPiece(const bool UPDATE, const int piece, const int to, struct Position* pos);
+static void AddPiece(const bool UPDATE, const int piece, const int to, struct Position* pos);
 
-void UpdateCastlingPerms(struct Position* pos, int source_square, int target_square);
+static void UpdateCastlingPerms(struct Position* pos, int source_square, int target_square);
 
-void MakeMove(const bool UPDATE, const Move move, struct Position* pos);
+static void MakeMove(const bool UPDATE, const Move move, struct Position* pos);
 // Reverts the previously played move
-void UnmakeMove(const Move move, struct Position* pos);
+static void UnmakeMove(const Move move, struct Position* pos);
 // makes a null move (a move that doesn't move any piece)
-void MakeNullMove(struct Position* pos);
+static void MakeNullMove(struct Position* pos);
 // Reverts the previously played null move
-void TakeNullMove(struct Position* pos);
+static void TakeNullMove(struct Position* pos);
 
-bool next_token(const char* str, int* index, char* token);
+static bool next_token(const char* str, int* index, char* token);
 
 enum MovegenType {
     MOVEGEN_NOISY = 0b01,
@@ -577,22 +577,22 @@ enum MovegenType {
 };
 
 // is the square given in input attacked by the current given side
-bool IsSquareAttacked(const struct Position* pos, const int square, const int side);
+static bool IsSquareAttacked(const struct Position* pos, const int square, const int side);
 
 // function that adds a (not yet scored) move to a move list
-void AddMoveNonScored(const Move move, struct MoveList* list);
+static void AddMoveNonScored(const Move move, struct MoveList* list);
 
 // function that adds an (already-scored) move to a move list
-void AddMoveScored(const Move move, const int score, struct MoveList* list);
+static void AddMoveScored(const Move move, const int score, struct MoveList* list);
 
 // Check for move pseudo-legality
-bool IsPseudoLegal(const struct Position* pos, const Move move);
+static bool IsPseudoLegal(const struct Position* pos, const Move move);
 
 // Check for move legality
-bool IsLegal(struct Position* pos, const Move move);
+static bool IsLegal(struct Position* pos, const Move move);
 
 // generate moves
-void GenerateMoves(struct MoveList* move_list, struct Position* pos, enum MovegenType type);
+static void GenerateMoves(struct MoveList* move_list, struct Position* pos, enum MovegenType type);
 
 enum {
     PICK_TT,
@@ -622,14 +622,14 @@ struct Movepicker {
     int stage;
 };
 
-void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const Move ttMove, const enum MovepickerType movepickerType, const bool rootNode);
-Move NextMove(struct Movepicker* mp, const bool skip);
+static void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const Move ttMove, const enum MovepickerType movepickerType, const bool rootNode);
+static Move NextMove(struct Movepicker* mp, const bool skip);
 
 // convert ASCII character pieces to encoded constants
-int char_pieces(const char ch);
+static int char_pieces(const char ch);
 
 // Map promoted piece to the corresponding ASCII character
-char promoted_pieces(const int piece);
+static char promoted_pieces(const int piece);
 
 struct SearchStack {
     // don't init. search will init before entering the negamax method
@@ -660,36 +660,36 @@ struct ThreadData {
 
 extern Move return_bestmove;
 
-void init_thread_data(struct ThreadData* td);
+static void init_thread_data(struct ThreadData* td);
 
 // ClearForSearch handles the cleaning of the thread data from a clean state
-void ClearForSearch(struct ThreadData* td);
+static void ClearForSearch(struct ThreadData* td);
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
-void RootSearch(int depth, struct ThreadData* td);
+static void RootSearch(int depth, struct ThreadData* td);
 
 // SearchPosition is the actual function that handles the search, it sets up the variables needed for the search , calls the Negamax function and handles the console output
-void SearchPosition(int start_depth, int final_depth, struct ThreadData* td);
+static void SearchPosition(int start_depth, int final_depth, struct ThreadData* td);
 
 // Sets up aspiration windows and starts a Negamax search
-int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td);
+static int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td);
 
-int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData* td, struct SearchStack* ss);
+static int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData* td, struct SearchStack* ss);
 
-int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* ss);
+static int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* ss);
 
 // inspired by the Weiss engine
-bool SEE(const struct Position* pos, const int move, const int threshold);
+static bool SEE(const struct Position* pos, const int move, const int threshold);
 
 // Checks if the current position is a draw
-bool IsDraw(struct Position* pos);
+static bool IsDraw(struct Position* pos);
 
-bool IsRepetition(const struct Position* pos); // remove this later, make static
-bool Is50MrDraw(struct Position* pos); // remove this later, make static
+static bool IsRepetition(const struct Position* pos); // remove this later, make static
+static bool Is50MrDraw(struct Position* pos); // remove this later, make static
 
-void Optimum(struct SearchInfo* info, int time, int inc);
-bool StopEarly(const struct SearchInfo* info);
-bool TimeOver(const struct SearchInfo* info);
+static void Optimum(struct SearchInfo* info, int time, int inc);
+static bool StopEarly(const struct SearchInfo* info);
+static bool TimeOver(const struct SearchInfo* info);
 
 #define ENTRIES_PER_BUCKET 3
 
@@ -733,39 +733,39 @@ extern struct TTable TT;
 static const uint8_t MAX_AGE = 1 << 5; // must be power of 2
 static const uint8_t AGE_MASK = MAX_AGE - 1;
 
-void* AlignedMalloc(size_t size, size_t alignment);
+static void* AlignedMalloc(size_t size, size_t alignment);
 
-void AlignedFree(void* src);
+static void AlignedFree(void* src);
 
-void TTEntry_init(struct TTEntry* const tte);
-void TTBucket_init(struct TTBucket* const ttb);
+static void TTEntry_init(struct TTEntry* const tte);
+static void TTBucket_init(struct TTBucket* const ttb);
 
-void ClearTT();
+static void ClearTT();
 // Initialize an TT of size MB
-void InitTT(uint64_t MB);
+static void InitTT(uint64_t MB);
 
-bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte);
+static bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte);
 
-void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV);
+static void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV);
 
-uint64_t Index(const ZobristKey posKey);
+static uint64_t Index(const ZobristKey posKey);
 
-void TTPrefetch(const ZobristKey posKey);
+static void TTPrefetch(const ZobristKey posKey);
 
-int ScoreToTT(int score, int ply);
+static int ScoreToTT(int score, int ply);
 
-int ScoreFromTT(int score, int ply);
+static int ScoreFromTT(int score, int ply);
 
-PackedMove MoveToTT(Move move);
+static PackedMove MoveToTT(Move move);
 
-Move MoveFromTT(struct Position* pos, PackedMove packed_move);
+static Move MoveFromTT(struct Position* pos, PackedMove packed_move);
 
-uint8_t BoundFromTT(uint8_t ageBoundPV);
+static uint8_t BoundFromTT(uint8_t ageBoundPV);
 
-bool FormerPV(uint8_t ageBoundPV);
+static bool FormerPV(uint8_t ageBoundPV);
 
-uint8_t AgeFromTT(uint8_t ageBoundPV);
+static uint8_t AgeFromTT(uint8_t ageBoundPV);
 
-uint8_t PackToTT(uint8_t bound, bool wasPV, uint8_t age);
+static uint8_t PackToTT(uint8_t bound, bool wasPV, uint8_t age);
 
-void UpdateTableAge();
+static void UpdateTableAge();
