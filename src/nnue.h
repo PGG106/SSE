@@ -1,7 +1,6 @@
 #pragma once
 
-//#include "simd.h"
-#include "types.h"
+#include "simd.h"
 #include "shims.h"
 
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
