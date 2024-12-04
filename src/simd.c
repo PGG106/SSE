@@ -1,6 +1,6 @@
 #if defined(USE_SIMD) && !NOSTDLIB
 
-#include "simd.h"
+#include "all.h"
 
 #if defined(USE_AVX512)
 
