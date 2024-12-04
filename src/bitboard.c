@@ -1,6 +1,6 @@
 #include "all.h"
 
-#include "shims.h"
+#include "all.h"
 
 // set/get/pop bit macros
 void set_bit(Bitboard* bitboard, const int square) { *bitboard |= (1ULL << square); }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "all.h"
 
 extern const Bitboard file_bbs[8];
 extern const Bitboard rank_bbs[8];

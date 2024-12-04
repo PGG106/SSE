@@ -6,7 +6,7 @@
 #include "eval.h"
 #include "search.h"
 
-#include "shims.h"
+#include "all.h"
 
 // Benchmarks from Bitgenie
 #define bench_count 52

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "types.h"
-#include "shims.h"
+#include "all.h"
+#include "all.h"
 
 struct Position;
 struct MoveList;

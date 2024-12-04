@@ -1,4 +1,4 @@
-#include "shims.h"
+#include "all.h"
 
 #if !NOSTDLIB
 uint64_t GetTimeMs() {

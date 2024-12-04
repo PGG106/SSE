@@ -2,7 +2,7 @@
 
 #if !NOSTDLIB
 
-#include "shims.h"
+#include "all.h"
 
 #if defined(USE_SIMD)
 #include <immintrin.h>

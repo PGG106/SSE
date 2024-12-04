@@ -1,7 +1,7 @@
 #pragma once
 
 #include "simd.h"
-#include "shims.h"
+#include "all.h"
 
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
 #define NUM_INPUTS 768

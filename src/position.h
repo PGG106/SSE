@@ -2,9 +2,9 @@
 
 #include "all.h"
 #include "nnue.h"
-#include "types.h"
+#include "all.h"
 
-#include "shims.h"
+#include "all.h"
 
 #ifdef __GNUC__
 #define PACK(__Declaration__) __Declaration__ __attribute__((__packed__))

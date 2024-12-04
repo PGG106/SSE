@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "all.h"
 
 struct ThreadData;
 

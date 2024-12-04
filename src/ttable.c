@@ -2,7 +2,7 @@
 
 struct TTable TT;
 
-#include "shims.h"
+#include "all.h"
 
 void* AlignedMalloc(size_t size, size_t alignment) {
     return malloc(size);

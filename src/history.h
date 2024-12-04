@@ -1,8 +1,8 @@
 #pragma once
 
-#include "types.h"
+#include "all.h"
 
-#include "shims.h"
+#include "all.h"
 
 struct Position;
 struct SearchData;

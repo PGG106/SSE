@@ -5,7 +5,7 @@
 #include "time_manager.h"
 #include "search.h"
 
-#include "shims.h"
+#include "all.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 Move ParseMove(const char* moveString, struct Position* pos) {

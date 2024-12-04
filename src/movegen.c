@@ -5,7 +5,7 @@
 #include "makemove.h"
 #include "position.h"
 
-#include "shims.h"
+#include "all.h"
 
 #define abs(x) ((x) < 0 ? -(x) : (x))
 
