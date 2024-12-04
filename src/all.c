@@ -496,7 +496,9 @@ int CountBits(Bitboard bitboard) {
 }
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
+#define max(a,b) (((a) > (b)) ? (a) : (b))
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
+#define abs(x) ((x) < 0 ? -(x) : (x))
 
 // if we don't have enough material to mate consider the position a draw
 bool MaterialDraw(const struct Position* pos) {
@@ -546,9 +548,7 @@ int EvalPosition(struct Position* pos) {
     return eval;
 }
 
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
-#define abs(x) ((x) < 0 ? -(x) : (x))
+
 
 
 /* History updating works in the same way for all histories, we have 3 methods:
@@ -2737,11 +2737,6 @@ int Position_getCapturedPiece(const struct Position* const pos) {
 void Position_ChangeSide(struct Position* const pos) {
     pos->side ^= 1;
 }
-
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#define abs(x) ((x) < 0 ? -(x) : (x))
-#define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 
 Move return_bestmove = NOMOVE;
 
