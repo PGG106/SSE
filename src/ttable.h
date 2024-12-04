@@ -45,47 +45,39 @@ extern struct TTable TT;
 static const uint8_t MAX_AGE = 1 << 5; // must be power of 2
 static const uint8_t AGE_MASK = MAX_AGE - 1;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void* AlignedMalloc(size_t size, size_t alignment);
 
-    void* AlignedMalloc(size_t size, size_t alignment);
+void AlignedFree(void* src);
 
-    void AlignedFree(void* src);
+void TTEntry_init(struct TTEntry* const tte);
+void TTBucket_init(struct TTBucket* const ttb);
 
-    void TTEntry_init(struct TTEntry* const tte);
-    void TTBucket_init(struct TTBucket* const ttb);
+void ClearTT();
+// Initialize an TT of size MB
+void InitTT(uint64_t MB);
 
-    void ClearTT();
-    // Initialize an TT of size MB
-    void InitTT(uint64_t MB);
+bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte);
 
-    bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte);
+void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV);
 
-    void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV);
+uint64_t Index(const ZobristKey posKey);
 
-    uint64_t Index(const ZobristKey posKey);
+void TTPrefetch(const ZobristKey posKey);
 
-    void TTPrefetch(const ZobristKey posKey);
+int ScoreToTT(int score, int ply);
 
-    int ScoreToTT(int score, int ply);
+int ScoreFromTT(int score, int ply);
 
-    int ScoreFromTT(int score, int ply);
+PackedMove MoveToTT(Move move);
 
-    PackedMove MoveToTT(Move move);
+Move MoveFromTT(struct Position* pos, PackedMove packed_move);
 
-    Move MoveFromTT(struct Position* pos, PackedMove packed_move);
+uint8_t BoundFromTT(uint8_t ageBoundPV);
 
-    uint8_t BoundFromTT(uint8_t ageBoundPV);
+bool FormerPV(uint8_t ageBoundPV);
 
-    bool FormerPV(uint8_t ageBoundPV);
+uint8_t AgeFromTT(uint8_t ageBoundPV);
 
-    uint8_t AgeFromTT(uint8_t ageBoundPV);
+uint8_t PackToTT(uint8_t bound, bool wasPV, uint8_t age);
 
-    uint8_t PackToTT(uint8_t bound, bool wasPV, uint8_t age);
-
-    void UpdateTableAge();
-
-#ifdef __cplusplus
-}
-#endif
+void UpdateTableAge();

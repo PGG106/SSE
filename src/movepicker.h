@@ -33,12 +33,5 @@ struct Movepicker {
     int stage;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const Move ttMove, const enum MovepickerType movepickerType, const bool rootNode);
-    Move NextMove(struct Movepicker* mp, const bool skip);
-#ifdef __cplusplus
-}
-#endif
-
+void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const Move ttMove, const enum MovepickerType movepickerType, const bool rootNode);
+Move NextMove(struct Movepicker* mp, const bool skip);

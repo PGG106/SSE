@@ -2,9 +2,6 @@
 
 #include "types.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 // generate pawn attacks
 Bitboard MaskPawnAttacks(int side, int square);
 
@@ -27,6 +24,3 @@ Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ);
 
 // set occupancies
 Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask);
-#ifdef __cplusplus
-}
-#endif
