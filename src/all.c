@@ -2888,7 +2888,7 @@ void init_thread_data(struct ThreadData* td)
 }
 
 // returns a bitboard of all the attacks to a specific square
-static inline Bitboard AttacksTo(const struct Position* pos, int to, Bitboard occ) {
+static Bitboard AttacksTo(const struct Position* pos, int to, Bitboard occ) {
     Bitboard attackingBishops = GetPieceBB(pos, BISHOP) | GetPieceBB(pos, QUEEN);
     Bitboard attackingRooks = GetPieceBB(pos, ROOK) | GetPieceBB(pos, QUEEN);
 
