@@ -2,7 +2,7 @@
 
 #include "all.h"
 #include "movegen.h"
-#include "eval.h"
+#include "all.h"
 #include "hyperbola.h"
 #include "makemove.h"
 #include "ttable.h"
