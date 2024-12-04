@@ -1,8 +1,4 @@
-#include "movegen.h"
-
 #include "all.h"
-#include "hyperbola.h"
-#include "makemove.h"
 
 #define abs(x) ((x) < 0 ? -(x) : (x))
 

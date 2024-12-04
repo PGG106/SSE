@@ -1,6 +1,4 @@
-#include "time_manager.h"
-
-#include "search.h"
+#include "all.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 

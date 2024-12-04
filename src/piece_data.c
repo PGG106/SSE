@@ -1,4 +1,4 @@
-#include "piece_data.h"
+#include "all.h"
 
 // convert ASCII character pieces to encoded constants
 int char_pieces(const char ch) {

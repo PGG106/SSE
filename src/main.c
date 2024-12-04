@@ -1,4 +1,3 @@
-#include "init.h"
 #include "all.h"
 
 #if NOSTDLIB

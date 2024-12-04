@@ -1,8 +1,4 @@
 #include "all.h"
-#include "migration.h"
-#include "movegen.h"
-#include "time_manager.h"
-#include "search.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 Move ParseMove(const char* moveString, struct Position* pos) {

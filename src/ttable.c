@@ -1,4 +1,4 @@
-#include "ttable.h"
+#include "all.h"
 
 struct TTable TT;
 

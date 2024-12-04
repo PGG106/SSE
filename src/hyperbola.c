@@ -1,4 +1,4 @@
-#include "hyperbola.h"
+#include "all.h"
 
 const Bitboard file_bbs[] =
 {

@@ -1,8 +1,5 @@
 #include "all.h"
 
-#include "all.h"
-#include "search.h"
-
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 #define abs(x) ((x) < 0 ? -(x) : (x))

@@ -1,6 +1,4 @@
-#include "io.h"
-
-#include "piece_data.h"
+#include "all.h"
 
 void PrintMove(const Move move) {
     const char* from = square_to_coordinates[From(move)];

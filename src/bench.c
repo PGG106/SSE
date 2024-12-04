@@ -1,11 +1,4 @@
-#include "all.h"
-
 #if BENCH
-#include "ttable.h"
-#include "init.h"
-#include "all.h"
-#include "search.h"
-
 #include "all.h"
 
 // Benchmarks from Bitgenie

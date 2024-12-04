@@ -1,8 +1,4 @@
-#include "makemove.h"
-
 #include "all.h"
-#include "init.h"
-#include "ttable.h"
 
 void HashKey(ZobristKey* originalKey, ZobristKey key) {
     *originalKey ^= key;

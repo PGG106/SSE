@@ -1,15 +1,3 @@
-#include "search.h"
-
-#include "all.h"
-#include "movegen.h"
-#include "all.h"
-#include "hyperbola.h"
-#include "makemove.h"
-#include "ttable.h"
-#include "io.h"
-#include "movepicker.h"
-#include "time_manager.h"
-
 #include "all.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))

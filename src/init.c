@@ -1,9 +1,3 @@
-#include "init.h"
-
-#include "all.h"
-#include "hyperbola.h"
-#include "search.h"
-#include "ttable.h"
 #include "all.h"
 
 Bitboard PieceKeys[12][64];
