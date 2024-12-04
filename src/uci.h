@@ -2,8 +2,6 @@
 
 #include "move.h"
 
-#include "shims.h"
-
 struct Position;
 struct SearchInfo;
 

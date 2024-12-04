@@ -3,7 +3,6 @@
 #include "all.h"
 #include "hyperbola.h"
 #include "makemove.h"
-#include "move.h"
 #include "position.h"
 
 #include "shims.h"

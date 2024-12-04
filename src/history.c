@@ -1,6 +1,6 @@
 #include "history.h"
 
-#include "move.h"
+#include "all.h"
 #include "position.h"
 #include "search.h"
 

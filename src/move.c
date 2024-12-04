@@ -1,4 +1,4 @@
-#include "move.h"
+#include "all.h"
 
 Move encode_move(const int source, const int target, const int piece, const int movetype) {
     return (source) | (target << 6) | (movetype << 12) | (piece << 16);
