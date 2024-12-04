@@ -1,5 +1,3 @@
-#include "uci.h"
-
 #include "all.h"
 #include "migration.h"
 #include "movegen.h"

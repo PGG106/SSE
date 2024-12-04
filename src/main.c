@@ -1,5 +1,5 @@
 #include "init.h"
-#include "uci.h"
+#include "all.h"
 
 #if NOSTDLIB
 void _start() {

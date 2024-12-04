@@ -3,7 +3,6 @@
 #include "all.h"
 #include "nnue.h"
 #include "types.h"
-#include "uci.h"
 
 #include "shims.h"
 

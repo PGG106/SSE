@@ -6,7 +6,6 @@
 #include "search.h"
 #include "ttable.h"
 #include "history.h"
-#include "uci.h"
 
 Bitboard PieceKeys[12][64];
 Bitboard enpassant_keys[64];
