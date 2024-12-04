@@ -276,8 +276,6 @@ extern struct Network net;
 
 #if !NOSTDLIB
 
-#include "all.h"
-
 #if defined(USE_SIMD)
 #include <immintrin.h>
 #endif
