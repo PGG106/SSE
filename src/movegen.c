@@ -3,9 +3,6 @@
 #include "all.h"
 #include "hyperbola.h"
 #include "makemove.h"
-#include "position.h"
-
-#include "all.h"
 
 #define abs(x) ((x) < 0 ? -(x) : (x))
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "position.h"
 #include "all.h"
 
 #define ENTRIES_PER_BUCKET 3

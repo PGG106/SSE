@@ -1,13 +1,8 @@
-#include "position.h"
-
 #include "all.h"
 #include "hyperbola.h"
 #include "init.h"
 #include "migration.h"
 #include "piece_data.h"
-#include "makemove.h"
-
-#include "all.h"
 
 const int castling_rights[64] = {
      7, 15, 15, 15,  3, 15, 15, 11,

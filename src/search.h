@@ -1,7 +1,6 @@
 #pragma once
 
 #include "history.h"
-#include "position.h"
 
 #include "all.h"
 

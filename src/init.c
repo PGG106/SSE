@@ -1,6 +1,5 @@
 #include "init.h"
 
-#include "position.h"
 #include "all.h"
 #include "hyperbola.h"
 #include "search.h"

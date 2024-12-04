@@ -1,6 +1,6 @@
 #pragma once
 
-#include "position.h"
+#include "all.h"
 
 // if we don't have enough material to mate consider the position a draw
 bool MaterialDraw(const struct Position* pos);

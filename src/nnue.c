@@ -1,7 +1,5 @@
 #include "all.h"
 
-#include "position.h"
-
 struct Network net;
 
 void NNUE_update(struct Accumulator* acc, struct Position* pos) {
