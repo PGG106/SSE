@@ -1,4 +1,4 @@
-#include "history.h"
+#include "all.h"
 
 #include "all.h"
 #include "search.h"

@@ -4,7 +4,7 @@
 #include "hyperbola.h"
 #include "search.h"
 #include "ttable.h"
-#include "history.h"
+#include "all.h"
 
 Bitboard PieceKeys[12][64];
 Bitboard enpassant_keys[64];
