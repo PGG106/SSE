@@ -1,4 +1,4 @@
-#include "bitboard.h"
+#include "all.h"
 
 #include "shims.h"
 

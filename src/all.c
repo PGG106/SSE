@@ -15,8 +15,6 @@ static Bitboard not_hg_file = 4557430888798830399ULL;
 // not AB file constant
 static Bitboard not_ab_file = 18229723555195321596ULL;
 
-static void set_bit(Bitboard *bitboard, const int square) { *bitboard |= (1ULL << square); }
-
 // generate pawn attacks
 Bitboard MaskPawnAttacks(int side, int square) {
     // result attacks bitboard

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bitboard.h"
+#include "all.h"
 #include "nnue.h"
 #include "types.h"
 #include "uci.h"
