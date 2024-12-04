@@ -24,3 +24,6 @@ Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ);
 
 // set occupancies
 Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask);
+
+// starts a bench for alexandria, searching a set of positions up to a set depth
+void StartBench(int depth);

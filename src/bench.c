@@ -1,4 +1,4 @@
-#include "bench.h"
+#include "all.h"
 
 #if BENCH
 #include "ttable.h"

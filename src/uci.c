@@ -1,7 +1,6 @@
 #include "uci.h"
 
-#include "bench.h"
-#include "init.h"
+#include "all.h"
 #include "migration.h"
 #include "movegen.h"
 #include "position.h"
