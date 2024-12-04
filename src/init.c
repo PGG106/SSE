@@ -1,7 +1,7 @@
 #include "init.h"
 
 #include "position.h"
-#include "attack.h"
+#include "all.h"
 #include "hyperbola.h"
 #include "search.h"
 #include "ttable.h"

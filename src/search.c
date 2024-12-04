@@ -1,6 +1,6 @@
 #include "search.h"
 
-#include "attack.h"
+#include "all.h"
 #include "movegen.h"
 #include "eval.h"
 #include "hyperbola.h"

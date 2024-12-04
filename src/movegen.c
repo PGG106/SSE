@@ -1,6 +1,6 @@
 #include "movegen.h"
 
-#include "attack.h"
+#include "all.h"
 #include "hyperbola.h"
 #include "makemove.h"
 #include "move.h"

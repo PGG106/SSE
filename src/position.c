@@ -1,6 +1,6 @@
 #include "position.h"
 
-#include "attack.h"
+#include "all.h"
 #include "hyperbola.h"
 #include "init.h"
 #include "migration.h"

@@ -1,6 +1,6 @@
 #include "makemove.h"
 
-#include "attack.h"
+#include "all.h"
 #include "init.h"
 #include "position.h"
 #include "ttable.h"

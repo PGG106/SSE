@@ -1,4 +1,4 @@
-#include "attack.h"
+#include "all.h"
 #include "hyperbola.h"
 
 #include "shims.h"
