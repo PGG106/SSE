@@ -725,6 +725,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 newDepth += doDeeperSearch - doShallowerSearch;
                 if (newDepth > reducedDepth)
                     score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
+                updateCHScore(ss, move, bonus);
             }
         }
         // If we skipped LMR and this isn't the first move of the node we'll search with a reduced window and full depth
