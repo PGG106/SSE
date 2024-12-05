@@ -60,6 +60,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
     {
         // increase bestMove HH and CH score
         updateHHScore(pos, sd, bestMove, bonus);
+        updateCHScore(ss, bestMove, bonus);
 
         // Loop through all the quiet moves
         for (int i = 0; i < quietMoves->count; i++) {
@@ -67,6 +68,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
             const Move move = quietMoves->moves[i].move;
             if (move == bestMove) continue;
             updateHHScore(pos, sd, move, -bonus);
+            updateCHScore(ss, move, -bonus);
         }
     }
     else {
