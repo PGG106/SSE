@@ -23,6 +23,7 @@ Move return_bestmove = NOMOVE;
 void ClearForSearch(struct ThreadData* td) {
     // Extract data structures from ThreadData
     struct SearchInfo* info = &td->info;
+    memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 
     // Reset plies and search info
     info->starttime = GetTimeMs();
@@ -653,6 +654,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // increment nodes count
         info->nodes++;
+        const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
 
@@ -725,6 +727,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // take move back
         UnmakeMove(move, pos);
+        if (rootNode)
+            td->nodeSpentTable[FromTo(move)] += info->nodes - nodesBeforeSearch;
 
         if (info->stopped)
             return 0;
