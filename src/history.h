@@ -31,7 +31,7 @@ extern "C" {
     int GetCHScore(const struct SearchStack* ss, const Move move);
     int GetSingleCHScore(const struct SearchStack* ss, const Move move, const int offset);
     int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, const Move move);
-    int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move);
+    int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move, const struct SearchStack* ss);
     // Clean all the history tables
     void CleanHistories(struct SearchData* sd);
     // Updates history heuristics for a single move
