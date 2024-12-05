@@ -269,10 +269,10 @@ char* fgets(char* string0, int count, int file)
 }
 #endif
 
-int see_margin[64][2];
+static int see_margin[64][2];
 
 // Lookup to get the rank of a square
-const uint8_t get_rank[64] = { 7, 7, 7, 7, 7, 7, 7, 7,
+static const uint8_t get_rank[64] = { 7, 7, 7, 7, 7, 7, 7, 7,
                                6, 6, 6, 6, 6, 6, 6, 6,
                                5, 5, 5, 5, 5, 5, 5, 5,
                                4, 4, 4, 4, 4, 4, 4, 4,
@@ -281,24 +281,24 @@ const uint8_t get_rank[64] = { 7, 7, 7, 7, 7, 7, 7, 7,
                                1, 1, 1, 1, 1, 1, 1, 1,
                                0, 0, 0, 0, 0, 0, 0, 0 };
 
-Bitboard PieceKeys[12][64];
-Bitboard enpassant_keys[64];
-Bitboard SideKey;
-Bitboard CastleKeys[16];
+static Bitboard PieceKeys[12][64];
+static Bitboard enpassant_keys[64];
+static Bitboard SideKey;
+static Bitboard CastleKeys[16];
 
 // pawn attacks table [side][square]
-Bitboard pawn_attacks[2][64];
+static Bitboard pawn_attacks[2][64];
 
 // knight attacks table [square]
-Bitboard knight_attacks[64];
+static Bitboard knight_attacks[64];
 
 // king attacks table [square]
-Bitboard king_attacks[64];
+static Bitboard king_attacks[64];
 
-Bitboard SQUARES_BETWEEN_BB[64][64];
+static Bitboard SQUARES_BETWEEN_BB[64][64];
 
 // Lookup to get the diagonal of a square
-const uint8_t get_diagonal[64] = { 14, 13, 12, 11, 10,  9,  8,  7,
+static const uint8_t get_diagonal[64] = { 14, 13, 12, 11, 10,  9,  8,  7,
                                    13, 12, 11, 10,  9,  8,  7,  6,
                                    12, 11, 10,  9,  8,  7,  6,  5,
                                    11, 10,  9,  8,  7,  6,  5,  4,
@@ -308,17 +308,17 @@ const uint8_t get_diagonal[64] = { 14, 13, 12, 11, 10,  9,  8,  7,
                                     7,  6,  5,  4,  3,  2,  1,  0 };
 
 // Lookup to get the color from a piece
-const int Color[12] = { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
+static const int Color[12] = { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
                             BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
 
-const int PieceType[12] = { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
+static const int PieceType[12] = { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
                                 PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 
 // Contains the material Values of the pieces
-const int SEEValue[15] = { 100, 422, 422, 642, 1015, 0,
+static const int SEEValue[15] = { 100, 422, 422, 642, 1015, 0,
                                100, 422, 422, 642, 1015, 0, 0, 0, 0 };
 
-const int castling_rights[64] = {
+static const int castling_rights[64] = {
      7, 15, 15, 15,  3, 15, 15, 11,
     15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15,
@@ -329,7 +329,7 @@ const int castling_rights[64] = {
     13, 15, 15, 15, 12, 15, 15, 14,
 };
 
-const char* const square_to_coordinates[] = {
+static const char* const square_to_coordinates[] = {
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
     "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
     "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
@@ -340,7 +340,7 @@ const char* const square_to_coordinates[] = {
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
 };
 
-struct TTable TT;
+static struct TTable TT;
 
 // not A file constant
 static Bitboard not_a_file = 18374403900871474942ULL;
@@ -549,7 +549,6 @@ static void StartBench(int depth) {}
 
 // set/get/pop bit macros
 static void set_bit(Bitboard* bitboard, const int square) { *bitboard |= (1ULL << square); }
-static int get_bit(const Bitboard bitboard, const int square) { return bitboard & (1ULL << square); }
 static void pop_bit(Bitboard* bitboard, const int square) { *bitboard &= ~(1ULL << square); }
 
 static int GetLsbIndex(Bitboard bitboard) {
@@ -1441,7 +1440,6 @@ static int To(const Move move) { return ((move & 0xFC0) >> 6); }
 static int FromTo(const Move move) { return move & 0xFFF; }
 static int Piece(const Move move) { return ((move & 0xF0000) >> 16); }
 static int PieceTo(const Move move) { return (Piece(move) << 6) | To(move); }
-static int PieceTypeTo(const Move move) { return (PieceType[Piece(move)] << 6) | To(move); }
 static int GetMovetype(const Move move) { return ((move & 0xF000) >> 12); }
 static int getPromotedPiecetype(const Move move) { return (GetMovetype(move) & 3) + 1; }
 static bool isEnpassant(const Move move) { return GetMovetype(move) == enPassant; }

@@ -159,7 +159,6 @@ static void StartBench(int depth);
 
 // set/get/pop bit macros
 static void set_bit(Bitboard* bitboard, const int square);
-static int get_bit(const Bitboard bitboard, const int square);
 static void pop_bit(Bitboard* bitboard, const int square);
 static int GetLsbIndex(Bitboard bitboard);
 static int popLsb(Bitboard* bitboard);
@@ -192,7 +191,6 @@ static int To(const Move move);
 static int FromTo(const Move move);
 static int Piece(const Move move);
 static int PieceTo(const Move move);
-static int PieceTypeTo(const Move move);
 static int GetMovetype(const Move move);
 static int getPromotedPiecetype(const Move move);
 static bool isEnpassant(const Move move);
@@ -687,8 +685,6 @@ static const uint8_t MAX_AGE = 1 << 5; // must be power of 2
 static const uint8_t AGE_MASK = MAX_AGE - 1;
 
 static void* AlignedMalloc(size_t size, size_t alignment);
-
-static void AlignedFree(void* src);
 
 static void TTEntry_init(struct TTEntry* const tte);
 static void TTBucket_init(struct TTBucket* const ttb);
