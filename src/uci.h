@@ -16,7 +16,7 @@ extern "C" {
     void ParsePosition(const char* command, struct Position* pos);
 
     // parse UCI "go" command
-    bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos);
+    bool ParseGo(const char* const line, struct SearchInfo* info, struct Position* pos, bool resetInfo);
 
     // main UCI loop
     void UciLoop();

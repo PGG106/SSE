@@ -17,6 +17,7 @@ struct SearchStack {
 };
 
 struct SearchData {
+    ZobristKey rootKey;
     int searchHistory[2][64 * 64];
     int captHist[12 * 64][6];
     int pawnCorrHist[2][CORRHIST_SIZE];
@@ -33,6 +34,13 @@ struct ThreadData {
     int RootDepth;
     int nmpPlies;
     uint64_t nodeSpentTable[64 * 64];
+
+    bool inPonder;
+#if UCI
+    char pendingLine[8192];
+#else
+    char pendingLine[256];
+#endif
 };
 
 extern Move return_bestmove;

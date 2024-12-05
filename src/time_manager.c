@@ -31,8 +31,12 @@ bool StopEarly(const struct SearchInfo* info) {
 
 bool TimeOver(const struct SearchInfo* info) {
     // check if more than Maxtime passed and we have to stop
-    return  ((info->timeset) && ((info->nodes & 1023) == 1023)
+    const bool isTimeOver =  ((info->timeset) && ((info->nodes & 1023) == 1023)
         && GetTimeMs() > info->stoptimeMax);
+    if(isTimeOver) {
+        //puts("TIME");
+    }
+    return isTimeOver;
 }
 
 SMALL void ScaleTm(struct ThreadData* td) {

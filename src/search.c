@@ -32,22 +32,54 @@ SMALL void ClearForSearch(struct ThreadData* td) {
 }
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
+
 SMALL void RootSearch(int depth, struct ThreadData* td) {
+    //puts("RS");
+    td->sd.rootKey = td->pos.posKey;
+
     // MainThread search
     SearchPosition(1, depth, td);
-    printf("bestmove ");
-    PrintMove(return_bestmove);
-    printf("\n");
-    fflush(stdout);
+    //puts("RET");
+    // If the search finished and we are in ponder, means there was a ponder miss
+    if(td->inPonder) {
+        // We must remove the two moves that were pushed at ponder start
+        td->pos.played_positions_size -= 2;
+        //puts("DETMISS");
+    }
+    else {
+        printf("bestmove ");
+        PrintMove(return_bestmove);
+        printf("\n");
+        fflush(stdout);
 
-    // Hack for Kaggle for full repetition detection
-#if KAGGLE
-    MakeMove(true, return_bestmove, &td->pos);
-    ZobristKey opponent_hash = td->pos.posKey;
-    UnmakeMove(return_bestmove, &td->pos);
-    td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
-    td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
-#endif
+        MakeMove(true, return_bestmove, &td->pos);
+        struct TTEntry tte;
+        bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+        //puts("A");
+        if (probed) {
+            //puts("B");
+            Move ponder_move = MoveFromTT(&td->pos, tte.move);
+            // Remake bestmove without UPDATE
+            UnmakeMove(return_bestmove, &td->pos);
+            MakeMove(false, return_bestmove, &td->pos);
+            MakeMove(false, ponder_move, &td->pos);
+
+            // Start infinite search for pondering
+            td->inPonder = true;
+            ResetInfo(&td->info);
+            Optimum(&td->info, 999999999, 0);
+            RootSearch(depth, td); // TODO: replace recursion with iteration to prevent potential stack overflow
+        }
+
+        // Hack for Kaggle for full repetition detection // TODO: Figure out how to reimplement to be ponder compatible
+        //#if KAGGLE
+        //MakeMove(true, return_bestmove, &td->pos);
+        //ZobristKey opponent_hash = td->pos.posKey;
+        //UnmakeMove(return_bestmove, &td->pos);
+        //td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
+        //td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
+        //#endif
+    }
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -149,6 +181,8 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->info.stopped = false;
 
     td->nmpPlies = 0;
+    td->inPonder = false;
+    td->pendingLine[0] = '\0';
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
@@ -372,6 +406,62 @@ static bool get_improving(const struct SearchStack *const ss, const bool inCheck
     return true;
 };
 
+static bool StdinHasData()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+}
+
+static bool PollPonder(struct ThreadData *td) {
+    //if ((td->info.nodes & 4095) == 4095) {
+    //    printf("P");
+    //    fflush(stdout);
+    //}
+    if(td->inPonder && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
+        //puts("POLL");
+        fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
+
+        // For non-UCI just assume "position"
+        // For UCI it may be ucinewgame or something else maybe,
+        // at that point just stop pondering
+#if UCI
+        if (strstr(td->pendingLine, "position") == NULL) {
+            return true;
+        }
+#endif
+
+        struct Position tempPos;
+        ParsePosition(td->pendingLine, &tempPos);
+        if(tempPos.posKey == td->sd.rootKey)
+        {
+            //puts("hit");
+            fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
+#if UCI
+            if (strstr(td->pendingLine, "isready") != NULL) {
+                puts("readyok");
+                fflush(stdout);
+                fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
+            }
+#endif
+            // Just continue searching, now with time control enabled
+            ParseGo(td->pendingLine, &td->info, &td->pos, false);
+            td->inPonder = false;
+            td->pendingLine[0] = '\0';
+            //printf("continuing");
+            return false;
+        }
+
+        //puts("miss");
+        // Position command stored as pending, stop search
+        return true;
+    }
+
+    // No input detected, continue searching
+    return false;
+}
+
 // Negamax alpha beta search
 int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData* td, struct SearchStack* ss) {
     // Extract data structures from ThreadData
@@ -412,7 +502,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return Quiescence(alpha, beta, td, ss);
 
     // check if more than Maxtime passed and we have to stop
-    if (TimeOver(&td->info)) {
+    if (TimeOver(&td->info) || PollPonder(td)) {
         td->info.stopped = true;
         return 0;
     }

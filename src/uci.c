@@ -66,8 +66,11 @@ SMALL Move ParseMove(const char* moveString, struct Position* pos) {
 }
 
 // parse UCI "go" command, returns true if we have to search afterwards and false otherwise
-SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos) {
-    ResetInfo(info);
+SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos, bool resetInfo) {
+    if(resetInfo) {
+        ResetInfo(info);
+    }
+
     int depth = -1;
     int time = -1, inc = 0;
 
@@ -162,14 +165,20 @@ SMALL void UciLoop() {
         char input[256];
 #endif
 
-        if (fgets(input, sizeof(input), stdin) == NULL)
-        {
-            break;
+        if(td.pendingLine[0] != '\0') {
+            memcpy(input, td.pendingLine, sizeof(td.pendingLine));
+            td.pendingLine[0] = '\0';
         }
 
-        // make sure input is available
-        if (input[0] == '\0') {
-            continue;
+        else {
+            if (fgets(input, sizeof(input), stdin) == NULL) {
+                break;
+            }
+
+            // make sure input is available
+            if (input[0] == '\0') {
+                continue;
+            }
         }
 
         size_t len = strlen(input);
@@ -190,9 +199,13 @@ SMALL void UciLoop() {
         // parse UCI "go" command
         else if (!strcmp(token, "go")) {
             // call parse go function
-            bool search = ParseGo(input, &td.info, &td.pos);
+            bool search = ParseGo(input, &td.info, &td.pos, true);
             // Start search in a separate thread
-            RootSearch(MAXDEPTH, &td);
+
+            if (search) {
+                td.inPonder = false;
+                RootSearch(MAXDEPTH, &td);
+            }
         }
 
 #if UCI
