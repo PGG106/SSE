@@ -21,6 +21,21 @@ int history_bonus(const int depth) {
     return min(16 * depth * depth + 32 * depth + 16, 1200);
 }
 
+void updateCHScore(struct SearchStack* ss, const Move move, const int bonus) {
+    // Update move score
+    updateSingleCHScore(ss, move, bonus, 1);
+    updateSingleCHScore(ss, move, bonus, 2);
+    updateSingleCHScore(ss, move, bonus, 4);
+}
+
+void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
+    if ((ss - offset)->move) {
+        // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
+        const int scaledBonus = bonus - GetSingleCHScore(ss, move, offset) * abs(bonus) / CH_MAX;
+        (*((ss - offset)->contHistEntry))[PieceTo(move)] += scaledBonus;
+    }
+}
+
 void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
     // Scale bonus to fix it in a [-HH_MAX;HH_MAX] range
     const int scaledBonus = bonus - GetHHScore(pos, sd, move) * abs(bonus) / HH_MAX;
@@ -45,6 +60,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
     {
         // increase bestMove HH and CH score
         updateHHScore(pos, sd, bestMove, bonus);
+        updateCHScore(ss, bestMove, bonus);
 
         // Loop through all the quiet moves
         for (int i = 0; i < quietMoves->count; i++) {
@@ -52,6 +68,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
             const Move move = quietMoves->moves[i].move;
             if (move == bestMove) continue;
             updateHHScore(pos, sd, move, -bonus);
+            updateCHScore(ss, move, -bonus);
         }
     }
     else {
@@ -69,6 +86,18 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
 // Returns the history score of a move
 int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move) {
     return sd->searchHistory[pos->side][FromTo(move)];
+}
+
+// Returns the history score of a move
+int GetCHScore(const struct SearchStack* ss, const Move move) {
+    return   GetSingleCHScore(ss, move, 1)
+             + GetSingleCHScore(ss, move, 2)
+             + GetSingleCHScore(ss, move, 4);
+}
+
+int GetSingleCHScore(const struct SearchStack* ss, const Move move, const int offset) {
+    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTo(move)]
+                               : 0;
 }
 
 // Returns the history score of a move
@@ -104,9 +133,9 @@ int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* 
     return clamp(rawEval + adjustment / CORRHIST_GRAIN, -MATE_FOUND + 1, MATE_FOUND - 1);
 }
 
-int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move) {
+int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move, const struct SearchStack* ss) {
     if (!isTactical(move))
-        return GetHHScore(pos, sd, move);
+        return GetHHScore(pos, sd, move) + GetCHScore(ss, move);
     else
         return GetCapthistScore(pos, sd, move);
 }

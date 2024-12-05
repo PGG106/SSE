@@ -9,6 +9,7 @@ void ScoreMoves(struct Movepicker* mp) {
     struct MoveList* moveList = &mp->moveList;
     struct Position* pos = mp->pos;
     struct SearchData* sd = mp->sd;
+    struct SearchStack* ss = mp->ss;
     // Loop through all the move in the movelist
     for (int i = mp->idx; i < moveList->count; i++) {
         const Move move = moveList->moves[i].move;
@@ -20,7 +21,7 @@ void ScoreMoves(struct Movepicker* mp) {
             moveList->moves[i].score = SEEValue[capturedPiece] * 16 + GetCapthistScore(pos, sd, move);
         }
         else {
-            moveList->moves[i].score = GetHistoryScore(pos, sd, move);
+            moveList->moves[i].score = GetHistoryScore(pos, sd, move, ss);
         }
     }
 }
@@ -50,6 +51,7 @@ void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, 
     mp->movepickerType = movepickerType;
     mp->pos = pos;
     mp->sd = sd;
+    mp->ss = ss;
     mp->ttMove = ttMove;
     mp->idx = 0;
     mp->stage = mp->ttMove ? PICK_TT : GEN_NOISY;

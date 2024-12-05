@@ -113,7 +113,7 @@ void InitAll() {
     initHashKeys();
     InitReductions();
     // Init TT
-    InitTT(3);
+    InitTT(1);
     NNUE_init();
 }
 
