@@ -73,8 +73,6 @@ char* fgets(char* string0, int count, int file);
 
 #define NAME "Alexandria-7.1.1"
 
-extern int see_margin[64][2];
-
 static const char* start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 typedef uint64_t Bitboard;
@@ -104,14 +102,8 @@ enum {
     a1, b1, c1, d1, e1, f1, g1, h1, no_sq
 };
 
-// Lookup to get the rank of a square
-extern const uint8_t get_rank[64];
-
 // Lookup to get the file of a square
 static uint8_t get_file(const int square);
-
-// Lookup to get the diagonal of a square
-extern const uint8_t get_diagonal[64];
 
 #define get_antidiagonal(sq) (get_rank[sq] + get_file(sq))
 
@@ -148,12 +140,6 @@ enum {
     PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 };
 
-// Lookup to get the color from a piece
-extern const int Color[12];
-extern const int PieceType[12];
-// Contains the material Values of the pieces
-extern const int SEEValue[15];
-
 // generate pawn attacks
 static Bitboard MaskPawnAttacks(int side, int square);
 
@@ -162,15 +148,6 @@ static Bitboard MaskKnightAttacks(int square);
 
 // generate king attacks
 static Bitboard MaskKingAttacks(int square);
-
-// pawn attacks table [side][square]
-extern Bitboard pawn_attacks[2][64];
-
-// knight attacks table [square]
-extern Bitboard knight_attacks[64];
-
-// king attacks table [square]
-extern Bitboard king_attacks[64];
 
 static Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ);
 
@@ -271,8 +248,6 @@ struct Network {
     int16_t* L1Weights;
     int16_t* L1Biases;
 };
-
-extern struct Network net;
 
 #if !NOSTDLIB
 
@@ -417,8 +392,6 @@ static Bitboard Position_getPinnedMask(const struct Position* const pos);
 static int Position_getCapturedPiece(const struct Position* const pos);
 static void Position_ChangeSide(struct Position* const pos);
 
-extern Bitboard SQUARES_BETWEEN_BB[64][64];
-
 // Hold the data from the uci input to set search parameters and some search data to populate the uci output
 struct SearchInfo {
     // search start time
@@ -439,12 +412,6 @@ struct SearchInfo {
 
     bool stopped;
 };
-
-// castling rights update constants
-extern const int castling_rights[64];
-
-// convert squares to coordinates
-extern const char* const square_to_coordinates[64];
 
 static void ResetBoard(struct Position* pos);
 static void ResetInfo(struct SearchInfo* info);
@@ -523,11 +490,6 @@ static void updateCapthistScore(const struct Position* pos, struct SearchData* s
 static void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff);
 static int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval);
 
-extern const Bitboard file_bbs[8];
-extern const Bitboard rank_bbs[8];
-extern const Bitboard diagonal_bbs[15];
-extern const Bitboard antidiagonal_bbs[15];
-
 static Bitboard ReverseBits(Bitboard bitboard);
 static Bitboard MaskedSlide(const Bitboard allPieces, const Bitboard pieceBitboard, const Bitboard mask);
 // get bishop attacks
@@ -538,11 +500,6 @@ static Bitboard GetRookAttacks(int square, Bitboard occupancy);
 static Bitboard GetQueenAttacks(const int square, Bitboard occupancy);
 
 struct ThreadData;
-
-extern Bitboard PieceKeys[12][64];
-extern Bitboard enpassant_keys[64];
-extern Bitboard SideKey;
-extern Bitboard CastleKeys[16];
 
 static void InitNewGame(struct ThreadData* td);
 
@@ -658,8 +615,6 @@ struct ThreadData {
     int nmpPlies;
 };
 
-extern Move return_bestmove;
-
 static void init_thread_data(struct ThreadData* td);
 
 // ClearForSearch handles the cleaning of the thread data from a clean state
@@ -727,8 +682,6 @@ struct TTable {
     size_t paddedSize;
     uint8_t age;
 };
-
-extern struct TTable TT;
 
 static const uint8_t MAX_AGE = 1 << 5; // must be power of 2
 static const uint8_t AGE_MASK = MAX_AGE - 1;
