@@ -295,6 +295,7 @@ void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
 int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
     int score;
     td->RootDepth = depth;
+    struct SearchData* sd = &td->sd;
     struct SearchStack stack[MAXDEPTH + 4], * ss = stack + 4;
     // Explicitly clean stack
     for (int i = -4; i < MAXDEPTH; i++) {
@@ -303,9 +304,11 @@ int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
         (ss + i)->searchKiller = NOMOVE;
         (ss + i)->staticEval = SCORE_NONE;
         (ss + i)->doubleExtensions = 0;
+        (ss + i)->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
     }
     for (int i = 0; i < MAXDEPTH; i++) {
         (ss + i)->ply = i;
+        (ss + i)->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
     }
     // We set an expected window for the score at the next search depth, this window is not 100% accurate so we might need to try a bigger window and re-search the position
     int delta = 12;
@@ -503,6 +506,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
             ss->move = NOMOVE;
             const int R = 4 + depth / 3 + min((eval - beta) / 200, 3);
+            ss->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
 
             MakeNullMove(pos);
 
@@ -655,6 +659,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // Play the move
         MakeMove(true, move, pos);
+        ss->contHistEntry = &sd->contHist[PieceTo(move)];
         // Add any played move to the matching list
         AddMoveNonScored(move, isQuiet ? &quietMoves : &noisyMoves);
 
