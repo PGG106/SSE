@@ -275,6 +275,12 @@ void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
         score = AspirationWindowSearch(averageScore, currentDepth, td);
         averageScore = averageScore == SCORE_NONE ? score : (averageScore + score) / 2;
 
+        // use the previous search to adjust some of the time management parameters, do not scale movetime time controls
+        if (   td->RootDepth > 7
+               && td->info.timeset) {
+            ScaleTm(td);
+        }
+
         // check if we just cleared a depth and more than OptTime passed, or we used more than the give nodes
         if (StopEarly(&td->info))
             // Stop main-thread search

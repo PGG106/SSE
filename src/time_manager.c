@@ -35,11 +35,11 @@ bool TimeOver(const struct SearchInfo* info) {
         && GetTimeMs() > info->stoptimeMax);
 }
 
-void ScaleTm(ThreadData* td) {
+void ScaleTm(struct ThreadData* td) {
     const int bestmove = return_bestmove;
     // Calculate how many nodes were spent on checking the best move
     const double bestMoveNodesFraction = (double)(td->nodeSpentTable[FromTo(bestmove)]) / (double)(td->info.nodes);
     const double nodeScalingFactor = (1.52 - bestMoveNodesFraction) * 1.74;
     // Scale the search time based on how many nodes we spent and how the best move changed
-    td->info.stoptimeOpt = std::min<uint64_t>(td->info.starttime + td->info.stoptimeBaseOpt * nodeScalingFactor, td->info.stoptimeMax);
+    td->info.stoptimeOpt = min(td->info.starttime + td->info.stoptimeBaseOpt * nodeScalingFactor, td->info.stoptimeMax);
 }
