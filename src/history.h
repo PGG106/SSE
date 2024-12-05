@@ -10,6 +10,7 @@ struct SearchStack;
 struct MoveList;
 
 const static int HH_MAX = 8192;
+const static int CH_MAX = 16384;
 const static int CAPTHIST_MAX = 16384;
 const static int CORRHIST_WEIGHT_SCALE = 1024;
 const static int CORRHIST_GRAIN = 256;
@@ -27,15 +28,15 @@ extern "C" {
 
     // Getters for the history heuristics
     int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move);
-    int GetCHScore(const SearchStack* ss, const Move move);
-    int GetSingleCHScore(const SearchStack* ss, const Move move, const int offset);
+    int GetCHScore(const struct SearchStack* ss, const Move move);
+    int GetSingleCHScore(const struct SearchStack* ss, const Move move, const int offset);
     int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, const Move move);
     int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move);
     // Clean all the history tables
     void CleanHistories(struct SearchData* sd);
     // Updates history heuristics for a single move
     void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
-    void updateCHScore(SearchStack* ss, const Move move, const int bonus);
+    void updateCHScore(struct SearchStack* ss, const Move move, const int bonus);
     void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
 
     // Corrhist stuff
