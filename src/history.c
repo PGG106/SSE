@@ -21,6 +21,21 @@ int history_bonus(const int depth) {
     return min(16 * depth * depth + 32 * depth + 16, 1200);
 }
 
+void updateCHScore(SearchStack* ss, const Move move, const int bonus) {
+    // Update move score
+    updateSingleCHScore(ss, move, bonus, 1);
+    updateSingleCHScore(ss, move, bonus, 2);
+    updateSingleCHScore(ss, move, bonus, 4);
+}
+
+void updateSingleCHScore(SearchStack* ss, const Move move, const int bonus, const int offset) {
+    if ((ss - offset)->move) {
+        // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
+        const int scaledBonus = bonus - GetSingleCHScore(ss, move, offset) * std::abs(bonus) / CH_MAX;
+        (*((ss - offset)->contHistEntry))[PieceTo(move)] += scaledBonus;
+    }
+}
+
 void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
     // Scale bonus to fix it in a [-HH_MAX;HH_MAX] range
     const int scaledBonus = bonus - GetHHScore(pos, sd, move) * abs(bonus) / HH_MAX;
@@ -69,6 +84,18 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
 // Returns the history score of a move
 int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move) {
     return sd->searchHistory[pos->side][FromTo(move)];
+}
+
+// Returns the history score of a move
+int GetCHScore(const SearchStack* ss, const Move move) {
+    return   GetSingleCHScore(ss, move, 1)
+             + GetSingleCHScore(ss, move, 2)
+             + GetSingleCHScore(ss, move, 4);
+}
+
+int GetSingleCHScore(const SearchStack* ss, const Move move, const int offset) {
+    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTo(move)]
+                               : 0;
 }
 
 // Returns the history score of a move
