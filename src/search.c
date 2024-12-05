@@ -23,6 +23,7 @@ Move return_bestmove = NOMOVE;
 void ClearForSearch(struct ThreadData* td) {
     // Extract data structures from ThreadData
     struct SearchInfo* info = &td->info;
+    memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 
     // Reset plies and search info
     info->starttime = GetTimeMs();
@@ -119,6 +120,7 @@ void init_thread_data(struct ThreadData* td)
     td->pos.historyStackHead = 0ULL;
 
     memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
+    memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
     //for (int i = 0; i < 12; i++) {
     //    td->pos.bitboards[i] = 0;
     //}
@@ -272,6 +274,12 @@ void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
     for (int currentDepth = startDepth; currentDepth <= finalDepth; currentDepth++) {
         score = AspirationWindowSearch(averageScore, currentDepth, td);
         averageScore = averageScore == SCORE_NONE ? score : (averageScore + score) / 2;
+
+        // use the previous search to adjust some of the time management parameters, do not scale movetime time controls
+        if (   td->RootDepth > 7
+               && td->info.timeset) {
+            ScaleTm(td);
+        }
 
         // check if we just cleared a depth and more than OptTime passed, or we used more than the give nodes
         if (StopEarly(&td->info))
@@ -652,6 +660,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // increment nodes count
         info->nodes++;
+        const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
 
@@ -724,6 +733,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // take move back
         UnmakeMove(move, pos);
+        if (rootNode)
+            td->nodeSpentTable[FromTo(move)] += info->nodes - nodesBeforeSearch;
 
         if (info->stopped)
             return 0;
