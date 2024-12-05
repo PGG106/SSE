@@ -30,6 +30,7 @@ struct ThreadData {
     struct SearchInfo info;
     int RootDepth;
     int nmpPlies;
+    uint64_t nodeSpentTable[64 * 64];
 };
 
 extern Move return_bestmove;

@@ -119,6 +119,7 @@ void init_thread_data(struct ThreadData* td)
     td->pos.historyStackHead = 0ULL;
 
     memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
+    memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
     //for (int i = 0; i < 12; i++) {
     //    td->pos.bitboards[i] = 0;
     //}
