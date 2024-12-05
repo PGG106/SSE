@@ -41,7 +41,7 @@ void RootSearch(int depth, struct ThreadData* td) {
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
-#if !FULL
+#if KAGGLE
     MakeMove(true, return_bestmove, &td->pos);
     ZobristKey opponent_hash = td->pos.posKey;
     UnmakeMove(return_bestmove, &td->pos);
