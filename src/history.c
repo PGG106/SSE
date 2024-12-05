@@ -135,7 +135,7 @@ int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* 
 
 int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, const Move move, const struct SearchStack* ss) {
     if (!isTactical(move))
-        return GetHHScore(pos, sd, move) + + GetCHScore(ss, move);
+        return GetHHScore(pos, sd, move) + GetCHScore(ss, move);
     else
         return GetCapthistScore(pos, sd, move);
 }
