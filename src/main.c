@@ -1,7 +1,7 @@
 #include "init.h"
 #include "uci.h"
 
-#if NOSTDLIB
+#ifdef NOSTDLIB
 void _start() {
 #else
 int main() {
@@ -12,7 +12,7 @@ int main() {
     // connect to the GUI
     UciLoop();
 
-#if NOSTDLIB
+#ifdef NOSTDLIB
     exit(0);
 #else
     return 0;

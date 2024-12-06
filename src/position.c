@@ -354,7 +354,7 @@ void restorePreviousBoardState(struct Position* pos)
 }
 
 void parse_moves(const char* moves, struct Position* pos) {
-#if UCI
+#ifdef UCI
     char move_str[6];
     int token_index = 0;
 

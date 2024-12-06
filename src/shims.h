@@ -1,6 +1,6 @@
 #pragma once
 
-#if !NOSTDLIB
+#ifndef NOSTDLIB
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -40,7 +40,7 @@ enum {
 #define true 1
 #define false 0
 
-#if !NDEBUG
+#ifndef NDEBUG
 #define assert(condition)                                                      \
   if (!(condition)) {                                                          \
     printf("Assert failed on line %i: ", __LINE__);                            \

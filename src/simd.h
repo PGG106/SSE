@@ -1,6 +1,6 @@
 #pragma once
 
-#if !NOSTDLIB
+#ifndef NOSTDLIB
 
 #include "shims.h"
 
