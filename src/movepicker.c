@@ -10,6 +10,7 @@ void ScoreMoves(struct Movepicker* mp) {
     struct Position* pos = mp->pos;
     struct SearchData* sd = mp->sd;
     struct SearchStack* ss = mp->ss;
+    bool rootNode = mp->rootNode;
     // Loop through all the move in the movelist
     for (int i = mp->idx; i < moveList->count; i++) {
         const Move move = moveList->moves[i].move;
@@ -21,7 +22,7 @@ void ScoreMoves(struct Movepicker* mp) {
             moveList->moves[i].score = SEEValue[capturedPiece] * 16 + GetCapthistScore(pos, sd, move);
         }
         else {
-            moveList->moves[i].score = GetHistoryScore(pos, sd, move, ss);
+            moveList->moves[i].score = GetHistoryScore(pos, sd, move, ss, rootNode);
         }
     }
 }

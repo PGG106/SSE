@@ -32,6 +32,7 @@ struct Movepicker {
     Move killer;
     int idx;
     int stage;
+    bool rootNode;
 };
 
 void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const Move ttMove, const enum MovepickerType movepickerType, const bool rootNode);

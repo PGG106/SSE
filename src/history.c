@@ -99,6 +99,10 @@ int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Mo
     return sd->searchHistory[pos->side][FromTo(move)];
 }
 
+int GetRHScore(const struct Position *pos, const struct SearchData *sd, const Move move) {
+    return sd->rootHistory[pos->side][FromTo(move)];
+}
+
 // Returns the history score of a move
 int GetCHScore(const struct SearchStack* ss, const Move move) {
     return   GetSingleCHScore(ss, move, 1)
