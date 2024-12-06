@@ -66,11 +66,7 @@ SMALL Move ParseMove(const char* moveString, struct Position* pos) {
 }
 
 // parse UCI "go" command, returns true if we have to search afterwards and false otherwise
-SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos, bool resetInfo) {
-    if(resetInfo) {
-        ResetInfo(info);
-    }
-
+SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos, const bool setStartTime) {
     int depth = -1;
     int time = -1, inc = 0;
 
@@ -101,7 +97,10 @@ SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Posi
         }
     }
 
-    info->starttime = GetTimeMs();
+    if (setStartTime) {
+        info->starttime = GetTimeMs();
+    }
+
     info->depth = depth;
     // calculate time allocation for the move
     Optimum(info, time, inc);
@@ -199,6 +198,7 @@ SMALL void UciLoop() {
         // parse UCI "go" command
         else if (!strcmp(token, "go")) {
             // call parse go function
+            ResetInfo(&td.info);
             bool search = ParseGo(input, &td.info, &td.pos, true);
             // Start search in a separate thread
 
