@@ -154,6 +154,8 @@ int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, con
 // Resets the history tables
 void CleanHistories(struct SearchData* sd) {
     memset(sd->searchHistory, 0, sizeof(sd->searchHistory));
+    memset(sd->rootHistory, 0, sizeof(sd->rootHistory));
+    memset(sd->contHist, 0, sizeof(sd->contHist));
     memset(sd->captHist, 0, sizeof(sd->captHist));
     memset(sd->pawnCorrHist, 0, sizeof(sd->pawnCorrHist));
     memset(sd->whiteNonPawnCorrHist, 0, sizeof(sd->whiteNonPawnCorrHist));
