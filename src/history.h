@@ -9,13 +9,13 @@ struct SearchData;
 struct SearchStack;
 struct MoveList;
 
-const static int HH_MAX = 8192;
-const static int CH_MAX = 16384;
-const static int CAPTHIST_MAX = 16384;
-const static int CORRHIST_WEIGHT_SCALE = 1024;
-const static int CORRHIST_GRAIN = 256;
+static const int HH_MAX = 8192;
+static const int CH_MAX = 16384;
+static const int CAPTHIST_MAX = 16384;
+static const int CORRHIST_WEIGHT_SCALE = 1024;
+static const int CORRHIST_GRAIN = 256;
 #define CORRHIST_SIZE 16384
-const static int CORRHIST_MAX = 16384;
+static const int CORRHIST_MAX = 16384;
 
 // Functions used to update the history heuristics
 void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const int depth, const Move bestMove, const struct MoveList* quietMoves, const struct MoveList* noisyMoves, const bool rootNode);
