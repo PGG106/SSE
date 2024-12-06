@@ -45,6 +45,7 @@ struct ThreadData {
 
 extern Move return_bestmove;
 
+void init_position(struct Position* pos);
 void init_thread_data(struct ThreadData* td);
 
 // ClearForSearch handles the cleaning of the thread data from a clean state

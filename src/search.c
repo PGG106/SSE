@@ -141,34 +141,43 @@ bool IsDraw(struct Position* pos) {
         || MaterialDraw(pos);
 }
 
-SMALL void init_thread_data(struct ThreadData* td)
-{
-    td->pos.side = -1;
-    td->pos.hisPly = 0;
-    td->pos.posKey = 0ULL;
-    td->pos.pawnKey = 0ULL;
-    td->pos.whiteNonPawnKey = 0ULL;
-    td->pos.blackNonPawnKey = 0ULL;
-    td->pos.historyStackHead = 0ULL;
+SMALL void init_position(struct Position* pos) {
+    pos->side = -1;
+    pos->hisPly = 0;
+    pos->posKey = 0ULL;
+    pos->pawnKey = 0ULL;
+    pos->whiteNonPawnKey = 0ULL;
+    pos->blackNonPawnKey = 0ULL;
+    pos->historyStackHead = 0ULL;
 
-    memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
-    memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
-    //for (int i = 0; i < 12; i++) {
-    //    td->pos.bitboards[i] = 0;
-    //}
+    memset(&pos->bitboards, 0, sizeof(Bitboard) * 12);
 
     for (int i = 0; i < 2; i++) {
-        td->pos.occupancies[i] = 0;
+        pos->occupancies[i] = 0;
     }
-    td->pos.played_positions_size = 0;
+    pos->played_positions_size = 0;
 
-    td->pos.state.castlePerm = 15;
-    td->pos.state.capture = EMPTY;
-    td->pos.state.enPas = 0;
-    td->pos.state.fiftyMove = 0;
-    td->pos.state.plyFromNull = 0;
-    td->pos.state.checkers = 0;
-    td->pos.state.checkMask = fullCheckmask;
+    pos->state.castlePerm = 15;
+    pos->state.capture = EMPTY;
+    pos->state.enPas = 0;
+    pos->state.fiftyMove = 0;
+    pos->state.plyFromNull = 0;
+    pos->state.checkers = 0;
+    pos->state.checkMask = fullCheckmask;
+
+    for (int i = 0; i < MAXPLY; i++)
+    {
+        for (int j = 0; j < 2; j++) {
+            pos->accumStack[i].perspective[j].pov = j;
+            pos->accumStack[i].perspective[j].NNUEAdd_size = 0;
+            pos->accumStack[i].perspective[j].NNUESub_size = 0;
+            pos->accumStack[i].perspective[j].needsRefresh = false;
+        }
+    }
+}
+
+SMALL void init_thread_data(struct ThreadData* td) {
+    init_position(&td->pos);
 
     td->info.starttime = 0;
     td->info.stoptimeBaseOpt = 0;
@@ -185,16 +194,7 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->pendingLine[0] = '\0';
 
     memset(&td->sd, 0, sizeof(struct SearchData));
-
-    for (int i = 0; i < MAXPLY; i++)
-    {
-        for (int j = 0; j < 2; j++) {
-            td->pos.accumStack[i].perspective[j].pov = j;
-            td->pos.accumStack[i].perspective[j].NNUEAdd_size = 0;
-            td->pos.accumStack[i].perspective[j].NNUESub_size = 0;
-            td->pos.accumStack[i].perspective[j].needsRefresh = false;
-        }
-    }
+    memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 }
 
 // returns a bitboard of all the attacks to a specific square
@@ -433,6 +433,7 @@ static bool PollPonder(struct ThreadData *td) {
 #endif
 
         struct Position tempPos;
+        init_position(&tempPos);
         ParsePosition(td->pendingLine, &tempPos);
         if(tempPos.posKey == td->sd.rootKey)
         {
