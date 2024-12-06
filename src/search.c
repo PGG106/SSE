@@ -270,6 +270,8 @@ void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
     ClearForSearch(td);
     UpdateTableAge();
 
+    memset(td->sd.rootHistory, 0, sizeof(td->sd.rootHistory));
+
     // Call the Negamax function in an iterative deepening framework
     for (int currentDepth = startDepth; currentDepth <= finalDepth; currentDepth++) {
         score = AspirationWindowSearch(averageScore, currentDepth, td);
