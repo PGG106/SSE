@@ -57,6 +57,7 @@ void InitMP(struct Movepicker* mp, struct Position* pos, struct SearchData* sd, 
     mp->idx = 0;
     mp->stage = mp->ttMove ? PICK_TT : GEN_NOISY;
     mp->killer = killer != ttMove ? killer : NOMOVE;
+    mp->rootNode = rootNode;
 }
 
 Move NextMove(struct Movepicker* mp, const bool skip) {
