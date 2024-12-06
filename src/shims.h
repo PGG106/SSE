@@ -59,7 +59,7 @@ int strlen(const char* const restrict string);
 void puts(const char* const restrict string);
 void puts_nonewline(const char* const restrict string);
 void fflush(int fd);
-bool strcmp(const char* restrict lhs, const char* restrict rhs);
+int strcmp(const char* restrict lhs, const char* restrict rhs);
 int atoi(const char* restrict string);
 void _printf(const char* format, const size_t* args);
 size_t GetTimeMs();

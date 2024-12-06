@@ -50,16 +50,16 @@ void fflush(int fd) {
 
 }
 
-bool strcmp(const char* restrict lhs,
+int strcmp(const char* restrict lhs,
     const char* restrict rhs) {
     while (*lhs || *rhs) {
         if (*lhs != *rhs) {
-            return true;
+            return 1;
         }
         lhs++;
         rhs++;
     }
-    return false;
+    return 0;
 }
 
 int atoi(const char* restrict string) {
