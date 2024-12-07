@@ -217,7 +217,7 @@ void NNUE_init() {
     const size_t L1Biases_offset = L1Weights_offset + L1_SIZE * 2 * OUTPUT_BUCKETS;
     const size_t len = L1Biases_offset + OUTPUT_BUCKETS;
 
-    uint16_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 1, nn, 0);
+    uint16_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
 
     net.FTWeights = ptr;
     net.FTBiases = ptr + FTBiases_offset;
