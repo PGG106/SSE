@@ -227,6 +227,16 @@ void UciLoop() {
         else if (!strcmp(token, "ucinewgame")) {
             InitNewGame(&td);
         }
+
+        else if (!strcmp(token, "eval")) {
+            // call parse position function
+            if (!parsed_position) {
+                ParsePosition("position startpos", &td.pos);
+            }
+            // print position eval
+            printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
+            printf("Scaled eval: %i\n", EvalPosition(&td.pos));
+        }
 #endif
 
         else printf("Unknown command: %s\n", (size_t)input);
