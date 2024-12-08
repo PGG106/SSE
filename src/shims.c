@@ -10,16 +10,13 @@ ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     return ret;
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("O1")
-void* memset(void* ptr, int value, size_t n) {
+SMALL void* memset(void* ptr, int value, size_t n) {
     unsigned char* p = (unsigned char*)ptr;
     while (n-- > 0) {
         *p++ = (unsigned char)value;
     }
     return ptr;
 }
-#pragma GCC pop_options
 
 void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);

@@ -346,7 +346,7 @@ void restorePreviousBoardState(struct Position* pos)
     pos->state = pos->history[pos->historyStackHead];
 }
 
-void parse_moves(const char* moves, struct Position* pos) {
+SMALL void parse_moves(const char* moves, struct Position* pos) {
 #if UCI
     char move_str[6];
     int token_index = 0;
