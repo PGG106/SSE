@@ -20,7 +20,7 @@
 Move return_bestmove = NOMOVE;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
-void ClearForSearch(struct ThreadData* td) {
+SMALL void ClearForSearch(struct ThreadData* td) {
     // Extract data structures from ThreadData
     struct SearchInfo* info = &td->info;
     memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
@@ -32,7 +32,7 @@ void ClearForSearch(struct ThreadData* td) {
 }
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
-void RootSearch(int depth, struct ThreadData* td) {
+SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
     SearchPosition(1, depth, td);
     printf("bestmove ");
@@ -109,7 +109,7 @@ bool IsDraw(struct Position* pos) {
         || MaterialDraw(pos);
 }
 
-void init_thread_data(struct ThreadData* td)
+SMALL void init_thread_data(struct ThreadData* td)
 {
     td->pos.side = -1;
     td->pos.hisPly = 0;
@@ -261,7 +261,7 @@ bool SEE(const struct Position* pos, const int move, const int threshold) {
 }
 
 // SearchPosition is the actual function that handles the search, it sets up the variables needed for the search, calls the AspirationWindowSearch function and handles the console output
-void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
+SMALL void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
     // variable used to store the score of the best move found by the search (while the move itself can be retrieved from the triangular PV table)
     int score = 0;
     int averageScore = SCORE_NONE;
@@ -292,7 +292,7 @@ void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
     }
 }
 
-int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
+SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
     int score;
     td->RootDepth = depth;
     struct SearchData* sd = &td->sd;

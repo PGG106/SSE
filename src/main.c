@@ -2,9 +2,9 @@
 #include "uci.h"
 
 #if NOSTDLIB
-void _start() {
+SMALL void _start() {
 #else
-int main() {
+SMALL int main() {
 #endif
 
     // Tables for move generation and precompute reduction values

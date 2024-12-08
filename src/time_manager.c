@@ -5,7 +5,7 @@
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
 // Calculate how much time to spend on searching a move
-void Optimum(struct SearchInfo* info, int time, int inc) {
+SMALL void Optimum(struct SearchInfo* info, int time, int inc) {
     // Reserve some time overhead to avoid timing out in the engine-gui communication process
     const int safety_overhead = min(100, time / 2);
     time -= safety_overhead;
@@ -35,7 +35,7 @@ bool TimeOver(const struct SearchInfo* info) {
         && GetTimeMs() > info->stoptimeMax);
 }
 
-void ScaleTm(struct ThreadData* td) {
+SMALL void ScaleTm(struct ThreadData* td) {
     const int bestmove = return_bestmove;
     // Calculate how many nodes were spent on checking the best move
     const double bestMoveNodesFraction = (double)(td->nodeSpentTable[FromTo(bestmove)]) / (double)(td->info.nodes);

@@ -21,19 +21,19 @@ int history_bonus(const int depth) {
     return min(16 * depth * depth + 32 * depth + 16, 1200);
 }
 
-void updateCHScore(struct SearchStack* ss, const Move move, const int bonus) {
-    // Update move score
-    updateSingleCHScore(ss, move, bonus, 1);
-    updateSingleCHScore(ss, move, bonus, 2);
-    updateSingleCHScore(ss, move, bonus, 4);
-}
-
 void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
     if ((ss - offset)->move) {
         // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
         const int scaledBonus = bonus - GetSingleCHScore(ss, move, offset) * abs(bonus) / CH_MAX;
         (*((ss - offset)->contHistEntry))[PieceTo(move)] += scaledBonus;
     }
+}
+
+void updateCHScore(struct SearchStack* ss, const Move move, const int bonus) {
+    // Update move score
+    updateSingleCHScore(ss, move, bonus, 1);
+    updateSingleCHScore(ss, move, bonus, 2);
+    updateSingleCHScore(ss, move, bonus, 4);
 }
 
 void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
@@ -141,7 +141,7 @@ int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, con
 }
 
 // Resets the history tables
-void CleanHistories(struct SearchData* sd) {
+SMALL void CleanHistories(struct SearchData* sd) {
     memset(sd->searchHistory, 0, sizeof(sd->searchHistory));
     memset(sd->contHist, 0, sizeof(sd->contHist));
     memset(sd->captHist, 0, sizeof(sd->captHist));

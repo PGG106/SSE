@@ -3,7 +3,6 @@
 #include "attack.h"
 #include "hyperbola.h"
 #include "init.h"
-#include "migration.h"
 #include "piece_data.h"
 #include "makemove.h"
 
@@ -32,9 +31,7 @@ const char* const square_to_coordinates[] = {
 };
 
 // Reset the position to a clean state
-#pragma GCC push_options
-#pragma GCC optimize("O2")
-void ResetBoard(struct Position* const pos) {
+SMALL void ResetBoard(struct Position* const pos) {
     // reset board position (pos->pos->bitboards)
     memset(pos->bitboards, 0, sizeof(pos->bitboards));
 
@@ -48,9 +45,8 @@ void ResetBoard(struct Position* const pos) {
     pos->state.castlePerm = 0;
     pos->state.plyFromNull = 0;
 }
-#pragma GCC pop_options
 
-void ResetInfo(struct SearchInfo* const info) {
+SMALL void ResetInfo(struct SearchInfo* const info) {
     info->depth = 0;
     info->nodes = 0;
     info->starttime = 0;
@@ -61,7 +57,7 @@ void ResetInfo(struct SearchInfo* const info) {
 }
 
 // Generates zobrist key from scratch
-ZobristKey GeneratePosKey(const struct Position* const pos) {
+SMALL ZobristKey GeneratePosKey(const struct Position* const pos) {
     Bitboard finalkey = 0;
     // for every square
     for (int sq = 0; sq < 64; ++sq) {
@@ -89,7 +85,7 @@ ZobristKey GeneratePosKey(const struct Position* const pos) {
 }
 
 // Generates zobrist key (for only the pawns) from scratch
-ZobristKey GeneratePawnKey(const struct Position* pos) {
+SMALL ZobristKey GeneratePawnKey(const struct Position* pos) {
     Bitboard pawnKey = 0;
     for (int sq = 0; sq < 64; ++sq) {
         // get piece on that square
@@ -102,7 +98,7 @@ ZobristKey GeneratePawnKey(const struct Position* pos) {
 }
 
 // Generates zobrist key (for non-pawns) from scratch
-ZobristKey GenerateNonPawnKey(const struct Position* pos, int side) {
+SMALL ZobristKey GenerateNonPawnKey(const struct Position* pos, int side) {
     Bitboard nonPawnKey = 0;
     for (int sq = 0; sq < 64; ++sq) {
         // get piece on that square
@@ -184,9 +180,7 @@ ZobristKey keyAfter(const struct Position* pos, const Move move) {
 }
 
 // parse FEN string
-#pragma GCC push_options
-#pragma GCC optimize("O2")
-void ParseFen(const char* command, struct Position* pos) {
+SMALL void ParseFen(const char* command, struct Position* pos) {
 
     ResetBoard(pos);
 
@@ -342,7 +336,6 @@ void ParseFen(const char* command, struct Position* pos) {
     NNUE_accumulate(&pos->accumStack[0], pos);
     pos->accumStackHead = 1;
 }
-#pragma GCC pop_options
 
 void saveBoardState(struct Position* pos) {
     pos->history[pos->historyStackHead] = pos->state;
@@ -353,7 +346,7 @@ void restorePreviousBoardState(struct Position* pos)
     pos->state = pos->history[pos->historyStackHead];
 }
 
-void parse_moves(const char* moves, struct Position* pos) {
+SMALL void parse_moves(const char* moves, struct Position* pos) {
 #if UCI
     char move_str[6];
     int token_index = 0;

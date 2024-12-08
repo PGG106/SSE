@@ -10,22 +10,19 @@ ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     return ret;
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("O1")
-void* memset(void* ptr, int value, size_t n) {
+SMALL void* memset(void* ptr, int value, size_t n) {
     unsigned char* p = (unsigned char*)ptr;
     while (n-- > 0) {
         *p++ = (unsigned char)value;
     }
     return ptr;
 }
-#pragma GCC pop_options
 
-void exit(const int returnCode) {
+SMALL void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);
 }
 
-int strlen(const char* const restrict string) {
+SMALL int strlen(const char* const restrict string) {
     int length = 0;
     while (string[length]) {
         length++;
@@ -50,7 +47,7 @@ void fflush(int fd) {
 
 }
 
-bool strcmp(const char* restrict lhs,
+SMALL bool strcmp(const char* restrict lhs,
     const char* restrict rhs) {
     while (*lhs || *rhs) {
         if (*lhs != *rhs) {
@@ -62,7 +59,7 @@ bool strcmp(const char* restrict lhs,
     return false;
 }
 
-int atoi(const char* restrict string) {
+SMALL int atoi(const char* restrict string) {
     size_t result = 0;
     while (true) {
         if (!*string) {
@@ -132,7 +129,7 @@ size_t GetTimeMs() {
 }
 
 //inline void* mmap(size_t size, unsigned long fd)
-void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t offset)
+SMALL void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t offset)
 {
     unsigned long call = 9; // syscall number for mmap
 
@@ -156,23 +153,23 @@ void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t 
     return (void*)ret;
 }
 
-void* malloc(size_t len)
+SMALL void* malloc(size_t len)
 {
     return mmap(NULL, len, 3, 0x22, -1, 0);
 }
 
-ssize_t open(const char* const restrict pathname, const int flags, const int mode) {
+SMALL ssize_t open(const char* const restrict pathname, const int flags, const int mode) {
     return _sys(2, (ssize_t)pathname, flags, mode);
 }
 
-ssize_t fopen(const char* const restrict pathname, const char* const restrict mode) {
+SMALL ssize_t fopen(const char* const restrict pathname, const char* const restrict mode) {
     int flags = 0;
     int file_mode = 0644; // Default permissions: -rw-r--r--
 
     return open(pathname, flags, file_mode);
 }
 
-char* strstr(const char* haystack, const char* needle) {
+SMALL char* strstr(const char* haystack, const char* needle) {
     // If needle is empty, return haystack
     if (*needle == '\0') {
         return (char*)haystack;
@@ -235,11 +232,11 @@ double log(double x) {
     return result;
 }
 
-int read(int fd, void* data, int count) {
+SMALL static int read(int fd, void* data, int count) {
     return _sys(0, fd, (size_t)data, count);
 }
 
-char* fgets(char* string0, int count, int file)
+SMALL char* fgets(char* string0, int count, int file)
 {
     char* string;
     int result;

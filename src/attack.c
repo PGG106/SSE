@@ -18,7 +18,7 @@ static Bitboard not_ab_file = 18229723555195321596ULL;
 inline void set_bit(Bitboard *bitboard, const int square) { *bitboard |= (1ULL << square); }
 
 // generate pawn attacks
-Bitboard MaskPawnAttacks(int side, int square) {
+SMALL Bitboard MaskPawnAttacks(int side, int square) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
     // piece bitboard
@@ -46,7 +46,7 @@ Bitboard MaskPawnAttacks(int side, int square) {
 }
 
 // generate knight attacks
-Bitboard MaskKnightAttacks(int square) {
+SMALL Bitboard MaskKnightAttacks(int square) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
     // piece bitboard
@@ -76,7 +76,7 @@ Bitboard MaskKnightAttacks(int square) {
 }
 
 // generate king attacks
-Bitboard MaskKingAttacks(int square) {
+SMALL Bitboard MaskKingAttacks(int square) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
 

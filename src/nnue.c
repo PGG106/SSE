@@ -196,7 +196,7 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 }
 
 
-void NNUE_init() {
+SMALL void NNUE_init() {
     // open the nn file
 
 #if KAGGLE
