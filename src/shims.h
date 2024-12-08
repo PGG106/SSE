@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _MSC_VER
+#define SMALL
+#else
+#define SMALL __attribute__((optimize("Os")))
+#endif
+
 #if !NOSTDLIB
 #include <assert.h>
 #include <stdbool.h>

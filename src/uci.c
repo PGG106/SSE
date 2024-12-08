@@ -11,7 +11,7 @@
 #include "shims.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
-Move ParseMove(const char* moveString, struct Position* pos) {
+SMALL Move ParseMove(const char* moveString, struct Position* pos) {
     // create move list instance
     struct MoveList moveList;
     moveList.count = 0;
@@ -66,7 +66,7 @@ Move ParseMove(const char* moveString, struct Position* pos) {
 }
 
 // parse UCI "go" command, returns true if we have to search afterwards and false otherwise
-bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos) {
+SMALL bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* pos) {
     ResetInfo(info);
     int depth = -1;
     int time = -1, inc = 0;
@@ -107,7 +107,7 @@ bool ParseGo(const char * const line, struct SearchInfo* info, struct Position* 
 }
 
 // parse UCI "position" command
-void ParsePosition(const char* command, struct Position* pos) {
+SMALL void ParsePosition(const char* command, struct Position* pos) {
     // parse UCI "startpos" command
     if (strstr(command, "startpos") != NULL) {
         // init chess board with start position
@@ -148,7 +148,7 @@ void ParsePosition(const char* command, struct Position* pos) {
 }
 
 // main UCI loop
-void UciLoop() {
+SMALL void UciLoop() {
 #if BENCH
     int benchDepth = 14;
     StartBench(benchDepth);
