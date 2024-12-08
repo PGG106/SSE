@@ -7,7 +7,7 @@
 // Net arch: (768xINPUT_BUCKETS -> L1_SIZE)x2 -> 1xOUTPUT_BUCKETS
 #define NUM_INPUTS 768
 #define INPUT_BUCKETS 1
-#define L1_SIZE 48
+#define L1_SIZE 80
 #define OUTPUT_BUCKETS 1
 
 #define FT_QUANT 255

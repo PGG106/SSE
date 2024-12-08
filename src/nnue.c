@@ -211,11 +211,7 @@ SMALL void NNUE_init() {
         exit(1);
     }
 
-    const size_t FTWeights_offset = 0;
-    const size_t FTBiases_offset = FTWeights_offset + NUM_INPUTS * L1_SIZE;
-    const size_t L1Weights_offset = FTBiases_offset + L1_SIZE;
-    const size_t L1Biases_offset = L1Weights_offset + L1_SIZE * 2 * OUTPUT_BUCKETS;
-    const size_t len = L1Biases_offset + OUTPUT_BUCKETS;
+    const size_t len = NUM_INPUTS * L1_SIZE + L1_SIZE + L1_SIZE * 2 * OUTPUT_BUCKETS + OUTPUT_BUCKETS;
 
     int8_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
 
