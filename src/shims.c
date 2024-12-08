@@ -23,6 +23,7 @@ void* memset(void* ptr, int value, size_t n) {
 
 void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);
+    __builtin_unreachable();
 }
 
 long unsigned int strlen(const char* string) {
@@ -173,7 +174,7 @@ ssize_t fopen(const char* const restrict pathname, const char* const restrict mo
     return open(pathname, flags, file_mode);
 }
 
-char* strstr(const char* haystack, const char* needle) {
+const char* strstr(const char* haystack, const char* needle) {
     // If needle is empty, return haystack
     if (*needle == '\0') {
         return (char*)haystack;
@@ -192,7 +193,7 @@ char* strstr(const char* haystack, const char* needle) {
 
         // If the entire needle is matched
         if (*n == '\0') {
-            return (char*)haystack;
+            return (const char*)haystack;
         }
     }
 

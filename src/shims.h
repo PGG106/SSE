@@ -67,7 +67,7 @@ void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t 
 void* malloc(long unsigned int len);
 ssize_t open(const char* const restrict pathname, const int flags, const int mode);
 ssize_t fopen(const char* const restrict pathname, const char* const restrict mode);
-char* strstr(const char* haystack, const char* needle);
+const char* strstr(const char* haystack, const char* needle);
 void* memset(void* ptr, int value, size_t n);
 double log(double x);
 int read(int fd, void* data, int count);
