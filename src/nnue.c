@@ -226,9 +226,17 @@ SMALL void NNUE_init() {
     for(int blockIndex = 0; blockIndex < blockCount; blockIndex++) {
         int8_t divisor = *ptr;
         ptr++;
-        for(int i = 0; i < blockSize; i++) {
-            net.FTWeights[currentIndex++] = (int16_t)((int16_t)(*ptr) * divisor);
-            ptr++;
+
+        if(divisor == 0) {
+            for (int i = 0; i < blockSize; i++) {
+                net.FTWeights[currentIndex++] = 0;
+            }
+        }
+        else {
+            for (int i = 0; i < blockSize; i++) {
+                net.FTWeights[currentIndex++] = (int16_t)((int16_t)(*ptr) * divisor);
+                ptr++;
+            }
         }
     }
 
