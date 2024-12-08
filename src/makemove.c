@@ -71,7 +71,7 @@ void UpdateCastlingPerms(struct Position* pos, int source_square, int target_squ
     HashKey(&pos->posKey, CastleKeys[Position_getCastlingPerm(pos)]);
 }
 
-inline void resetEpSquare(struct Position* pos) {
+static void resetEpSquare(struct Position* pos) {
     if (Position_getEpSquare(pos) != no_sq) {
         HashKey(&pos->posKey, enpassant_keys[Position_getEpSquare(pos)]);
         pos->state.enPas = no_sq;

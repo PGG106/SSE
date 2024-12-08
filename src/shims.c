@@ -1,5 +1,12 @@
-#if NOSTDLIB
 #include "shims.h"
+
+#if !NOSTDLIB
+uint64_t GetTimeMs() {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return t.tv_sec * 1000 + t.tv_nsec / 1000000;
+}
+#else
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
     ssize_t ret;
