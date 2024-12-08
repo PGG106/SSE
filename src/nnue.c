@@ -211,16 +211,40 @@ SMALL void NNUE_init() {
         exit(1);
     }
 
-    const size_t FTWeights_offset = 0;
-    const size_t FTBiases_offset = FTWeights_offset + NUM_INPUTS * L1_SIZE;
-    const size_t L1Weights_offset = FTBiases_offset + L1_SIZE;
-    const size_t L1Biases_offset = L1Weights_offset + L1_SIZE * 2 * OUTPUT_BUCKETS;
-    const size_t len = L1Biases_offset + OUTPUT_BUCKETS;
+    const size_t len = NUM_INPUTS * L1_SIZE + L1_SIZE + L1_SIZE * 2 * OUTPUT_BUCKETS + OUTPUT_BUCKETS;
 
-    uint16_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
+    int8_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
 
-    net.FTWeights = ptr;
-    net.FTBiases = ptr + FTBiases_offset;
-    net.L1Weights = ptr + L1Weights_offset;
-    net.L1Biases = ptr + L1Biases_offset;
+    const int ft_size = NUM_INPUTS * L1_SIZE;
+    const int blockSize = L1_SIZE * 4;
+    const int blockCount = ft_size / blockSize;
+
+    int currentIndex = 0;
+    for(int blockIndex = 0; blockIndex < blockCount; blockIndex++) {
+        int8_t divisor = *ptr;
+        ptr++;
+
+        if(divisor == 0) {
+            for (int i = 0; i < blockSize; i++) {
+                net.FTWeights[currentIndex++] = 0;
+            }
+        }
+        else {
+            for (int i = 0; i < blockSize; i++) {
+                net.FTWeights[currentIndex++] = (int16_t)((int16_t)(*ptr) * divisor);
+                ptr++;
+            }
+        }
+    }
+
+    int16_t* ptr2 = (int16_t*)ptr;
+    for (int i = 0; i < L1_SIZE; i++) {
+        net.FTBiases[i] = *ptr2;
+        ptr2++;
+    }
+    for (int i = 0; i < L1_SIZE * 2 * OUTPUT_BUCKETS; i++) {
+        net.L1Weights[i] = *ptr2;
+        ptr2++;
+    }
+    net.L1Biases[0] = *ptr2; // Just assume 1 output bucket for now
 }
