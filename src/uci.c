@@ -2,7 +2,7 @@
 
 #include "bench.h"
 #include "init.h"
-#include "migration.h"
+#include "io.h"
 #include "movegen.h"
 #include "position.h"
 #include "time_manager.h"

@@ -2,7 +2,7 @@
 
 #include "piece_data.h"
 
-void PrintMove(const Move move) {
+SMALL void PrintMove(const Move move) {
     const char* from = square_to_coordinates[From(move)];
     const char* to = square_to_coordinates[To(move)];
 
@@ -12,7 +12,7 @@ void PrintMove(const Move move) {
         printf("%s%s", (const size_t)from, (const size_t)to);
 }
 
-bool next_token(const char* str, int* index, char* token)
+SMALL bool next_token(const char* str, int* index, char* token)
 {
     if (str[*index] == '\0')
     {

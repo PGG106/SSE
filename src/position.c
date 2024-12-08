@@ -3,7 +3,6 @@
 #include "attack.h"
 #include "hyperbola.h"
 #include "init.h"
-#include "migration.h"
 #include "piece_data.h"
 #include "makemove.h"
 

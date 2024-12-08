@@ -28,7 +28,7 @@ Bitboard SQUARES_BETWEEN_BB[64][64];
 static uint64_t random_state = 6379633040001738036;
 
 // generate 64-bit pseudo legal numbers
-static uint64_t GetRandomU64Number() {
+SMALL static uint64_t GetRandomU64Number() {
     // get current state
     uint64_t number = random_state;
 
@@ -45,7 +45,7 @@ static uint64_t GetRandomU64Number() {
 }
 
 // Initialize the Zobrist keys
-void initHashKeys() {
+SMALL void initHashKeys() {
     for (int Typeindex = WP; Typeindex <= BK; ++Typeindex) {
         for (int squareIndex = 0; squareIndex < 64; ++squareIndex) {
             PieceKeys[Typeindex][squareIndex] = GetRandomU64Number();
@@ -66,7 +66,7 @@ void initHashKeys() {
 }
 
 // init attack tables for all the piece types, indexable by square
-void InitAttackTables() {
+SMALL void InitAttackTables() {
     for (int square = 0; square < 64; square++) {
         // init pawn attacks
         pawn_attacks[WHITE][square] = MaskPawnAttacks(WHITE, square);
@@ -80,7 +80,7 @@ void InitAttackTables() {
     }
 }
 
-void initializeLookupTables() {
+SMALL void initializeLookupTables() {
     // initialize squares between table
     Bitboard sqs;
     for (int sq1 = 0; sq1 < 64; ++sq1) {
@@ -95,7 +95,7 @@ void initializeLookupTables() {
 }
 
 // PreCalculate the logarithms used in the reduction calculation
-void InitReductions() {
+SMALL void InitReductions() {
 
     for (int depth = 0; depth < 64; depth++) {
 
@@ -105,7 +105,7 @@ void InitReductions() {
     }
 }
 
-void InitAll() {
+SMALL void InitAll() {
     TT.pTable = NULL;
     // init attacks tables
     InitAttackTables();
@@ -117,7 +117,7 @@ void InitAll() {
     NNUE_init();
 }
 
-void InitNewGame(struct ThreadData* td) {
+SMALL void InitNewGame(struct ThreadData* td) {
     // Extract data structures from ThreadData
     struct Position* pos = &td->pos;
     struct SearchData* sd = &td->sd;
