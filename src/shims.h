@@ -76,7 +76,6 @@ ssize_t fopen(const char* const restrict pathname, const char* const restrict mo
 char* strstr(const char* haystack, const char* needle);
 void* memset(void* ptr, int value, size_t n);
 double log(double x);
-int read(int fd, void* data, int count);
 char* fgets(char* string0, int count, int file);
 
 #endif
