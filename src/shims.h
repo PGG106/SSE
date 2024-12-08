@@ -55,8 +55,8 @@ enum {
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3);
 void exit(const int returnCode);
-int strlen(const char* const restrict string);
-void puts(const char* const restrict string);
+long unsigned int strlen(const char* string);
+int puts(const char* string);
 void puts_nonewline(const char* const restrict string);
 void fflush(int fd);
 int strcmp(const char* restrict lhs, const char* restrict rhs);
@@ -64,7 +64,7 @@ int atoi(const char* restrict string);
 void _printf(const char* format, const size_t* args);
 size_t GetTimeMs();
 void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t offset);
-void* malloc(size_t len);
+void* malloc(long unsigned int len);
 ssize_t open(const char* const restrict pathname, const int flags, const int mode);
 ssize_t fopen(const char* const restrict pathname, const char* const restrict mode);
 char* strstr(const char* haystack, const char* needle);

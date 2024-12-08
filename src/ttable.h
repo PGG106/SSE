@@ -48,11 +48,6 @@ static const uint8_t AGE_MASK = MAX_AGE - 1;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-    void* AlignedMalloc(size_t size, size_t alignment);
-
-    void AlignedFree(void* src);
-
     void TTEntry_init(struct TTEntry* const tte);
     void TTBucket_init(struct TTBucket* const ttb);
 

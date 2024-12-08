@@ -10,6 +10,8 @@
 
 #include "shims.h"
 
+static const char* start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 // Parse a move from algebraic notation to the engine's internal encoding
 Move ParseMove(const char* moveString, struct Position* pos) {
     // create move list instance

@@ -4,10 +4,6 @@ struct TTable TT;
 
 #include "shims.h"
 
-void* AlignedMalloc(size_t size, size_t alignment) {
-    return malloc(size);
-}
-
 void ClearTT() {
     for (uint64_t i = 0; i < TT.paddedSize / sizeof(struct TTBucket); ++i) {
         TTBucket_init(&TT.pTable[i]);
@@ -30,7 +26,7 @@ void InitTT(uint64_t MB) {
 
     // Pad the TT by using a ceil div and a multiply to get the size to be a multiple of `alignment`
     TT.paddedSize = (TT.numBuckets * sizeof(struct TTBucket) + alignment - 1) / alignment * alignment;
-    TT.pTable = (struct TTBucket*)(AlignedMalloc(TT.paddedSize, alignment));
+    TT.pTable = (struct TTBucket*)(malloc(TT.paddedSize));
 
     // On linux we request huge pages to make use of the 2MB alignment
 #if defined(USE_MADVISE)

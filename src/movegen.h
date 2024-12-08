@@ -7,9 +7,9 @@ struct Position;
 struct MoveList;
 
 enum MovegenType {
-    MOVEGEN_NOISY = 0b01,
-    MOVEGEN_QUIET = 0b10,
-    MOVEGEN_ALL   = 0b11
+    MOVEGEN_NOISY = 1,
+    MOVEGEN_QUIET = 2,
+    MOVEGEN_ALL   = 3
 };
 
 #ifdef __cplusplus

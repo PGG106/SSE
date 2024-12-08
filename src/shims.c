@@ -25,8 +25,8 @@ void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);
 }
 
-int strlen(const char* const restrict string) {
-    int length = 0;
+long unsigned int strlen(const char* string) {
+    long unsigned int length = 0;
     while (string[length]) {
         length++;
     }
@@ -37,9 +37,10 @@ static void write(int fd, void* data, int count) {
     _sys(1, fd, (size_t)data, count);
 }
 
-void puts(const char* const restrict string) {
+int puts(const char* string) {
     write(stdout, string, strlen(string));
     write(stdout, "\n", 1);
+    return 0;
 }
 
 void puts_nonewline(const char* const restrict string) {
@@ -156,7 +157,7 @@ void* mmap(void* addr, size_t len, size_t prot, size_t flags, size_t fd, size_t 
     return (void*)ret;
 }
 
-void* malloc(size_t len)
+void* malloc(long unsigned int len)
 {
     return mmap(NULL, len, 3, 0x22, -1, 0);
 }
