@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-int char_pieces(const char ch) {
+SMALL int char_pieces(const char ch) {
 	switch (ch)
 	{
 	case 'P':
@@ -35,7 +35,7 @@ int char_pieces(const char ch) {
 }
 
 // Map promoted piece to the corresponding ASCII character
-char promoted_pieces(const int piece) {
+SMALL char promoted_pieces(const int piece) {
 	switch (piece)
 	{
 	case WQ:
