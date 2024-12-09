@@ -237,14 +237,13 @@ SMALL void NNUE_init() {
         }
     }
 
-    int16_t* ptr2 = (int16_t*)ptr;
     for (int i = 0; i < L1_SIZE; i++) {
-        net.FTBiases[i] = *ptr2;
-        ptr2++;
+        net.FTBiases[i] = *(int16_t*)ptr;
+        ptr += 2;
     }
     for (int i = 0; i < L1_SIZE * 2 * OUTPUT_BUCKETS; i++) {
-        net.L1Weights[i] = *ptr2;
-        ptr2++;
+        net.L1Weights[i] = *ptr;
+        ptr++;
     }
-    net.L1Biases[0] = *ptr2; // Just assume 1 output bucket for now
+    net.L1Biases[0] = *(int16_t*)ptr; // Just assume 1 output bucket for now
 }
