@@ -41,8 +41,6 @@ void PseudoLegalPawnMoves(struct Position* pos, int color, struct MoveList* list
     if (genQuiet) {
         Bitboard push = NORTH(ourPawns, color) & freeSquares & ~0xFF000000000000FFULL;
         Bitboard doublePushBb = NORTH(push, color) & freeSquares & rank4BB;
-        push &= Position_getCheckmask(pos);
-        doublePushBb &= Position_getCheckmask(pos);
         while (push) {
             const int to = popLsb(&push);
             AddMoveNonScored(encode_move(to - north, to, pawnType, Quiet), list);
@@ -55,7 +53,7 @@ void PseudoLegalPawnMoves(struct Position* pos, int color, struct MoveList* list
 
     if (genNoisy) {
         // Push promotions
-        Bitboard pushPromo = NORTH(ourPawns, color) & freeSquares & 0xFF000000000000FFULL & Position_getCheckmask(pos);
+        Bitboard pushPromo = NORTH(ourPawns, color) & freeSquares & 0xFF000000000000FFULL;
         while (pushPromo) {
             const int to = popLsb(&pushPromo);
             AddMoveNonScored(encode_move(to - north, to, pawnType, queenPromo | Quiet), list);
@@ -65,8 +63,8 @@ void PseudoLegalPawnMoves(struct Position* pos, int color, struct MoveList* list
         }
 
         // Captures and capture-promotions
-        Bitboard captBB1 = (NORTH(ourPawns, color) >> 1) & ~0x8080808080808080ULL & enemy & Position_getCheckmask(pos);
-        Bitboard captBB2 = (NORTH(ourPawns, color) << 1) & ~0x101010101010101ULL & enemy & Position_getCheckmask(pos);
+        Bitboard captBB1 = (NORTH(ourPawns, color) >> 1) & ~0x8080808080808080ULL & enemy;
+        Bitboard captBB2 = (NORTH(ourPawns, color) << 1) & ~0x101010101010101ULL & enemy;
         while (captBB1) {
             const int to = popLsb(&captBB1);
             const int from = to - north + 1;
@@ -123,7 +121,7 @@ void PseudoLegalKnightMoves(struct Position* pos, int color, struct MoveList* li
 
     while (knights) {
         const int from = popLsb(&knights);
-        Bitboard possible_moves = knight_attacks[from] & moveMask & Position_getCheckmask(pos);
+        Bitboard possible_moves = knight_attacks[from] & moveMask;
         while (possible_moves) {
             const int to = popLsb(&possible_moves);
             const enum Movetype movetype = Position_PieceOn(pos, to) != EMPTY ? Capture : Quiet;
@@ -152,7 +150,7 @@ void PseudoLegalSlidersMoves(struct Position* pos, int color, struct MoveList* l
         while (pieces) {
             const int from = popLsb(&pieces);
             Bitboard possible_moves =
-                pieceAttacks(piecetype, from, boardOccupancy) & moveMask & Position_getCheckmask(pos);
+                pieceAttacks(piecetype, from, boardOccupancy) & moveMask;
             while (possible_moves) {
                 const int to = popLsb(&possible_moves);
                 const enum Movetype movetype = Position_PieceOn(pos, to) != EMPTY ? Capture : Quiet;
@@ -427,7 +425,7 @@ bool IsLegal(struct Position* pos, const Move move) {
         return !Position_getCheckers(pos) && (((1ULL << to) & RayBetween(ksq, from)) || ((1ULL << from) & RayBetween(ksq, to)));
     }
     else if (Position_getCheckers(pos)) {
-        return (1ULL << to) & Position_getCheckmask(pos);
+        return (1ULL << to) & (Position_getCheckers(pos) | RayBetween(GetLsbIndex(Position_getCheckers(pos)), ksq));
     }
     else
         return true;

@@ -323,15 +323,6 @@ SMALL void ParseFen(const char* command, struct Position* pos) {
     // Update pinmasks and checkers
     UpdatePinsAndCheckers(pos, pos->side);
 
-    // If we are in check get the squares between the checking piece and the king
-    if (Position_getCheckers(pos)) {
-        const int kingSquare = KingSQ(pos, pos->side);
-        const int pieceLocation = GetLsbIndex(Position_getCheckers(pos));
-        pos->state.checkMask = (1ULL << pieceLocation) | RayBetween(pieceLocation, kingSquare);
-    }
-    else
-        pos->state.checkMask = fullCheckmask;
-
     // Update nnue accumulator to reflect board state
     NNUE_accumulate(&pos->accumStack[0], pos);
     pos->accumStackHead = 1;

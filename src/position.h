@@ -23,7 +23,6 @@ struct BoardState {
     int fiftyMove;
     int plyFromNull;
     Bitboard checkers;
-    Bitboard checkMask;
     Bitboard pinned;
 }; // stores a move and the state of the game before that move is made
 // for rollback purposes
@@ -108,10 +107,6 @@ inline Bitboard Position_getCheckers(const struct Position* const pos) {
     return pos->state.checkers;
 }
 
-inline Bitboard Position_getCheckmask(const struct Position* const pos) {
-    return pos->state.checkMask;
-}
-
 inline Bitboard Position_getPinnedMask(const struct Position* const pos) {
     return pos->state.pinned;
 }
@@ -153,44 +148,40 @@ extern const int castling_rights[64];
 // convert squares to coordinates
 extern const char* const square_to_coordinates[64];
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void ResetBoard(struct Position* pos);
-    void ResetInfo(struct SearchInfo* info);
-    ZobristKey GeneratePosKey(const struct Position* const pos);
-    ZobristKey GeneratePawnKey(const struct Position* pos);
-    ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
 
-    Bitboard RayBetween(int square1, int square2);
-    void UpdatePinsAndCheckers(struct Position* pos, const int side);
+void ResetBoard(struct Position* pos);
+void ResetInfo(struct SearchInfo* info);
+ZobristKey GeneratePosKey(const struct Position* const pos);
+ZobristKey GeneratePawnKey(const struct Position* pos);
+ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
 
-    // Get on what square of the board the king of color c resides
-    int KingSQ(const struct Position* pos, const int c);
+Bitboard RayBetween(int square1, int square2);
+void UpdatePinsAndCheckers(struct Position* pos, const int side);
 
-    // Parse a string of moves in coordinate format and plays them
-    void parse_moves(const char* moves, struct Position* pos);
+// Get on what square of the board the king of color c resides
+int KingSQ(const struct Position* pos, const int c);
 
-    // Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
-    Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
+// Parse a string of moves in coordinate format and plays them
+void parse_moves(const char* moves, struct Position* pos);
 
-    // parse FEN string
-    void ParseFen(const char* command, struct Position* pos);
+// Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
+Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
 
-    // Return a piece based on the type and the color
-    int GetPiece(const int piecetype, const int color);
+// parse FEN string
+void ParseFen(const char* command, struct Position* pos);
 
-    // Returns the piece_type of a piece
-    int GetPieceType(const int piece);
+// Return a piece based on the type and the color
+int GetPiece(const int piecetype, const int color);
 
-    // Returns true if side has at least one piece on the board that isn't a pawn, false otherwise
-    bool BoardHasNonPawns(const struct Position* pos, const int side);
+// Returns the piece_type of a piece
+int GetPieceType(const int piece);
 
-    ZobristKey keyAfter(const struct Position* pos, const Move move);
+// Returns true if side has at least one piece on the board that isn't a pawn, false otherwise
+bool BoardHasNonPawns(const struct Position* pos, const int side);
 
-    void saveBoardState(struct Position* pos);
+ZobristKey keyAfter(const struct Position* pos, const Move move);
 
-    void restorePreviousBoardState(struct Position* pos);
-#ifdef __cplusplus
-}
-#endif
+void saveBoardState(struct Position* pos);
+
+void restorePreviousBoardState(struct Position* pos);
+

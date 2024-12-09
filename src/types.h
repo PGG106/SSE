@@ -2,15 +2,9 @@
 
 #include "shims.h"
 
-#define NAME "Alexandria-7.1.1"
-
 extern int see_margin[64][2];
 
-#ifdef __cplusplus
-static const std::string start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-#else
 static const char* start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-#endif
 
 typedef uint64_t Bitboard;
 typedef uint16_t TTKey;
@@ -25,7 +19,6 @@ static const int MATE_SCORE = 32000;
 static const int MATE_FOUND = MATE_SCORE - MAXPLY;
 static const int SCORE_NONE = 32001;
 static const int MAXSCORE = 32670;
-static const Bitboard fullCheckmask = 0xFFFFFFFFFFFFFFFF;
 
 // board squares
 enum {

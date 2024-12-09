@@ -136,7 +136,6 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->pos.state.fiftyMove = 0;
     td->pos.state.plyFromNull = 0;
     td->pos.state.checkers = 0;
-    td->pos.state.checkMask = fullCheckmask;
 
     td->info.starttime = 0;
     td->info.stoptimeBaseOpt = 0;
