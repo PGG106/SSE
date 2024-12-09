@@ -218,10 +218,6 @@ SMALL void UciLoop() {
         }
 
         else if (!strcmp(token, "eval")) {
-            // call parse position function
-            if (!parsed_position) {
-                ParsePosition("position startpos", &td.pos);
-            }
             // print position eval
             printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
             printf("Scaled eval: %i\n", EvalPosition(&td.pos));
