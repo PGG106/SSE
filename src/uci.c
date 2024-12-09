@@ -122,10 +122,6 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
             const char* fen_start_ptr = strstr(command, "fen") + 4;
             ParseFen(fen_start_ptr, pos);
         }
-        else {
-            // init chess board with start position
-            ParseFen(start_position, pos);
-        }
     }
 
 #if UCI
@@ -155,7 +151,6 @@ SMALL void UciLoop() {
     return;
 #endif
 
-    bool parsed_position = false;
     struct ThreadData td;
     init_thread_data(&td);
 
@@ -190,20 +185,14 @@ SMALL void UciLoop() {
         if (!strcmp(token, "position")) {
             // call parse position function
             ParsePosition(input, &td.pos);
-            parsed_position = true;
         }
 
         // parse UCI "go" command
         else if (!strcmp(token, "go")) {
-            if (!parsed_position) { // call parse position function
-                ParsePosition("position startpos", &td.pos);
-            }
             // call parse go function
             bool search = ParseGo(input, &td.info, &td.pos);
             // Start search in a separate thread
-            if (search) {
-                RootSearch(MAXDEPTH, &td);
-            }
+            RootSearch(MAXDEPTH, &td);
         }
 
 #if UCI
@@ -237,8 +226,7 @@ SMALL void UciLoop() {
             printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
             printf("Scaled eval: %i\n", EvalPosition(&td.pos));
         }
-#endif
-
         else printf("Unknown command: %s\n", (size_t)input);
+#endif
     }
 }
