@@ -28,7 +28,7 @@ struct SearchData {
 
 enum PonderState {
     NOT_PONDERING,
-    IN_PONDERING,
+    IN_PONDER,
     PONDER_HIT,
     PONDER_MISS
 };
