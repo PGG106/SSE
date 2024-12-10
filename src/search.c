@@ -46,7 +46,8 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
         td->pos.played_positions_size -= 2;
         //puts("DETMISS");
     }
-    else {
+    else if(td->ponderState != IN_PONDER) {
+        puts("MOVE");
         printf("bestmove ");
         PrintMove(return_bestmove);
         printf("\n");
@@ -65,8 +66,9 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
             MakeMove(false, ponder_move, &td->pos);
 
             // Start infinite search for pondering
-            td->ponderState = IN_PONDERING;
+            td->ponderState = IN_PONDER;
             ResetInfo(&td->info);
+            td->info.starttime = GetTimeMs();
             Optimum(&td->info, 999999999, 0);
             RootSearch(depth, td); // TODO: replace recursion with iteration to prevent potential stack overflow
         }
@@ -421,10 +423,13 @@ static bool PollPonder(struct ThreadData *td) {
     //    printf("P");
     //    fflush(stdout);
     //}
-    if(td->ponderState == IN_PONDERING && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
+    if(td->ponderState == IN_PONDER && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
         puts("POLL");
         fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
         puts(td->pendingLine);
+
+        td->ponderState = PONDER_MISS;
+        return true;
 
         // For non-UCI just assume "position"
         // For UCI it may be ucinewgame or something else maybe,
@@ -451,11 +456,15 @@ static bool PollPonder(struct ThreadData *td) {
             }
 #endif
             // Just continue searching, now with time control enabled
+
             ParseGo(td->pendingLine, &td->info, &td->pos, false);
             td->ponderState = PONDER_HIT;
             td->pendingLine[0] = '\0';
+            if(StopEarly(&td->info)) {
+                return true;
+            }
             //printf("continuing");
-            return false;
+            return true; // TODO: REMOVE THIS
         }
 
         puts("miss");
