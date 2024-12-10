@@ -26,6 +26,13 @@ struct SearchData {
     int contHist[12 * 64][12 * 64];
 };
 
+enum PonderState {
+    NOT_PONDERING,
+    IN_PONDERING,
+    PONDER_HIT,
+    PONDER_MISS
+};
+
 // a collection of all the data a thread needs to conduct a search
 struct ThreadData {
     struct Position pos;
@@ -35,7 +42,9 @@ struct ThreadData {
     int nmpPlies;
     uint64_t nodeSpentTable[64 * 64];
 
-    bool inPonder;
+    //bool inPonder;
+    //bool ponderHit;
+    enum PonderState ponderState;
 #if UCI
     char pendingLine[8192];
 #else
