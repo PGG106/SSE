@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-SMALL int char_pieces(const char ch) {
+int char_pieces(const char ch) { // TODO: making this SMALL introduces cancer?
 	switch (ch)
 	{
 	case 'P':

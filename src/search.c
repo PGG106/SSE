@@ -428,9 +428,6 @@ static bool PollPonder(struct ThreadData *td) {
         fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
         puts(td->pendingLine);
 
-        td->ponderState = PONDER_MISS;
-        return true;
-
         // For non-UCI just assume "position"
         // For UCI it may be ucinewgame or something else maybe,
         // at that point just stop pondering
