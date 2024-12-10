@@ -203,7 +203,7 @@ SMALL void UciLoop() {
             // Start search in a separate thread
 
             if (search) {
-                td.inPonder = false;
+                td.ponderState = NOT_PONDERING;
                 RootSearch(MAXDEPTH, &td);
             }
         }

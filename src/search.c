@@ -41,7 +41,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     SearchPosition(1, depth, td);
     //puts("RET");
     // If the search finished and we are in ponder, means there was a ponder miss
-    if(td->inPonder) {
+    if(td->ponderState == PONDER_MISS) {
         // We must remove the two moves that were pushed at ponder start
         td->pos.played_positions_size -= 2;
         //puts("DETMISS");
@@ -65,7 +65,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
             MakeMove(false, ponder_move, &td->pos);
 
             // Start infinite search for pondering
-            td->inPonder = true;
+            td->ponderState = IN_PONDERING;
             ResetInfo(&td->info);
             Optimum(&td->info, 999999999, 0);
             RootSearch(depth, td); // TODO: replace recursion with iteration to prevent potential stack overflow
@@ -190,7 +190,9 @@ SMALL void init_thread_data(struct ThreadData* td) {
     td->info.stopped = false;
 
     td->nmpPlies = 0;
-    td->inPonder = false;
+    //td->inPonder = false;
+    //td->ponderHit = false;
+    td->ponderState = NOT_PONDERING;
     td->pendingLine[0] = '\0';
 
     memset(&td->sd, 0, sizeof(struct SearchData));
@@ -419,15 +421,17 @@ static bool PollPonder(struct ThreadData *td) {
     //    printf("P");
     //    fflush(stdout);
     //}
-    if(td->inPonder && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
-        //puts("POLL");
+    if(td->ponderState == IN_PONDERING && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
+        puts("POLL");
         fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
+        puts(td->pendingLine);
 
         // For non-UCI just assume "position"
         // For UCI it may be ucinewgame or something else maybe,
         // at that point just stop pondering
 #if UCI
         if (strstr(td->pendingLine, "position") == NULL) {
+            puts("WEIRDRET");
             return true;
         }
 #endif
@@ -437,7 +441,7 @@ static bool PollPonder(struct ThreadData *td) {
         ParsePosition(td->pendingLine, &tempPos);
         if(tempPos.posKey == td->sd.rootKey)
         {
-            //puts("hit");
+            puts("hit");
             fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
 #if UCI
             if (strstr(td->pendingLine, "isready") != NULL) {
@@ -448,13 +452,14 @@ static bool PollPonder(struct ThreadData *td) {
 #endif
             // Just continue searching, now with time control enabled
             ParseGo(td->pendingLine, &td->info, &td->pos, false);
-            td->inPonder = false;
+            td->ponderState = PONDER_HIT;
             td->pendingLine[0] = '\0';
             //printf("continuing");
             return false;
         }
 
-        //puts("miss");
+        puts("miss");
+        td->ponderState = PONDER_MISS;
         // Position command stored as pending, stop search
         return true;
     }

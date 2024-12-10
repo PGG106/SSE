@@ -6,7 +6,6 @@ SMALL void _start() {
 #else
 SMALL int main() {
 #endif
-
     // Tables for move generation and precompute reduction values
     InitAll();
     // connect to the GUI
