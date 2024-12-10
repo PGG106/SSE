@@ -27,14 +27,14 @@ inline Move encode_move(const int source, const int target, const int piece, con
     return (source) | (target << 6) | (movetype << 12) | (piece << 16);
 }
 
-inline int From(const Move move) { return move & 0x3F; }
-inline int To(const Move move) { return ((move & 0xFC0) >> 6); }
-inline int FromTo(const Move move) { return move & 0xFFF; }
+static int From(const Move move) { return move & 0x3F; }
+static int To(const Move move) { return ((move & 0xFC0) >> 6); }
+static int FromTo(const Move move) { return move & 0xFFF; }
 inline int Piece(const Move move) { return ((move & 0xF0000) >> 16); }
-inline int PieceTo(const Move move) { return (Piece(move) << 6) | To(move); }
+static int PieceTo(const Move move) { return (Piece(move) << 6) | To(move); }
 inline int PieceTypeTo(const Move move) { return (PieceType[Piece(move)] << 6) | To(move); }
 inline int GetMovetype(const Move move) { return ((move & 0xF000) >> 12); }
-inline int getPromotedPiecetype(const Move move) { return (GetMovetype(move) & 3) + 1; }
+static int getPromotedPiecetype(const Move move) { return (GetMovetype(move) & 3) + 1; }
 inline bool isEnpassant(const Move move) { return GetMovetype(move) == enPassant; }
 inline bool isDP(const Move move) { return GetMovetype(move) == doublePush; }
 inline bool isCastle(const Move move) { 
@@ -42,6 +42,6 @@ inline bool isCastle(const Move move) {
 }
 inline bool isCapture(const Move move) { return GetMovetype(move) & Capture; }
 inline bool isQuiet(const Move move) { return !isCapture(move); }
-inline bool isPromo(const Move move) { return GetMovetype(move) & 8; }
+static bool isPromo(const Move move) { return GetMovetype(move) & 8; }
 // Shorthand for captures + any promotion no matter if quiet or not 
-inline bool isTactical(const Move move) { return isCapture(move) || isPromo(move); }
+static bool isTactical(const Move move) { return isCapture(move) || isPromo(move); }
