@@ -264,4 +264,8 @@ SMALL char* fgets(char* string0, int count, int file)
     *string = 0;
     return string0;
 }
+
+int poll(struct pollfd* fds, unsigned int nfds, int timeout) {
+    return (int)_sys(7, (ssize_t)fds, (ssize_t)nfds, timeout);
+}
 #endif
