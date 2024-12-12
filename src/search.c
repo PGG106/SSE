@@ -426,8 +426,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if(info->nodes % 4096 && StdinHasData()){
-        td->info.stopped = true;
-        return 0;
+        td->info.nodes += 1;
     }
 
     if (!rootNode) {
