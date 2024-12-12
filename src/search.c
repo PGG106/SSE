@@ -51,9 +51,10 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
 
     // start pondering
     MakeMove(true, return_bestmove, &td->pos);
+    td->info.timeset = false;
+    td->info.stopped = false;
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(return_bestmove, &td->pos);
-
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
