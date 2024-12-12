@@ -53,6 +53,14 @@ enum {
 #define assert(condition)
 #endif
 
+struct pollfd {
+    int   fd;      // file descriptor to monitor
+    short events;  // events of interest
+    short revents; // events that occurred
+};
+
+#define POLLIN 1
+
 #define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3);
@@ -73,5 +81,5 @@ char* strstr(const char* haystack, const char* needle);
 void* memset(void* ptr, int value, size_t n);
 double log(double x);
 char* fgets(char* string0, int count, int file);
-
+int poll(struct pollfd* fds, unsigned int nfds, int timeout);
 #endif
