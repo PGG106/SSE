@@ -31,6 +31,14 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
+static bool StdinHasData()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+}
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
@@ -413,6 +421,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
+        td->info.stopped = true;
+        return 0;
+    }
+
+    if(info->nodes % 4096 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
