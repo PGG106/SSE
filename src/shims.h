@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/mman.h>
+#include <poll.h>
 
 uint64_t GetTimeMs();
 #else
