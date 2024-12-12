@@ -840,6 +840,12 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
+    if((info->nodes & 4096)
+       && InputWaiting()){
+        td->info.stopped = true;
+        return 0;
+    }
+
     // If position is a draw return a draw score
     if (MaterialDraw(pos))
         return 0;
