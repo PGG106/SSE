@@ -423,7 +423,7 @@ static bool PollPonder(struct ThreadData *td) {
     //    printf("P");
     //    fflush(stdout);
     //}
-    if(td->ponderState == IN_PONDER && (td->info.nodes & 4095) == 4095 && StdinHasData()) {
+    if(td->ponderState == IN_PONDER && td->info.nodes % 4096 == 0 && StdinHasData()) {
         puts("POLL");
         fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
         puts(td->pendingLine);
