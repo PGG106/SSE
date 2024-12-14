@@ -425,7 +425,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if(info->nodes % 4096 && StdinHasData()){
+    if(info->nodes % 4096 == 0 && StdinHasData()){
         td->info.nodes += 1;
     }
 
