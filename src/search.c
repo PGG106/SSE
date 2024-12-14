@@ -466,8 +466,8 @@ static bool PollPonder(struct ThreadData *td) {
                 return true;
             }
 
-            puts("stopping");
-            return true;
+            //puts("stopping");
+            //return true;
 
             return false;
         }
@@ -924,7 +924,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     int rawEval;
 
     // check if more than Maxtime passed and we have to stop
-    if (TimeOver(&td->info)) {
+    if (TimeOver(&td->info) || PollPonder(td)) {
         td->info.stopped = true;
         return 0;
     }
