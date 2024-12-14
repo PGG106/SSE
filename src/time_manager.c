@@ -36,7 +36,7 @@ bool TimeOver(const struct SearchInfo* info) {
 }
 
 SMALL void ScaleTm(struct ThreadData* td) {
-    const int bestmove = return_bestmove;
+    const int bestmove = GetBestMove(&td->pvTable);
     // Calculate how many nodes were spent on checking the best move
     const double bestMoveNodesFraction = (double)(td->nodeSpentTable[FromTo(bestmove)]) / (double)(td->info.nodes);
     const double nodeScalingFactor = (1.52 - bestMoveNodesFraction) * 1.74;

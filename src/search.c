@@ -17,12 +17,15 @@
 #define abs(x) ((x) < 0 ? -(x) : (x))
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 
-Move return_bestmove = NOMOVE;
+Move GetBestMove(const struct PvTable* pvTable) {
+    return pvTable->pvArray[0][0];
+}
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
 SMALL void ClearForSearch(struct ThreadData* td) {
     // Extract data structures from ThreadData
     struct SearchInfo* info = &td->info;
+    memset(&td->pvTable, 0, sizeof(td->pvTable));
     memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 
     // Reset plies and search info
@@ -36,7 +39,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
     SearchPosition(1, depth, td);
     printf("bestmove ");
-    PrintMove(return_bestmove);
+    PrintMove(GetBestMove(&td->pvTable));
     printf("\n");
     fflush(stdout);
 
@@ -378,6 +381,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     struct Position* pos = &td->pos;
     struct SearchData* sd = &td->sd;
     struct SearchInfo* info = &td->info;
+    struct PvTable* pvTable = &td->pvTable;
 
     // Initialize the node
     const bool inCheck = Position_getCheckers(pos);
@@ -389,6 +393,9 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     TTEntry_init(&tte);
 
     const Move excludedMove = ss->excludedMove;
+
+    // if we are in a singular search and reusing the same ss entry, we have to guard this statement otherwise the pv length will get reset
+    pvTable->pvLength[ss->ply] = ss->ply;
 
     bool pvNode = beta - alpha > 1;
 
@@ -757,8 +764,16 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             // Found a better move that raised alpha
             if (score > alpha) {
                 bestMove = move;
-                if (rootNode)
-                    return_bestmove = bestMove;
+
+                if (pvNode) {
+                    // Update the pv table
+                    pvTable->pvArray[ss->ply][ss->ply] = move;
+                    for (int nextPly = ss->ply + 1; nextPly < pvTable->pvLength[ss->ply + 1]; nextPly++) {
+                        pvTable->pvArray[ss->ply][nextPly] = pvTable->pvArray[ss->ply + 1][nextPly];
+                    }
+                    pvTable->pvLength[ss->ply] = pvTable->pvLength[ss->ply + 1];
+                }
+
 
                 if (score >= beta) {
                     // If the move that caused the beta cutoff is quiet we have a killer move

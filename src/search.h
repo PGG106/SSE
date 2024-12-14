@@ -25,6 +25,11 @@ struct SearchData {
     int contHist[12 * 64][12 * 64];
 };
 
+struct PvTable {
+    int pvLength[129];
+    Move pvArray[129][129];
+};
+
 // a collection of all the data a thread needs to conduct a search
 struct ThreadData {
     struct Position pos;
@@ -32,10 +37,9 @@ struct ThreadData {
     struct SearchInfo info;
     int RootDepth;
     int nmpPlies;
+    struct PvTable pvTable;
     uint64_t nodeSpentTable[64 * 64];
 };
-
-extern Move return_bestmove;
 
 void init_thread_data(struct ThreadData* td);
 
