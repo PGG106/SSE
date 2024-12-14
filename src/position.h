@@ -79,7 +79,7 @@ inline int Position_PieceCount(const struct Position* const pos) {
     return CountBits(Position_Occupancy(pos, BOTH));
 }
 
-inline int Position_PieceOn(const struct Position* const pos, const int square) {
+static int Position_PieceOn(const struct Position* const pos, const int square) {
     assert(square >= 0 && square <= 63);
     return pos->pieces[square];
 }
@@ -92,11 +92,11 @@ inline int Position_get50MrCounter(const struct Position* const pos) {
     return pos->state.fiftyMove;
 }
 
-inline int Position_getCastlingPerm(const struct Position* const pos) {
+static int Position_getCastlingPerm(const struct Position* const pos) {
     return pos->state.castlePerm;
 }
 
-inline int Position_getEpSquare(const struct Position* const pos) {
+static int Position_getEpSquare(const struct Position* const pos) {
     return pos->state.enPas;
 }
 
@@ -104,7 +104,7 @@ inline int Position_getPlyFromNull(const struct Position* const pos) {
     return pos->state.plyFromNull;
 }
 
-inline Bitboard Position_getCheckers(const struct Position* const pos) {
+static Bitboard Position_getCheckers(const struct Position* const pos) {
     return pos->state.checkers;
 }
 

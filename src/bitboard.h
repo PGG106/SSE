@@ -4,11 +4,11 @@
 #include "types.h"
 
 // set/get/pop bit macros
-inline void set_bit(Bitboard *bitboard, const int square) { *bitboard |= (1ULL << square); }
+static void set_bit(Bitboard *bitboard, const int square) { *bitboard |= (1ULL << square); }
 inline int get_bit(const Bitboard bitboard, const int square) { return bitboard & (1ULL << square); }
 inline void pop_bit(Bitboard *bitboard, const int square) { *bitboard &= ~(1ULL << square); }
 
-inline int GetLsbIndex(Bitboard bitboard) {
+static int GetLsbIndex(Bitboard bitboard) {
     assert(bitboard);
     return __builtin_ctzll(bitboard);;
 }

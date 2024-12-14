@@ -50,7 +50,7 @@ static const uint8_t get_rank[64] = { 7, 7, 7, 7, 7, 7, 7, 7,
                                0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Lookup to get the file of a square
-inline uint8_t get_file(const int square){
+static uint8_t get_file(const int square){
     return square % 8;
 }
 
