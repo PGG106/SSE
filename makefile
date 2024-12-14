@@ -168,7 +168,9 @@ $(TMPDIR):
 
 -include $(DEPENDS)
 
-small: clean all
+cleanall: clean all
+
+small: cleanall
 	sstrip $(EXE)
 	ls -la $(EXE)
 	tar -cf submission.tar $(EXE) nn.net main.py
