@@ -1,6 +1,7 @@
 #Custom
 *.tar
 *.tar.gz
+.idea
 
 # Prerequisites
 *.d
