@@ -47,7 +47,6 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
         //puts("DETMISS");
     }
     else if(td->ponderState != IN_PONDER) {
-        puts("MOVE");
         printf("bestmove ");
         PrintMove(return_bestmove);
         printf("\n");
@@ -56,10 +55,11 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
         MakeMove(true, return_bestmove, &td->pos);
         struct TTEntry tte;
         bool probed = ProbeTTEntry(td->pos.posKey, &tte);
-        //puts("A");
         if (probed) {
-            //puts("B");
             Move ponder_move = MoveFromTT(&td->pos, tte.move);
+            printf("pondering ");
+            PrintMove(ponder_move);
+            printf("\n");
             // Remake bestmove without UPDATE
             UnmakeMove(return_bestmove, &td->pos);
             MakeMove(false, return_bestmove, &td->pos);
@@ -71,6 +71,8 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
             td->info.starttime = GetTimeMs();
             Optimum(&td->info, 999999999, 0);
             RootSearch(depth, td); // TODO: replace recursion with iteration to prevent potential stack overflow
+        } else {
+            puts("fail to get ponder move");
         }
 
         // Hack for Kaggle for full repetition detection // TODO: Figure out how to reimplement to be ponder compatible
@@ -424,9 +426,12 @@ static bool PollPonder(struct ThreadData *td) {
     //    fflush(stdout);
     //}
     if(td->ponderState == IN_PONDER && td->info.nodes % 4096 == 0 && StdinHasData()) {
+        //td->ponderState = PONDER_MISS;
+        //return true;
+
         puts("POLL");
         fgets(td->pendingLine, sizeof(td->pendingLine), stdin);
-        puts(td->pendingLine);
+        //puts(td->pendingLine);
 
         // For non-UCI just assume "position"
         // For UCI it may be ucinewgame or something else maybe,
@@ -460,8 +465,11 @@ static bool PollPonder(struct ThreadData *td) {
             if(StopEarly(&td->info)) {
                 return true;
             }
-            //printf("continuing");
-            return true; // TODO: REMOVE THIS
+
+            puts("stopping");
+            return true;
+
+            return false;
         }
 
         puts("miss");
