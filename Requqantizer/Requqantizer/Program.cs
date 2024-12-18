@@ -11,66 +11,18 @@ namespace Requqantizer
     {
         static void Main(string[] args)
         {
-            const int NUM_INPUTS = 768;
-            const int L1_SIZE = 80;
-            const int OUTPUT_BUCKETS = 1;
-
-            const int FT_QUANT = 255;
-            const int L1_QUANT = 64;
-
-            const int blockSize = L1_SIZE * 4;
-
-            var dir = $"C:/shared/sse/nets/{L1_SIZE}";
+            var dir = $"C:/shared/sse/nets/{Constants.L1_SIZE}";
             var path = Path.Combine(dir, "quantised.bin");
-            var bytes = File.ReadAllBytes(path);
-            Console.WriteLine($"Original file size: {bytes.Length} bytes");
-
             var path2 = Path.Combine(dir, "raw.bin");
-            var bytes2 = File.ReadAllBytes(path2);
-            
-            var sectionSizes = new[]
-            {
-                NUM_INPUTS * L1_SIZE,
-                L1_SIZE,
-                L1_SIZE * 2 * OUTPUT_BUCKETS,
-                OUTPUT_BUCKETS
-            };
 
-            var unpaddedSize = sectionSizes.Sum() * 2;
-            Console.WriteLine($"Unpadded file size: {unpaddedSize} bytes");
-
-            var sections = new List<List<short>>();
-            var sections2 = new List<List<float>>();
-            var reader = new BinaryReader(new MemoryStream(bytes));
-            var reader2 = new BinaryReader(new MemoryStream(bytes2));
-
-            for (var sectionIndex = 0; sectionIndex < sectionSizes.Length; sectionIndex++)
-            {
-                var sectionSize = sectionSizes[sectionIndex];
-                Console.Write($"Section {sectionIndex}: Count: {sectionSize}: ");
-
-                var data = new List<short>();
-                var data2 = new List<float>();
-                for (var i = 0; i < sectionSize; i++)
-                {
-                    var value = reader.ReadInt16();
-                    data.Add(value);
-
-                    var value2 = reader2.ReadSingle();
-                    data2.Add(value2);
-                }
-                sections.Add(data);
-                sections2.Add(data2);
-
-                Console.WriteLine($"Min: {data.Min()} Max: {data.Max()}");
-            }
+            var sections = new Reader().ReadShorts(path);
+            var sections2 = new Reader().ReadFloats(path2);
 
             var section = sections[0];
             var section2 = sections2[0];
-
             
-            var blockCount = section.Count / blockSize;
-            Console.WriteLine($"Block size: {blockSize}");
+            var blockCount = section.Count / Constants.blockSize;
+            Console.WriteLine($"Block size: {Constants.blockSize}");
             Console.WriteLine($"Block count: {blockCount}");
             var queue = new Queue<short>(section);
             var queue2 = new Queue<float>(section2);
@@ -81,12 +33,12 @@ namespace Requqantizer
             {
                 var block = new List<short>();
                 var block2 = new List<float>();
-                for (var i = 0; i < blockSize; i++)
+                for (var i = 0; i < Constants.blockSize; i++)
                 {
                     var value = queue.Dequeue();
                     block.Add(value);
 
-                    var value2 = queue2.Dequeue() * FT_QUANT;
+                    var value2 = queue2.Dequeue() * Constants.FT_QUANT;
                     block2.Add(value2);
                 }
                 blocks.Add(block);
