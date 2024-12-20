@@ -35,11 +35,7 @@ struct Network {
     //int16_t *L1Biases;
 };
 
-#ifdef __cplusplus
-extern Network net;
-#else
 extern struct Network net;
-#endif
 
 struct Position;
 
@@ -55,18 +51,12 @@ struct Pov_Accumulator {
     bool needsRefresh;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
-    int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
-    void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
-    void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
-    void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
-    void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
-#ifdef __cplusplus
-}
-#endif
+void Pov_Accumulator_accumulate(struct Pov_Accumulator* accumulator, struct Position* pos);
+int Pov_Accumulator_GetIndex(const struct Pov_Accumulator* accumulator, const int piece, const int square, const int kingSq, bool flip);
+void Pov_Accumulator_addSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub);
+void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* prev_acc, size_t add, size_t sub1, size_t sub2);
+void Pov_Accumulator_applyUpdate(struct Pov_Accumulator* accumulator, struct Pov_Accumulator* previousPovAccumulator);
+void Pov_Accumulator_refresh(struct Pov_Accumulator* accumulator, struct Position* pos);
 
 inline bool Pov_Accumulator_isClean(const struct Pov_Accumulator *accumulator) {
     return accumulator->NNUEAdd_size == 0;
@@ -101,14 +91,8 @@ inline void Accumulator_ClearSubIndex(struct Accumulator* accumulator) {
     accumulator->perspective[BLACK].NNUESub_size = 0;
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void NNUE_init();
-    void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
-    void NNUE_update(struct Accumulator* acc, struct Position* pos);
-    int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
-    int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
-#ifdef __cplusplus
-}
-#endif
+void NNUE_init();
+void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
+void NNUE_update(struct Accumulator* acc, struct Position* pos);
+int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);

@@ -9,16 +9,9 @@ extern Bitboard enpassant_keys[64];
 extern Bitboard SideKey;
 extern Bitboard CastleKeys[16];
 
+void InitNewGame(struct ThreadData* td);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void InitNewGame(struct ThreadData* td);
+// init slider piece's attack tables
+void InitAttackTables();
 
-    // init slider piece's attack tables
-    void InitAttackTables();
-
-    void InitAll();
-#ifdef __cplusplus
-}
-#endif
+void InitAll();

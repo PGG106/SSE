@@ -153,44 +153,38 @@ extern const int castling_rights[64];
 // convert squares to coordinates
 extern const char* const square_to_coordinates[64];
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void ResetBoard(struct Position* pos);
-    void ResetInfo(struct SearchInfo* info);
-    ZobristKey GeneratePosKey(const struct Position* const pos);
-    ZobristKey GeneratePawnKey(const struct Position* pos);
-    ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
+void ResetBoard(struct Position* pos);
+void ResetInfo(struct SearchInfo* info);
+ZobristKey GeneratePosKey(const struct Position* const pos);
+ZobristKey GeneratePawnKey(const struct Position* pos);
+ZobristKey GenerateNonPawnKey(const struct Position* pos, int side);
 
-    Bitboard RayBetween(int square1, int square2);
-    void UpdatePinsAndCheckers(struct Position* pos, const int side);
+Bitboard RayBetween(int square1, int square2);
+void UpdatePinsAndCheckers(struct Position* pos, const int side);
 
-    // Get on what square of the board the king of color c resides
-    int KingSQ(const struct Position* pos, const int c);
+// Get on what square of the board the king of color c resides
+int KingSQ(const struct Position* pos, const int c);
 
-    // Parse a string of moves in coordinate format and plays them
-    void parse_moves(const char* moves, struct Position* pos);
+// Parse a string of moves in coordinate format and plays them
+void parse_moves(const char* moves, struct Position* pos);
 
-    // Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
-    Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
+// Retrieve a generic piece (useful when we don't know what type of piece we are dealing with
+Bitboard GetPieceBB(const struct Position* pos, const int piecetype);
 
-    // parse FEN string
-    void ParseFen(const char* command, struct Position* pos);
+// parse FEN string
+void ParseFen(const char* command, struct Position* pos);
 
-    // Return a piece based on the type and the color
-    int GetPiece(const int piecetype, const int color);
+// Return a piece based on the type and the color
+int GetPiece(const int piecetype, const int color);
 
-    // Returns the piece_type of a piece
-    int GetPieceType(const int piece);
+// Returns the piece_type of a piece
+int GetPieceType(const int piece);
 
-    // Returns true if side has at least one piece on the board that isn't a pawn, false otherwise
-    bool BoardHasNonPawns(const struct Position* pos, const int side);
+// Returns true if side has at least one piece on the board that isn't a pawn, false otherwise
+bool BoardHasNonPawns(const struct Position* pos, const int side);
 
-    ZobristKey keyAfter(const struct Position* pos, const Move move);
+ZobristKey keyAfter(const struct Position* pos, const Move move);
 
-    void saveBoardState(struct Position* pos);
+void saveBoardState(struct Position* pos);
 
-    void restorePreviousBoardState(struct Position* pos);
-#ifdef __cplusplus
-}
-#endif
+void restorePreviousBoardState(struct Position* pos);
