@@ -1,6 +1,7 @@
 #include "uci.h"
 
 #include "bench.h"
+#include "eval.h"
 #include "init.h"
 #include "io.h"
 #include "movegen.h"
