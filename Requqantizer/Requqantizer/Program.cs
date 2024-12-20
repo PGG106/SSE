@@ -4,6 +4,17 @@
     {
         static void Main(string[] args)
         {
+            //var ms = new MemoryStream();
+            //var w = new Int7Writer(ms);
+            //w.WriteInt(1);
+            //w.WriteInt(12);
+            //w.WriteInt(123);
+            //w.WriteInt(1234);
+            //var a = ms.ToArray();
+            //var r = new Int7Reader();
+            //r.Read(a);
+            //return;
+
             var dir = $"C:/shared/sse/nets/{Constants.L1_SIZE}";
             var path = Path.Combine(dir, "quantised.bin");
             var path2 = Path.Combine(dir, "raw.bin");
@@ -12,10 +23,46 @@
             var sections = reader.ReadShorts(path);
             var sections2 = reader.ReadFloats(path2);
 
+            var bins = Enumerable.Repeat(0, 16).ToArray();
+            foreach (var section in sections)
+            {
+                for (var i = 0; i < section.Count; i++)
+                {
+                    var val = section[i];
+                    var copy = val;
+                    var needsBits = 0;
+                    while (val != 0)
+                    {
+                        val /= 2;
+                        needsBits++;
+                        bins[needsBits]++;
+                    }
+                }
+            }
+
+            for (var i = 0; i < bins.Length; i++)
+            {
+                var bin = bins[i];
+                Console.WriteLine($"{i}: {bin}");
+            }
+
             var blocker = new Blocker();
             var blocks = blocker.BlockSection(sections2[0]);
 
             var result = new List<byte>();
+
+            //var ms = new MemoryStream();
+            //var int7Writer = new Int7Writer(ms);
+            //foreach (var value in sections[0])
+            //{
+            //    int7Writer.WriteInt(value);
+            //}
+            //var arr = ms.ToArray();
+            //foreach (var val in arr)
+            //{
+            //    result.Add(val);
+            //}
+
             for (var blockIndex = 0; blockIndex < blocks.Count; blockIndex++)
             {
                 var block = blocks[blockIndex].Values;
