@@ -30,7 +30,7 @@ ifeq ($(BENCH), true)
 endif
 
 ifeq ($(NOSTDLIB), true)
-	CFLAGS += -nostdlib -ffreestanding -static -DNOSTDLIB
+	CFLAGS += -nostdlib -ffreestanding -fno-tree-loop-distribute-patterns -static -DNOSTDLIB
 else
 	CFLAGS += -lm
 endif
