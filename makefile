@@ -30,7 +30,7 @@ ifeq ($(BENCH), true)
 endif
 
 ifeq ($(NOSTDLIB), true)
-	CFLAGS += -nostdlib -fno-builtin-memset -static -DNOSTDLIB
+	CFLAGS += -nostdlib -ffreestanding -static -DNOSTDLIB
 else
 	CFLAGS += -lm
 endif
@@ -155,7 +155,7 @@ EXE     := $(NAME)$(SUFFIX)
 
 all: $(TARGET)
 clean:
-	@rm -rf $(TMPDIR) *.o  $(DEPENDS) *.d *.tar *.gz
+	@rm -rf $(TMPDIR) *.o  $(DEPENDS) *.d *.tar *.gz *.xz
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(NATIVE) -MMD -MP -o $(EXE) $^ $(FLAGS) -lm
@@ -173,7 +173,9 @@ cleanall: clean all
 small: cleanall
 	sstrip $(EXE)
 	ls -la $(EXE)
-	tar -cf submission.tar $(EXE) nn.net main.py
+	xz -k -9 $(EXE)
+	xz -k -9 $(NETWORK_NAME)
+	tar -cf submission.tar $(EXE).xz $(NETWORK_NAME).xz main.py
 	ls -la submission.tar
 	zopfli --i1000 submission.tar
 	ls -la submission.tar.gz
