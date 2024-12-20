@@ -30,7 +30,7 @@ ifeq ($(BENCH), true)
 endif
 
 ifeq ($(NOSTDLIB), true)
-	CFLAGS += -nostdlib -fno-builtin-memset -static -DNOSTDLIB
+	CFLAGS += -nostdlib -ffreestanding -static -DNOSTDLIB
 else
 	CFLAGS += -lm
 endif
