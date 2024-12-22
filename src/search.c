@@ -386,12 +386,12 @@ static bool get_improving(const struct SearchStack *const ss, const bool inCheck
     return true;
 };
 
-static bool InputWaiting()
-{
+static bool InputWaiting() {
     struct pollfd fds;
     fds.fd = 0;
     fds.events = POLLIN;
     return poll(&fds, 1, 0);
+}
 
 
 // Negamax alpha beta search
