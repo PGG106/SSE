@@ -95,4 +95,4 @@ void NNUE_init();
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
 void NNUE_update(struct Accumulator* acc, struct Position* pos);
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm, const int outputBucket);

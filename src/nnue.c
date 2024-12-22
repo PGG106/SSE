@@ -70,13 +70,14 @@ void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_A
     }
 }
 
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm) {
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm, const int outputBucket) {
     // this function takes the net output for the current accumulators and returns the eval of the position
     // according to the net
 
     const int16_t* us = board_accumulator->perspective[stm].values;
     const int16_t* them = board_accumulator->perspective[stm ^ 1].values;
-    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[0], net.L1Biases[0]);
+    const int32_t bucketOffset = 2 * L1_SIZE * outputBucket;
+    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[bucketOffset], net.L1Biases[outputBucket]);
 }
 
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos) {
