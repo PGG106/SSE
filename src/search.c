@@ -56,6 +56,12 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
+    // start pondering
+    MakeMove(true, return_bestmove, &td->pos);
+    td->info.timeset = false;
+    td->info.stopped = false;
+    SearchPosition(1, MAXDEPTH, td);
+    UnmakeMove(return_bestmove, &td->pos);
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -380,6 +386,14 @@ static bool get_improving(const struct SearchStack *const ss, const bool inCheck
     return true;
 };
 
+static bool InputWaiting()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+
+
 // Negamax alpha beta search
 int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData* td, struct SearchStack* ss) {
     // Extract data structures from ThreadData
@@ -426,7 +440,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if(info->nodes % 16384 == 0 && StdinHasData()){
-        td->info.nodes += 1;
+        td->info.stopped = true;
+        return 0;
     }
 
     if (!rootNode) {
@@ -827,6 +842,11 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
+        td->info.stopped = true;
+        return 0;
+    }
+
+    if(info->nodes % 16384 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
