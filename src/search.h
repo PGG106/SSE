@@ -33,6 +33,7 @@ struct ThreadData {
     int RootDepth;
     int nmpPlies;
     uint64_t nodeSpentTable[64 * 64];
+    bool pondering;
 };
 
 extern Move return_bestmove;

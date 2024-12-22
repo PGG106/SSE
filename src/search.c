@@ -66,6 +66,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     MakeMove(true, ponder_move, &td->pos);
     td->info.timeset = false;
     td->info.stopped = false;
+    td->pondering = true;
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
@@ -170,6 +171,8 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->info.stopped = false;
 
     td->nmpPlies = 0;
+
+    td->pondering = false;
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
@@ -438,7 +441,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if(info->nodes % 16384 == 0 && StdinHasData()){
+    if( td->pondering && info->nodes % 8192 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
@@ -845,7 +848,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
-    if(info->nodes % 16384 == 0 && StdinHasData()){
+    if(td->pondering && info->nodes % 8192 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
