@@ -357,6 +357,11 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
+        if( td->pondering && StdinHasData()){
+            td->info.stopped = true;
+            return 0;
+        }
+
         // Stop calculating and return best move so far
         if (td->info.stopped) break;
 
@@ -442,7 +447,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if( td->pondering && info->nodes % 8192 == 0 && StdinHasData()){
+    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
@@ -849,7 +854,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
-    if(td->pondering && info->nodes % 8192 == 0 && StdinHasData()){
+    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
