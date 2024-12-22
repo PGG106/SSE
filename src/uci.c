@@ -144,17 +144,8 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
     pos->accumStackHead = 1;
 }
 
-// main UCI loop
-SMALL void UciLoop() {
-#if BENCH
-    int benchDepth = 14;
-    StartBench(benchDepth);
-    return;
-#endif
-
-    struct ThreadData td;
-    init_thread_data(&td);
-
+SMALL static void UciLoopInner(struct ThreadData *td)
+{
     // main loop
     while (true) {
 #if UCI
@@ -185,15 +176,15 @@ SMALL void UciLoop() {
         // parse UCI "position" command
         if (!strcmp(token, "position")) {
             // call parse position function
-            ParsePosition(input, &td.pos);
+            ParsePosition(input, &td->pos);
         }
 
         // parse UCI "go" command
         else if (!strcmp(token, "go")) {
             // call parse go function
-            bool search = ParseGo(input, &td.info, &td.pos);
+            bool search = ParseGo(input, &td->info, &td->pos);
             // Start search in a separate thread
-            RootSearch(MAXDEPTH, &td);
+            RootSearch(MAXDEPTH, td);
         }
 
 #if UCI
@@ -215,15 +206,27 @@ SMALL void UciLoop() {
 
         // parse UCI "ucinewgame" command
         else if (!strcmp(token, "ucinewgame")) {
-            InitNewGame(&td);
+            InitNewGame(td);
         }
 
         else if (!strcmp(token, "eval")) {
             // print position eval
-            printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
-            printf("Scaled eval: %i\n", EvalPosition(&td.pos));
+            printf("Raw eval: %i\n", EvalPositionRaw(&td->pos));
+            printf("Scaled eval: %i\n", EvalPosition(&td->pos));
         }
         else printf("Unknown command: %s\n", (size_t)input);
 #endif
     }
+}
+
+// main UCI loop
+SMALL void UciLoop() {
+#if BENCH
+    int benchDepth = 14;
+    StartBench(benchDepth);
+    return;
+#endif
+    struct ThreadData td;
+    init_thread_data(&td);
+    UciLoopInner(&td);
 }
