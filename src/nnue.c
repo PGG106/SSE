@@ -245,10 +245,9 @@ SMALL void NNUE_init() {
         net.L1Weights[i] = *ptr;
         ptr++;
     }
-
     for(int i= 0; i < OUTPUT_BUCKETS; i++){
         net.L1Biases[i] = *(int16_t*)ptr;
-        ptr++;
+        ptr += 2;
     }
 
     int16_t transposedL1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
