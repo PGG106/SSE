@@ -58,9 +58,15 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
 #endif
     // start pondering
     MakeMove(true, return_bestmove, &td->pos);
+    struct TTEntry tte;
+    bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+    if (probed)
+        ponder_move = MoveFromTT(&td->pos, tte.move);
+    MakeMove(true, ponder_move, &td->pos);
     td->info.timeset = false;
     td->info.stopped = false;
     SearchPosition(1, MAXDEPTH, td);
+    UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
 }
 
