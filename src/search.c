@@ -31,6 +31,14 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
+static bool StdinHasData()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+}
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
@@ -48,6 +56,21 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
+    // start pondering
+    MakeMove(true, return_bestmove, &td->pos);
+    struct TTEntry tte;
+    bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+    Move ponder_move = NOMOVE;
+    if (probed)
+        ponder_move = MoveFromTT(&td->pos, tte.move);
+    MakeMove(true, ponder_move, &td->pos);
+    td->info.timeset = false;
+    td->info.stopped = false;
+    td->pondering = true;
+    SearchPosition(1, MAXDEPTH, td);
+    UnmakeMove(ponder_move, &td->pos);
+    UnmakeMove(return_bestmove, &td->pos);
+    td->pondering = false;
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -149,6 +172,8 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->info.stopped = false;
 
     td->nmpPlies = 0;
+
+    td->pondering = false;
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
@@ -332,6 +357,11 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
+        if( td->pondering && StdinHasData()){
+            td->info.stopped = true;
+            return 0;
+        }
+
         // Stop calculating and return best move so far
         if (td->info.stopped) break;
 
@@ -413,6 +443,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
+        td->info.stopped = true;
+        return 0;
+    }
+
+    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
@@ -815,6 +850,11 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
+        td->info.stopped = true;
+        return 0;
+    }
+
+    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
