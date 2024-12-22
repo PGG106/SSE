@@ -8,7 +8,7 @@
 #define NUM_INPUTS 768
 #define INPUT_BUCKETS 1
 #define L1_SIZE 80
-#define OUTPUT_BUCKETS 1
+#define OUTPUT_BUCKETS 8
 
 #define FT_QUANT 255
 #define L1_QUANT 64

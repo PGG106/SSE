@@ -80,6 +80,7 @@ ssize_t open(const char* const restrict pathname, const int flags, const int mod
 ssize_t fopen(const char* const restrict pathname, const char* const restrict mode);
 char* strstr(const char* haystack, const char* needle);
 void* memset(void* ptr, int value, size_t n);
+void* memcpy(void* dest, const void* src, size_t n);
 double log(double x);
 char* fgets(char* string0, int count, int file);
 int poll(struct pollfd* fds, unsigned int nfds, int timeout);
