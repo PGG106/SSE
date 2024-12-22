@@ -1,4 +1,6 @@
-﻿namespace Requqantizer
+﻿using System;
+
+namespace Requqantizer
 {
     internal class Program
     {
@@ -90,6 +92,19 @@
 
                 result.AddRange(BitConverter.GetBytes(value));
             }
+
+            var transposedL1Weights = new short[Constants.L1_SIZE * 2 * Constants.OUTPUT_BUCKETS];
+            for (var weight = 0; weight < 2 * Constants.L1_SIZE; ++weight)
+            {
+                for (var bucket = 0; bucket < Constants.OUTPUT_BUCKETS; ++bucket)
+                {
+                    var srcIdx = weight * Constants.OUTPUT_BUCKETS + bucket;
+                    var dstIdx = bucket * 2 * Constants.L1_SIZE + weight;
+                    transposedL1Weights[dstIdx] = sections[2][srcIdx];
+                }
+            }
+            sections[2] = transposedL1Weights.ToList();
+
             foreach (var value in sections[2])
             {
                 //var sht = (short)Math.Round(value * L1_QUANT);
