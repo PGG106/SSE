@@ -60,6 +60,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     MakeMove(true, return_bestmove, &td->pos);
     struct TTEntry tte;
     bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+    Move ponder_move = NOMOVE;
     if (probed)
         ponder_move = MoveFromTT(&td->pos, tte.move);
     MakeMove(true, ponder_move, &td->pos);
