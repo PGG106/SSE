@@ -7,9 +7,10 @@ SMALL void _start() {
 #else
 SMALL int main() {
 #endif
-    // Tables for move generation and precompute reduction values
-    // connect to the GUI
-    //UciLoop();
+    struct ThreadData td;
+    init_thread_data(&td);
+    current_td = &td;
+
     StartUciThread();
     RunMainThread();
 

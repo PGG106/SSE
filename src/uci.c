@@ -233,8 +233,5 @@ SMALL void UciLoop() {
     StartBench(benchDepth);
     return;
 #endif
-    struct ThreadData td;
-    init_thread_data(&td);
-    current_td = &td;
-    UciLoopInner(&td);
+    UciLoopInner(current_td);
 }
