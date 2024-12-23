@@ -17,6 +17,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <poll.h>
 
 uint64_t GetTimeMs();
 #else
@@ -55,6 +56,14 @@ enum {
 #endif
 
 #define printf(format, ...) _printf(format, (size_t[]){__VA_ARGS__})
+
+struct pollfd {
+    int   fd;      // file descriptor to monitor
+    short events;  // events of interest
+    short revents; // events that occurred
+};
+
+#define POLLIN 1
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3);
 void exit(const int returnCode);

@@ -35,6 +35,14 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
+static bool StdinHasData()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+}
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
@@ -52,7 +60,6 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
-
 #ifndef NOPONDER
     // start pondering
     MakeMove(true, return_bestmove, &td->pos);
@@ -67,7 +74,6 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
-#endif
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -169,6 +175,8 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->info.stopped = false;
 
     td->nmpPlies = 0;
+
+    td->pondering = false;
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
