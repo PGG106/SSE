@@ -87,7 +87,6 @@ void RunMainThread() {
         SpinLock(&do_search);
         RootSearch(MAXDEPTH, current_td);
         finished = true;
-        stop = false;
         do_search = false;
     }
 }

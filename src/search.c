@@ -350,7 +350,6 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         }
 
         if(stop){
-            do_search = false;
             td->info.stopped = true;
             return 0;
         }
@@ -441,7 +440,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if(stop){
-        do_search = false;
         td->info.stopped = true;
         return 0;
     }
@@ -849,7 +847,6 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     }
 
     if(stop){
-        do_search = false;
         td->info.stopped = true;
         return 0;
     }

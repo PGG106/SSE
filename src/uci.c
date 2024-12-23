@@ -165,7 +165,6 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             continue;
         }
 
-        do_search = false;
         stop = true;
         SpinLock(&finished);
 
