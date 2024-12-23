@@ -1,5 +1,6 @@
 #include "init.h"
-#include "uci.h"
+#include "search.h"
+#include "threads.h"
 
 #if NOSTDLIB
 SMALL void _start() {
@@ -7,9 +8,11 @@ SMALL void _start() {
 SMALL int main() {
 #endif
     // Tables for move generation and precompute reduction values
-    InitAll();
     // connect to the GUI
-    UciLoop();
+    //UciLoop();
+    do_search = false;
+    StartUciThread();
+    RunMainThread();
 
 #if NOSTDLIB
     exit(0);

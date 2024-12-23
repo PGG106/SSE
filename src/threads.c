@@ -1,6 +1,8 @@
 #include "threads.h"
 
-#include "shims.h"
+#include "init.h"
+#include "search.h"
+#include "uci.h"
 
 #define SIGCHLD 17
 #define CLONE_VM      0x00000100
@@ -9,6 +11,8 @@
 #define CLONE_SIGHAND 0x00000800
 
 #define MY_THREAD_FLAGS (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD)
+
+typedef int (*thread_fn)(void*);
 
 // We define a new helper that can take 5 parameters plus the syscall number (6 total).
 ssize_t _sys6(ssize_t call,
@@ -32,9 +36,8 @@ ssize_t _sys6(ssize_t call,
     return ret;
 }
 
-int createThread(thread_fn fn, void* arg)
-{
-    const size_t STACK_SIZE = 8192;
+int createThread(thread_fn fn, void* arg) {
+    const size_t STACK_SIZE = 8 * 1024 * 1024;
     char* stackMem = (char*)malloc(STACK_SIZE);
     if (!stackMem) {
         return -1;
@@ -50,4 +53,29 @@ int createThread(thread_fn fn, void* arg)
         exit(0);
     }
     return ret;
+}
+
+int UciFn(void* arg)
+{
+    (void)arg;
+    InitAll();
+    UciLoop();
+    //while (true) puts("hi1");
+    return 0;
+}
+
+void StartUciThread() {
+    createThread(UciFn, NULL);
+}
+
+void RunMainThread() {
+    while (true)
+    {
+        puts("waiting");
+        while (!do_search) {
+        }
+        puts("started");
+        RootSearch(MAXDEPTH, current_td);
+        finished = true;
+    }
 }

@@ -18,6 +18,10 @@
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 
 Move return_bestmove = NOMOVE;
+struct ThreadData* current_td;
+bool do_search = false;
+bool stop = false;
+bool finished = true;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
 SMALL void ClearForSearch(struct ThreadData* td) {
@@ -357,7 +361,7 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
-        if( td->pondering && StdinHasData()){
+        if( td->pondering && stop){
             td->info.stopped = true;
             return 0;
         }
@@ -447,7 +451,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
+    if(td->pondering && stop){
         td->info.stopped = true;
         return 0;
     }

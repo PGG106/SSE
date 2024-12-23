@@ -37,6 +37,10 @@ struct ThreadData {
 };
 
 extern Move return_bestmove;
+extern struct ThreadData* current_td;
+extern bool do_search;
+extern bool stop;
+extern bool finished;
 
 void init_thread_data(struct ThreadData* td);
 

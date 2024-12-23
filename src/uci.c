@@ -164,6 +164,14 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             continue;
         }
 
+        do_search = false;
+        stop = true;
+        puts("setfalse");
+        while (!finished)
+        {
+            
+        }
+
         size_t len = strlen(input);
         if (input[len - 1] == '\n') {
             input[len - 1] = '\0';
@@ -184,7 +192,11 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             // call parse go function
             bool search = ParseGo(input, &td->info, &td->pos);
             // Start search in a separate thread
-            RootSearch(MAXDEPTH, td);
+            stop = false;
+            finished = false;
+            do_search = true;
+            puts("starting");
+            //RootSearch(MAXDEPTH, td);
         }
 
 #if UCI
@@ -228,5 +240,6 @@ SMALL void UciLoop() {
 #endif
     struct ThreadData td;
     init_thread_data(&td);
+    current_td = &td;
     UciLoopInner(&td);
 }
