@@ -20,7 +20,7 @@
 Move return_bestmove = NOMOVE;
 struct ThreadData* current_td;
 volatile bool do_search = false;
-volatile bool stop = false;
+bool stop = false;
 volatile bool finished = true;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
@@ -52,6 +52,8 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
+
+#ifndef NOPONDER
     // start pondering
     MakeMove(true, return_bestmove, &td->pos);
     struct TTEntry tte;
@@ -65,6 +67,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
+#endif
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise

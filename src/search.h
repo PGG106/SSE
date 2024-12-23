@@ -38,7 +38,7 @@ struct ThreadData {
 extern Move return_bestmove;
 extern struct ThreadData* current_td;
 extern volatile bool do_search;
-extern volatile bool stop;
+extern bool stop;
 extern volatile bool finished;
 
 void init_thread_data(struct ThreadData* td);

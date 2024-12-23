@@ -67,7 +67,6 @@ int createThread(thread_fn fn, void* arg) {
 void* UciFn(void* arg)
 {
     (void)arg;
-    InitAll();
     UciLoop();
     //while (true) puts("hi1");
     return NULL;

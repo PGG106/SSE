@@ -165,8 +165,10 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             continue;
         }
 
+#ifndef NOPONDER
         stop = true;
         SpinLock(&finished);
+#endif
 
         size_t len = strlen(input);
         if (input[len - 1] == '\n') {
@@ -191,7 +193,9 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             stop = false;
             finished = false;
             do_search = true;
-            //RootSearch(MAXDEPTH, td);
+#ifdef NOPONDER
+            RootSearch(MAXDEPTH, td);
+#endif
         }
 
 #if UCI
