@@ -167,7 +167,6 @@ SMALL static void UciLoopInner(struct ThreadData *td)
 
         do_search = false;
         stop = true;
-        puts("setfalse");
         SpinLock(&finished);
 
         size_t len = strlen(input);
@@ -193,8 +192,6 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             stop = false;
             finished = false;
             do_search = true;
-            puts("starting");
-            printf("%i\n", do_search);
             //RootSearch(MAXDEPTH, td);
         }
 

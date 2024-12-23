@@ -2,4 +2,4 @@
 
 void StartUciThread();
 void RunMainThread();
-void SpinLock(const bool* condition);
+void SpinLock(volatile bool* condition);

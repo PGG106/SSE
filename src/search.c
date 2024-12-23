@@ -19,9 +19,9 @@
 
 Move return_bestmove = NOMOVE;
 struct ThreadData* current_td;
-bool do_search = false;
-bool stop = false;
-bool finished = true;
+volatile bool do_search = false;
+volatile bool stop = false;
+volatile bool finished = true;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
 SMALL void ClearForSearch(struct ThreadData* td) {
@@ -33,14 +33,6 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->starttime = GetTimeMs();
     info->nodes = 0;
     info->seldepth = 0;
-}
-
-static bool StdinHasData()
-{
-    struct pollfd fds;
-    fds.fd = 0;
-    fds.events = POLLIN;
-    return poll(&fds, 1, 0);
 }
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
@@ -70,11 +62,9 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     MakeMove(true, ponder_move, &td->pos);
     td->info.timeset = false;
     td->info.stopped = false;
-    td->pondering = true;
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
-    td->pondering = false;
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -176,8 +166,6 @@ SMALL void init_thread_data(struct ThreadData* td)
     td->info.stopped = false;
 
     td->nmpPlies = 0;
-
-    td->pondering = false;
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
@@ -361,7 +349,8 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
-        if( td->pondering && stop){
+        if(stop){
+            do_search = false;
             td->info.stopped = true;
             return 0;
         }
@@ -451,7 +440,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if(td->pondering && stop){
+    if(stop){
+        do_search = false;
         td->info.stopped = true;
         return 0;
     }
@@ -858,7 +848,8 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
-    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
+    if(stop){
+        do_search = false;
         td->info.stopped = true;
         return 0;
     }

@@ -33,14 +33,13 @@ struct ThreadData {
     int RootDepth;
     int nmpPlies;
     uint64_t nodeSpentTable[64 * 64];
-    bool pondering;
 };
 
 extern Move return_bestmove;
 extern struct ThreadData* current_td;
-extern bool do_search;
-extern bool stop;
-extern bool finished;
+extern volatile bool do_search;
+extern volatile bool stop;
+extern volatile bool finished;
 
 void init_thread_data(struct ThreadData* td);
 

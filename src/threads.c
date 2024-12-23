@@ -77,17 +77,17 @@ void StartUciThread() {
     createThread(UciFn, NULL);
 }
 
-__attribute__((optimize("O0"))) void SpinLock(const bool* condition) {
+void SpinLock(volatile bool* condition) {
     while (!*condition) {}
 }
 
 void RunMainThread() {
     while (true)
     {
-        puts("waiting");
         SpinLock(&do_search);
-        puts("started");
         RootSearch(MAXDEPTH, current_td);
         finished = true;
+        stop = false;
+        do_search = false;
     }
 }

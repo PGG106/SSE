@@ -10,7 +10,6 @@ SMALL int main() {
     // Tables for move generation and precompute reduction values
     // connect to the GUI
     //UciLoop();
-    do_search = false;
     StartUciThread();
     RunMainThread();
 
