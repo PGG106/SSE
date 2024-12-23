@@ -1,5 +1,9 @@
 #include "threads.h"
 
+#if !NOSTDLIB
+#include <pthread.h>
+#endif
+
 #include "init.h"
 #include "search.h"
 #include "uci.h"
@@ -12,7 +16,7 @@
 
 #define MY_THREAD_FLAGS (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD)
 
-typedef int (*thread_fn)(void*);
+typedef void* (*thread_fn)(void*);
 
 // We define a new helper that can take 5 parameters plus the syscall number (6 total).
 ssize_t _sys6(ssize_t call,
@@ -37,6 +41,7 @@ ssize_t _sys6(ssize_t call,
 }
 
 int createThread(thread_fn fn, void* arg) {
+#if NOSTDLIB
     const size_t STACK_SIZE = 8 * 1024 * 1024;
     char* stackMem = (char*)malloc(STACK_SIZE);
     if (!stackMem) {
@@ -53,27 +58,34 @@ int createThread(thread_fn fn, void* arg) {
         exit(0);
     }
     return ret;
+#else
+    pthread_t t1;
+    pthread_create(&t1, NULL, fn, NULL);
+#endif
 }
 
-int UciFn(void* arg)
+void* UciFn(void* arg)
 {
     (void)arg;
     InitAll();
     UciLoop();
     //while (true) puts("hi1");
-    return 0;
+    return NULL;
 }
 
 void StartUciThread() {
     createThread(UciFn, NULL);
 }
 
+__attribute__((optimize("O0"))) void SpinLock(const bool* condition) {
+    while (!*condition) {}
+}
+
 void RunMainThread() {
     while (true)
     {
         puts("waiting");
-        while (!do_search) {
-        }
+        SpinLock(&do_search);
         puts("started");
         RootSearch(MAXDEPTH, current_td);
         finished = true;

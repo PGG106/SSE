@@ -32,7 +32,7 @@ endif
 ifeq ($(NOSTDLIB), true)
 	CFLAGS += -nostdlib -ffreestanding -fno-tree-loop-distribute-patterns -static -DNOSTDLIB
 else
-	CFLAGS += -lm
+	CFLAGS += -lm -pthread
 endif
 
 #UCI build

@@ -10,6 +10,7 @@
 #include "search.h"
 
 #include "shims.h"
+#include "threads.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 SMALL Move ParseMove(const char* moveString, struct Position* pos) {
@@ -167,10 +168,7 @@ SMALL static void UciLoopInner(struct ThreadData *td)
         do_search = false;
         stop = true;
         puts("setfalse");
-        while (!finished)
-        {
-            
-        }
+        SpinLock(&finished);
 
         size_t len = strlen(input);
         if (input[len - 1] == '\n') {
@@ -196,6 +194,7 @@ SMALL static void UciLoopInner(struct ThreadData *td)
             finished = false;
             do_search = true;
             puts("starting");
+            printf("%i\n", do_search);
             //RootSearch(MAXDEPTH, td);
         }
 
