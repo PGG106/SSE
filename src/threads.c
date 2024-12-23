@@ -42,7 +42,7 @@ ssize_t _sys6(ssize_t call,
 
 int createThread(thread_fn fn, void* arg) {
 #if NOSTDLIB
-    const size_t STACK_SIZE = 8 * 1024 * 1024;
+    const size_t STACK_SIZE = 16 * 1024;
     char* stackMem = (char*)malloc(STACK_SIZE);
     if (!stackMem) {
         return -1;
