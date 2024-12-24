@@ -349,11 +349,6 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
-        if( td->pondering && StdinHasData()){
-            td->info.stopped = true;
-            return 0;
-        }
-
         // Stop calculating and return best move so far
         if (td->info.stopped) break;
 
