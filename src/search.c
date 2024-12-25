@@ -556,18 +556,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 if (nmpScore > MATE_FOUND)
                     nmpScore = beta;
 
-                // If we don't have to do a verification search just return the score
-                if (td->nmpPlies || depth < 15)
-                    return nmpScore;
-
-                // Verification search to avoid zugzwangs: if we are at an high enough depth we perform another reduced search without nmp for at least nmpPlies
-                td->nmpPlies = ss->ply + (depth - R) * 2 / 3;
-                int verificationScore = Negamax(beta - 1, beta, depth - R, false, td, ss);
-                td->nmpPlies = 0;
-
-                // If the verification search holds return the score
-                if (verificationScore >= beta)
-                    return nmpScore;
+                return nmpScore;
             }
         }
         // Razoring
