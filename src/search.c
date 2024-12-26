@@ -49,13 +49,14 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
-#if KAGGLE
+#ifdef KAGGLE
     MakeMove(true, return_bestmove, &td->pos);
     ZobristKey opponent_hash = td->pos.posKey;
     UnmakeMove(return_bestmove, &td->pos);
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
+#ifndef NOPONDER
     // start pondering
     MakeMove(true, return_bestmove, &td->pos);
     struct TTEntry tte;
@@ -71,6 +72,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     UnmakeMove(ponder_move, &td->pos);
     UnmakeMove(return_bestmove, &td->pos);
     td->pondering = false;
+#endif
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
