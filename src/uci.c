@@ -160,6 +160,8 @@ void* checkStop(void* param) {
 
         else if (!strcmp(input, "stop")) {
                 td->info.stopped = true;
+                //kill
+                return;
         }
     }
     return NULL;
