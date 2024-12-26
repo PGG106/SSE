@@ -147,8 +147,8 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
 
 void* checkStop(void* param) {
     struct ThreadData* td = param;
+    char input[256];
     while (true) {
-        char input[256];
 
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
