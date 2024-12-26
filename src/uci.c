@@ -145,7 +145,8 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
     pos->accumStackHead = 1;
 }
 
-void checkStop(struct ThreadData* td) {
+void* checkStop(void* param) {
+    struct ThreadData* td = param;
     char input[256];
     while (true) {
         if (fgets(input, sizeof(input), stdin) == NULL) {
@@ -161,6 +162,7 @@ void checkStop(struct ThreadData* td) {
                 td->info.stopped = true;
         }
     }
+    return NULL;
 }
 
 // main UCI loop
