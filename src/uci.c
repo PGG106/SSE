@@ -172,8 +172,6 @@ void* checkStop(void* param) {
         // parse UCI "position" command
         if (!strcmp(token, "stop")) {
             td->info.stopped = true;
-            //kill
-            printf("shit");
             return NULL;
         }
     }
