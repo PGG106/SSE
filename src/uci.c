@@ -147,9 +147,11 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
 
 void* checkStop(void* param) {
     struct ThreadData* td = param;
-    char input[256];
     while (true) {
-        if (fgets(input, sizeof(input), stdin) == NULL) {
+        char input[256];
+
+        if (fgets(input, sizeof(input), stdin) == NULL)
+        {
             break;
         }
 
@@ -158,10 +160,21 @@ void* checkStop(void* param) {
             continue;
         }
 
-        else if (!strcmp(input, "stop")) {
-                td->info.stopped = true;
-                //kill
-                return;
+        size_t len = strlen(input);
+        if (input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+
+        char token[128];
+        int input_index = 0;
+        next_token(input, &input_index, token);
+
+        // parse UCI "position" command
+        if (!strcmp(token, "stop")) {
+            td->info.stopped = true;
+            //kill
+            printf("shit");
+            return NULL;
         }
     }
     return NULL;
