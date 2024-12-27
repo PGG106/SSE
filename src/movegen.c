@@ -1,7 +1,7 @@
 #include "movegen.h"
 
 #include "attack.h"
-#include "hyperbola.h"
+#include "magic.h"
 #include "makemove.h"
 #include "move.h"
 #include "position.h"
