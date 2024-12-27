@@ -25,7 +25,7 @@ void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonu
     if ((ss - offset)->move) {
         // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
         const int scaledBonus = bonus - GetSingleCHScore(ss, move, offset) * abs(bonus) / CH_MAX;
-        (*((ss - offset)->contHistEntry))[PieceTo(move)] += scaledBonus;
+        (*((ss - offset)->contHistEntry))[PieceTypeTo(move)] += scaledBonus;
     }
 }
 
@@ -96,7 +96,7 @@ int GetCHScore(const struct SearchStack* ss, const Move move) {
 }
 
 int GetSingleCHScore(const struct SearchStack* ss, const Move move, const int offset) {
-    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTo(move)]
+    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTypeTo(move)]
                                : 0;
 }
 
