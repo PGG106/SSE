@@ -37,7 +37,9 @@ int ScaleMaterial(const struct Position* pos, int eval) {
 int EvalPositionRaw(struct Position* pos) {
     // Update accumulators to ensure we are up to date on the current board state
     NNUE_update(Position_AccumulatorTop(pos), pos);
-    return NNUE_output(Position_AccumulatorTop(pos), pos->side);
+    const int pieceCount = Position_PieceCount(pos);
+    const int outputBucket = min((63 - pieceCount) * (32 - pieceCount) / 225, 7);
+    return NNUE_output(Position_AccumulatorTop(pos), pos->side, outputBucket);
 }
 
 // position evaluation

@@ -64,12 +64,14 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     Move ponder_move = NOMOVE;
     if (probed)
         ponder_move = MoveFromTT(&td->pos, tte.move);
+    if(IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos,ponder_move)){
     MakeMove(true, ponder_move, &td->pos);
     td->info.timeset = false;
     td->info.stopped = false;
     td->pondering = true;
     SearchPosition(1, MAXDEPTH, td);
     UnmakeMove(ponder_move, &td->pos);
+    }
     UnmakeMove(return_bestmove, &td->pos);
     td->pondering = false;
 #endif
@@ -87,15 +89,7 @@ bool IsRepetition(const struct Position* pos) {
     for (int index = 4; index <= distance; index += 2)
         // if we found the same position hashkey as the current position
         if (pos->played_positions[startingPoint - index] == pos->posKey) {
-
-            // we found a 2-fold repetition within the search tree
-            if (index < pos->historyStackHead)
-                return true;
-
-            counter++;
-            // we found a 3-fold repetition which occurred in part before or at root
-            if (counter >= 2)
-                return true;
+            return true;
         }
     return false;
 }
@@ -146,9 +140,6 @@ SMALL void init_thread_data(struct ThreadData* td)
 
     memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
     memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
-    //for (int i = 0; i < 12; i++) {
-    //    td->pos.bitboards[i] = 0;
-    //}
 
     for (int i = 0; i < 2; i++) {
         td->pos.occupancies[i] = 0;
@@ -558,18 +549,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 if (nmpScore > MATE_FOUND)
                     nmpScore = beta;
 
-                // If we don't have to do a verification search just return the score
-                if (td->nmpPlies || depth < 15)
-                    return nmpScore;
-
-                // Verification search to avoid zugzwangs: if we are at an high enough depth we perform another reduced search without nmp for at least nmpPlies
-                td->nmpPlies = ss->ply + (depth - R) * 2 / 3;
-                int verificationScore = Negamax(beta - 1, beta, depth - R, false, td, ss);
-                td->nmpPlies = 0;
-
-                // If the verification search holds return the score
-                if (verificationScore >= beta)
-                    return nmpScore;
+                return nmpScore;
             }
         }
         // Razoring
@@ -705,7 +685,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
-
 
             int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
                 : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
