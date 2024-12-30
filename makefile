@@ -178,6 +178,8 @@ cleanall: clean all
 small: cleanall
 	sstrip $(EXE)
 	ls -la $(EXE)
+	md5sum $(NETWORK_NAME)
+	md5sum $(EXE)
 	xz -k -9 $(EXE)
 	xz -k -9 $(NETWORK_NAME)
 	tar -cf submission.tar $(EXE).xz $(NETWORK_NAME).xz main.py
