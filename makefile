@@ -27,6 +27,7 @@ endif
 
 ifeq ($(BENCH), true)
 	CFLAGS += -DBENCH
+	CFLAGS += -DNOPONDER # Never bench with ponder
 endif
 
 ifeq ($(NOPONDER), true)
