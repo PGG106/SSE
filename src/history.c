@@ -108,9 +108,8 @@ int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, co
     return sd->captHist[PieceTo(move)][capturedPiece];
 }
 
-void updateSingleCorrHistScore(int *entry, const int scaledDiff, const int newWeight) {
-    *entry = (*entry * (CORRHIST_WEIGHT_SCALE - newWeight) + scaledDiff * newWeight) / CORRHIST_WEIGHT_SCALE;
-    *entry = clamp(*entry, -CORRHIST_MAX, CORRHIST_MAX);
+void updateSingleCorrHistScore(short *entry, const int scaledDiff, const int newWeight) {
+    *entry = clamp((*entry * (CORRHIST_WEIGHT_SCALE - newWeight) + scaledDiff * newWeight) / CORRHIST_WEIGHT_SCALE, -CORRHIST_MAX, CORRHIST_MAX);
 }
 
 void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff) {
