@@ -13,16 +13,16 @@ struct SearchStack {
     int ply;
     Move searchKiller;
     int doubleExtensions;
-    int (*contHistEntry)[12 * 64];
+    short(*contHistEntry)[12 * 64];
 };
 
 struct SearchData {
-    int searchHistory[2][64 * 64];
-    int captHist[12 * 64][6];
-    int pawnCorrHist[2][CORRHIST_SIZE];
-    int whiteNonPawnCorrHist[2][CORRHIST_SIZE];
-    int blackNonPawnCorrHist[2][CORRHIST_SIZE];
-    int contHist[12 * 64][12 * 64];
+    short searchHistory[2][64 * 64];
+    short captHist[12 * 64][6];
+    short pawnCorrHist[2][CORRHIST_SIZE];
+    short whiteNonPawnCorrHist[2][CORRHIST_SIZE];
+    short blackNonPawnCorrHist[2][CORRHIST_SIZE];
+    short contHist[12 * 64][12 * 64];
 };
 
 // a collection of all the data a thread needs to conduct a search
