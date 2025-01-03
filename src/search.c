@@ -597,11 +597,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         if (!rootNode
             && bestScore > -MATE_FOUND) {
 
-            int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
-                : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
-
             // lmrDepth is the current depth minus the reduction the move would undergo in lmr, this is helpful because it helps us discriminate the bad moves with more accuracy
-            const int lmrDepth = max(0, depth - depthReduction + moveHistory / 8192);
+            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] + moveHistory / 8192);
 
             if (!skipQuiets) {
 
@@ -684,9 +681,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
-
-            int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
-                : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
+            int depthReduction = reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)];
 
             if (isQuiet) {
                 // Fuck
