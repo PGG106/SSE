@@ -207,7 +207,7 @@ SMALL void UciLoop() {
         // parse UCI "uci" command
         else if (!strcmp(token, "uci")) {
             // print engine info
-            puts("id name SSE 0.1.1");
+            puts("id name SSE 0.5");
             puts("id author Zuppa and Gedas based on Alexandria\n");
             puts("uciok");
             fflush(stdout);
