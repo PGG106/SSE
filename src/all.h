@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <string.h>
-#include <stdall.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <fcntl.h>
