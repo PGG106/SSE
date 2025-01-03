@@ -1,0 +1,5 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+__gnu_lto_slim      0x1               all.o
