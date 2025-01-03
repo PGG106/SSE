@@ -5,6 +5,7 @@
 #define NAME "Alexandria-7.1.1"
 
 extern int see_margin[64][2];
+extern int reductions[2][64][64];
 
 static const char* start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
