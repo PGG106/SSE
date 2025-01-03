@@ -1,12 +1,4 @@
-#include "init.h"
-
-#include "position.h"
-#include "attack.h"
-#include "hyperbola.h"
-#include "search.h"
-#include "ttable.h"
-#include "history.h"
-#include "uci.h"
+#include "all.h"
 
 Bitboard PieceKeys[12][64];
 Bitboard enpassant_keys[64];

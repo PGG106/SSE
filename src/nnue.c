@@ -1,7 +1,4 @@
-#include "nnue.h"
-
-#include "position.h"
-#include "simd.h"
+#include "all.h"
 
 struct Network net;
 

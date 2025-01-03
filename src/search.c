@@ -1,16 +1,4 @@
-#include "search.h"
-
-#include "attack.h"
-#include "movegen.h"
-#include "eval.h"
-#include "hyperbola.h"
-#include "makemove.h"
-#include "ttable.h"
-#include "io.h"
-#include "movepicker.h"
-#include "time_manager.h"
-
-#include "shims.h"
+#include "all.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #define max(a,b) (((a) > (b)) ? (a) : (b))

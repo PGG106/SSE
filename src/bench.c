@@ -1,13 +1,6 @@
-#include "bench.h"
+#include "all.h"
 
 #if BENCH
-#include "ttable.h"
-#include "init.h"
-#include "eval.h"
-#include "search.h"
-
-#include "shims.h"
-
 // Benchmarks from Bitgenie
 #define bench_count 52
 const char* benchmarkfens[bench_count] = {

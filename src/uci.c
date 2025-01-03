@@ -1,15 +1,4 @@
-#include "uci.h"
-
-#include "bench.h"
-#include "eval.h"
-#include "init.h"
-#include "io.h"
-#include "movegen.h"
-#include "position.h"
-#include "time_manager.h"
-#include "search.h"
-
-#include "shims.h"
+#include "all.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 SMALL Move ParseMove(const char* moveString, struct Position* pos) {

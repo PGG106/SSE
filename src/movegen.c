@@ -1,12 +1,4 @@
-#include "movegen.h"
-
-#include "attack.h"
-#include "hyperbola.h"
-#include "makemove.h"
-#include "move.h"
-#include "position.h"
-
-#include "shims.h"
+#include "all.h"
 
 #define abs(x) ((x) < 0 ? -(x) : (x))
 

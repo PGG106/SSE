@@ -1,5 +1,4 @@
-#include "init.h"
-#include "uci.h"
+#include "all.h"
 
 #if NOSTDLIB
 SMALL void _start() {

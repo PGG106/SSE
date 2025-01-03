@@ -1,8 +1,6 @@
-#include "ttable.h"
+#include "all.h"
 
 struct TTable TT;
-
-#include "shims.h"
 
 void* AlignedMalloc(size_t size, size_t alignment) {
     return malloc(size);

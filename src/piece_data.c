@@ -1,6 +1,4 @@
-#include "piece_data.h"
-
-#include "types.h"
+#include "all.h"
 
 SMALL int char_pieces(const char ch) {
 	switch (ch)
