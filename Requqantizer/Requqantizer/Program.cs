@@ -4,17 +4,6 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        //var ms = new MemoryStream();
-        //var w = new Int7Writer(ms);
-        //w.WriteInt(1);
-        //w.WriteInt(12);
-        //w.WriteInt(123);
-        //w.WriteInt(1234);
-        //var a = ms.ToArray();
-        //var r = new Int7Reader();
-        //r.Read(a);
-        //return;
-
         var dir = $"C:/shared/sse/nets/{Constants.L1_SIZE}";
         var pathShorts = Path.Combine(dir, "quantised.bin");
         var pathFloats = Path.Combine(dir, "raw.bin");
@@ -24,102 +13,13 @@ internal class Program
 
         var permutor = new Permutor();
         permutor.Permute(sections);
-
-        //var bins = Enumerable.Repeat(0, 16).ToArray();
-        //foreach (var section in sections.Shorts)
-        //{
-        //    for (var i = 0; i < section.Count; i++)
-        //    {
-        //        var val = section[i];
-        //        var copy = val;
-        //        var needsBits = 0;
-        //        while (val != 0)
-        //        {
-        //            val /= 2;
-        //            needsBits++;
-        //            bins[needsBits]++;
-        //        }
-        //    }
-        //}
-
-        //for (var i = 0; i < bins.Length; i++)
-        //{
-        //    var bin = bins[i];
-        //    Console.WriteLine($"{i}: {bin}");
-        //}
-
-
+        
         var blocker = new Blocker();
         var blocks = blocker.BlockSection(sections.Floats[0]);
 
-        var result = new List<byte>();
+        var serializer = new Serializer();
+        var result = serializer.Serialize(sections, blocks);
 
-        //var ms = new MemoryStream();
-        //var int7Writer = new Int7Writer(ms);
-        //foreach (var value in sections[0])
-        //{
-        //    int7Writer.WriteInt(value);
-        //}
-        //var arr = ms.ToArray();
-        //foreach (var val in arr)
-        //{
-        //    result.Add(val);
-        //}
-
-        for (var blockIndex = 0; blockIndex < blocks.Count; blockIndex++)
-        {
-            var block = blocks[blockIndex].Values;
-            var divisor = blocks[blockIndex].Divisor;
-
-            result.Add((byte)divisor);
-            if (divisor == 0)
-            {
-                continue;
-            }
-
-            foreach (var value in block)
-            {
-                var quantized = (byte)(sbyte)Math.Round(value / (double)divisor);
-                result.Add(quantized);
-            }
-        }
-
-        foreach (var value in sections.Shorts[1])
-        {
-            //result.Add((byte)(sbyte)value);
-
-            //var sht = (short)Math.Round(value * FT_QUANT);
-            //result.AddRange(BitConverter.GetBytes(sht));
-
-            result.AddRange(BitConverter.GetBytes(value));
-        }
-
-        //var transposedL1Weights = new short[Constants.L1_SIZE * 2 * Constants.OUTPUT_BUCKETS];
-        //for (var weight = 0; weight < 2 * Constants.L1_SIZE; ++weight)
-        //{
-        //    for (var bucket = 0; bucket < Constants.OUTPUT_BUCKETS; ++bucket)
-        //    {
-        //        var srcIdx = weight * Constants.OUTPUT_BUCKETS + bucket;
-        //        var dstIdx = bucket * 2 * Constants.L1_SIZE + weight;
-        //        transposedL1Weights[dstIdx] = sections[2][srcIdx];
-        //    }
-        //}
-        //sections[2] = transposedL1Weights.ToList();
-
-        foreach (var value in sections.Shorts[2])
-        {
-            //var sht = (short)Math.Round(value * L1_QUANT);
-            //result.AddRange(BitConverter.GetBytes(sht));
-            result.Add((byte)(sbyte)value);
-        }
-        foreach (var value in sections.Shorts[3])
-        {
-            //var sht = (short)Math.Round(value * FT_QUANT * L1_QUANT);
-            //result.AddRange(BitConverter.GetBytes(sht));
-
-            result.AddRange(BitConverter.GetBytes(value));
-        }
-
-        File.WriteAllBytes("nn.net", result.ToArray());
+        File.WriteAllBytes("nn.net", result);
     }
 }
