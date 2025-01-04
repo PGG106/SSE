@@ -116,6 +116,10 @@ ad007539cec52de9368bc2e2b30fb83f  nn.net
 ```
 
 ```c
+Max observed memory: 4.7 MB
+```
+
+```c
 Score of sse-magics vs sse-dev: 11445 - 7372 - 18413  [0.555] 37230
 ...      sse-magics playing White: 10099 - 579 - 7937  [0.756] 18615
 ...      sse-magics playing Black: 1346 - 6793 - 10476  [0.354] 18615
