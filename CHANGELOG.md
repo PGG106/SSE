@@ -101,3 +101,24 @@ Exhaustive xz parameter search, no functional change
 
 ad007539cec52de9368bc2e2b30fb83f  nn.net
 f22b045c49c81dfe415d87e1edb786ec  Alexandria
+
+### 0.7
+
+Reintroduce magic bitboards
+
+65347 bytes
+
+ad007539cec52de9368bc2e2b30fb83f  nn.net
+32041dcc10431b65ce7bace35ba53b54  Alexandria
+
+```c
+5844361 nodes 3031000 nps
+```
+
+```c
+Score of sse-magics vs sse-dev: 11445 - 7372 - 18413  [0.555] 37230
+...      sse-magics playing White: 10099 - 579 - 7937  [0.756] 18615
+...      sse-magics playing Black: 1346 - 6793 - 10476  [0.354] 18615
+...      White vs Black: 16892 - 1925 - 18413  [0.701] 37230
+Elo difference: 38.2 +/- 2.5, LOS: 100.0 %, DrawRatio: 49.5 %
+```
