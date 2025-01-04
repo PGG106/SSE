@@ -14,7 +14,7 @@ do
 	do
 		for NICE in {4..273}
 		do
-			xz -f -k --lzma2=preset=9,lc=0,lp=0,pb=0,mf=$MF,nice=$NICE $TARGET
+			xz -f -k --lzma2=preset=9,lc=2,lp=0,pb=0,mf=$MF,nice=$NICE $TARGET
 			FILESIZE=$(stat -c%s "$TARGET.xz")
 			if [ "$FILESIZE" -lt "$SMALLEST" ]; then
 				echo mf=$MF nice=$NICE size=$FILESIZE
