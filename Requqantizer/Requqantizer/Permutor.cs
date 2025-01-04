@@ -1,17 +1,24 @@
 ﻿namespace Requqantizer;
 
-class NodeData
-{
-    public List<float> L1Weights { get; set; }
-}
-
 internal class Permutor
 {
+    private readonly Random _rng;
+
+    public Permutor(Random? rng = null)
+    {
+        _rng = rng ?? new Random(0);
+    }
+
+    private int[] GetNodeIndices()
+    {
+        var nodeIndices = Enumerable.Range(0, Constants.L1_SIZE).ToArray();
+        _rng.Shuffle(nodeIndices);
+        return nodeIndices;
+    }
+
     public Sections Permute(Sections sections)
     {
-        var rng = new Random(0);
-        var nodeIndices = Enumerable.Range(0, Constants.L1_SIZE).ToArray();
-        rng.Shuffle(nodeIndices);
+        var nodeIndices = GetNodeIndices();
 
         var newSections = new Sections();
         newSections.Shorts = sections.Shorts.Select(x => x.ToList()).ToList();

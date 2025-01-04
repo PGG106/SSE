@@ -12,14 +12,19 @@ internal class Program
         var sections = reader.ReadBoth(pathShorts, pathFloats);
 
         var permutor = new Permutor();
-        sections = permutor.Permute(sections);
-        
         var blocker = new Blocker();
-        var blocks = blocker.BlockSection(sections.Floats[0], Constants.BLOCK_SIZE);
 
-        var serializer = new Serializer();
-        var result = serializer.Serialize(sections, blocks);
+        for (var i = 0; i < 100; i++)
+        {
+            var sections2 = permutor.Permute(sections);
+            //sections = sections2;
+            var blocks = blocker.BlockSection(sections2.Floats[0], Constants.BLOCK_SIZE, false);
+        }
+        
 
-        File.WriteAllBytes("nn.net", result);
+        //var serializer = new Serializer();
+        //var result = serializer.Serialize(sections, blocks);
+
+        //File.WriteAllBytes("nn.net", result);
     }
 }

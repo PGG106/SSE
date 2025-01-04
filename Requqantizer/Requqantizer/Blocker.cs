@@ -2,11 +2,15 @@
 
 internal class Blocker
 {
-    public List<Block> BlockSection(List<float> section, int blockSize)
+    public List<Block> BlockSection(List<float> section, int blockSize, bool printDetails = true)
     {
         var blockCount = section.Count / blockSize;
-        Console.WriteLine($"Block size: {blockSize}");
-        Console.WriteLine($"Block count: {blockCount}");
+        if (printDetails)
+        {
+            Console.WriteLine($"Block size: {blockSize}");
+            Console.WriteLine($"Block count: {blockCount}");
+        }
+
         var queue = new Queue<float>(section);
         var blocks = new List<Block>();
         for (var blockIndex = 0; blockIndex < blockCount; blockIndex++)
@@ -39,7 +43,10 @@ internal class Blocker
 
             block.Divisor = divisor;
 
-            Console.WriteLine($"Block {blockIndex}: Divisor: {divisor} Min: {block.Values.Min()} Max: {block.Values.Max()}");
+            if (printDetails)
+            {
+                Console.WriteLine($"Block {blockIndex}: Divisor: {divisor} Min: {block.Values.Min()} Max: {block.Values.Max()}");
+            }
         }
 
         if (queue.Count > 0)
@@ -62,7 +69,7 @@ internal class Blocker
         {
             var bin = divisorBins[i];
             var percentage = bin * 100f / blockCount;
-            Console.WriteLine($"Div {i}: {bin} ({percentage:0.0}%)");
+            //Console.WriteLine($"Div {i}: {bin} ({percentage:0.0}%)");
         }
 
         return blocks;
