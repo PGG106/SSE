@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Requqantizer
 {
@@ -18,15 +19,17 @@ namespace Requqantizer
             //return;
 
             var dir = $"C:/shared/sse/nets/{Constants.L1_SIZE}";
-            var path = Path.Combine(dir, "quantised.bin");
-            var path2 = Path.Combine(dir, "raw.bin");
+            var pathShorts = Path.Combine(dir, "quantised.bin");
+            var pathFloats = Path.Combine(dir, "raw.bin");
 
             var reader = new Reader();
-            var sections = reader.ReadShorts(path);
-            var sections2 = reader.ReadFloats(path2);
+            var sections = reader.ReadBoth(pathShorts, pathFloats);
+
+            var permutor = new Permutor();
+            permutor.Permute(sections);
 
             var bins = Enumerable.Repeat(0, 16).ToArray();
-            foreach (var section in sections)
+            foreach (var section in sections.Shorts)
             {
                 for (var i = 0; i < section.Count; i++)
                 {
@@ -48,8 +51,9 @@ namespace Requqantizer
                 Console.WriteLine($"{i}: {bin}");
             }
 
+
             var blocker = new Blocker();
-            var blocks = blocker.BlockSection(sections2[0]);
+            var blocks = blocker.BlockSection(sections.Floats[0]);
 
             var result = new List<byte>();
 
@@ -83,7 +87,7 @@ namespace Requqantizer
                 }
             }
 
-            foreach (var value in sections[1])
+            foreach (var value in sections.Shorts[1])
             {
                 //result.Add((byte)(sbyte)value);
 
@@ -105,13 +109,13 @@ namespace Requqantizer
             //}
             //sections[2] = transposedL1Weights.ToList();
 
-            foreach (var value in sections[2])
+            foreach (var value in sections.Shorts[2])
             {
                 //var sht = (short)Math.Round(value * L1_QUANT);
                 //result.AddRange(BitConverter.GetBytes(sht));
                 result.Add((byte)(sbyte)value);
             }
-            foreach (var value in sections[3])
+            foreach (var value in sections.Shorts[3])
             {
                 //var sht = (short)Math.Round(value * FT_QUANT * L1_QUANT);
                 //result.AddRange(BitConverter.GetBytes(sht));

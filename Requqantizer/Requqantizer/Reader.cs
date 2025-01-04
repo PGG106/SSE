@@ -1,4 +1,6 @@
-﻿namespace Requqantizer
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace Requqantizer
 {
     internal class Reader
     {
@@ -53,6 +55,14 @@
                 sections.Add(data);
                 Console.WriteLine($"Min: {data.Min()} Max: {data.Max()}");
             }
+            return sections;
+        }
+
+        public Sections ReadBoth(string pathShorts, string pathFloats)
+        {
+            var sections = new Sections();
+            sections.Shorts = ReadShorts(pathShorts);
+            sections.Floats = ReadFloats(pathFloats);
             return sections;
         }
     }
