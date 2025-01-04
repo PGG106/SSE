@@ -1,8 +1,7 @@
-﻿namespace Requqantizer
+﻿namespace Requqantizer;
+
+internal class Sections
 {
-    internal class Sections
-    {
-        public List<List<short>> Shorts { get; set; }
-        public List<List<float>> Floats { get; set; }
-    }
+    public List<List<short>> Shorts { get; set; }
+    public List<List<float>> Floats { get; set; }
 }

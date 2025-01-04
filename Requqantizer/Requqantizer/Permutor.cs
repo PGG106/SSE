@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Requqantizer;
 
-namespace Requqantizer
+internal class Permutor
 {
-    internal class Permutor
+    public Sections Permute(Sections sections)
     {
-        public Sections Permute(Sections sections)
-        {
-            return sections;
-        }
+        return sections;
     }
 }
