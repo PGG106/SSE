@@ -3,7 +3,7 @@
 #include "attack.h"
 #include "movegen.h"
 #include "eval.h"
-#include "hyperbola.h"
+#include "magic.h"
 #include "makemove.h"
 #include "ttable.h"
 #include "io.h"
