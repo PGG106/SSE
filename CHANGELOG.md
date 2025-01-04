@@ -22,6 +22,10 @@ Whenever I decided to add this changelog
 6319719 nodes 2320000 nps
 ```
 
+```c
+Max observed memory: 4.4 MB
+```
+
 ### 0.3
 
 Use shorts for histories
@@ -33,6 +37,10 @@ ad007539cec52de9368bc2e2b30fb83f  nn.net
 
 ```c
 6319719 nodes 2279000 nps
+```
+
+```c
+Max observed memory: 2.9 MB
 ```
 
 ```
@@ -56,6 +64,10 @@ ad007539cec52de9368bc2e2b30fb83f  nn.net
 5844361 nodes 2383000 nps
 ```
 
+```c
+Max observed memory: 2.4 MB
+```
+
 ```
 Score of sse-conthist2 vs sse-dev: 1366 - 1394 - 2740  [0.497] 5500
 ...      sse-conthist2 playing White: 1219 - 144 - 1387  [0.695] 2750
@@ -74,5 +86,18 @@ ad007539cec52de9368bc2e2b30fb83f  nn.net
 f22b045c49c81dfe415d87e1edb786ec  Alexandria
 
 ```c
+Max observed memory: 2.4 MB
+```
+
+```c
 5844361 nodes 2509000 nps
 ```
+
+### 0.6
+
+Exhaustive xz parameter search, no functional change
+
+64545 bytes
+
+ad007539cec52de9368bc2e2b30fb83f  nn.net
+f22b045c49c81dfe415d87e1edb786ec  Alexandria
