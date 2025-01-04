@@ -193,7 +193,7 @@ Bitboard pieceAttacks(int piecetype, int pieceSquare, Bitboard occ) {
 }
 
 // mask bishop attacks
-Bitboard MaskBishopAttacks(int square) {
+SMALL Bitboard MaskBishopAttacks(int square) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
 
@@ -216,7 +216,7 @@ Bitboard MaskBishopAttacks(int square) {
 }
 
 // mask rook attacks
-Bitboard MaskRookAttacks(int square) {
+SMALL Bitboard MaskRookAttacks(int square) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
     // init target rank & files
@@ -236,7 +236,7 @@ Bitboard MaskRookAttacks(int square) {
 }
 
 // generate bishop attacks on the fly
-Bitboard BishopAttacksOnTheFly(int square, Bitboard block) {
+SMALL Bitboard BishopAttacksOnTheFly(int square, Bitboard block) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
     // init target rank & files
@@ -271,7 +271,7 @@ Bitboard BishopAttacksOnTheFly(int square, Bitboard block) {
 }
 
 // generate rook attacks on the fly
-Bitboard RookAttacksOnTheFly(int square, Bitboard block) {
+SMALL Bitboard RookAttacksOnTheFly(int square, Bitboard block) {
     // result attacks bitboard
     Bitboard attacks = 0ULL;
     // init target rank & files
@@ -305,7 +305,7 @@ Bitboard RookAttacksOnTheFly(int square, Bitboard block) {
     return attacks;
 }
 
-Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask) {
+SMALL Bitboard SetOccupancy(int index, int bits_in_mask, Bitboard attack_mask) {
     // occupancy map
     Bitboard occupancy = 0ULL;
     // loop over the range of bits within attack mask
