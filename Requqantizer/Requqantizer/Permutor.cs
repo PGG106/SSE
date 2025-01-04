@@ -31,8 +31,8 @@ internal class Permutor
             // Input weights
             for (var inputIndex = 0; inputIndex < Constants.NUM_INPUTS; inputIndex++)
             {
-                var oldInputOffset = oldNodeIndex * Constants.NUM_INPUTS + inputIndex;
-                var newInputOffset = newNodeIndex * Constants.NUM_INPUTS + inputIndex;
+                var oldInputOffset = inputIndex * Constants.L1_SIZE + oldNodeIndex;
+                var newInputOffset = inputIndex * Constants.L1_SIZE + newNodeIndex;
 
                 newSections.Shorts[0][newInputOffset] = sections.Shorts[0][oldInputOffset];
                 newSections.Floats[0][newInputOffset] = sections.Floats[0][oldInputOffset];
