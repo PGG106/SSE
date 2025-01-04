@@ -54,22 +54,25 @@ internal class Blocker
             throw new Exception("Didnt read all from queue");
         }
 
-        var divisorBins = Enumerable.Range(0, 5).ToArray();
-        var divisorSum = 0f;
-        foreach (var block in blocks)
+        if (printDetails)
         {
-            divisorBins[block.Divisor]++;
-            divisorSum += block.Divisor;
-        }
+            var divisorBins = Enumerable.Range(0, 5).ToArray();
+            var divisorSum = 0f;
+            foreach (var block in blocks)
+            {
+                divisorBins[block.Divisor]++;
+                divisorSum += block.Divisor;
+            }
 
-        var avgDivisor = divisorSum / blockCount;
-        Console.WriteLine($"Avg divisor: {avgDivisor}");
+            var avgDivisor = divisorSum / blockCount;
+            Console.WriteLine($"Avg divisor: {avgDivisor}");
 
-        for (int i = 0; i < 5; i++)
-        {
-            var bin = divisorBins[i];
-            var percentage = bin * 100f / blockCount;
-            //Console.WriteLine($"Div {i}: {bin} ({percentage:0.0}%)");
+            for (int i = 0; i < 5; i++)
+            {
+                var bin = divisorBins[i];
+                var percentage = bin * 100f / blockCount;
+                Console.WriteLine($"Div {i}: {bin} ({percentage:0.0}%)");
+            }
         }
 
         return blocks;
