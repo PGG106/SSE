@@ -2,17 +2,17 @@
 
 internal class Blocker
 {
-    public List<Block> BlockSection(List<float> section)
+    public List<Block> BlockSection(List<float> section, int blockSize)
     {
-        var blockCount = section.Count / Constants.blockSize;
-        Console.WriteLine($"Block size: {Constants.blockSize}");
+        var blockCount = section.Count / blockSize;
+        Console.WriteLine($"Block size: {blockSize}");
         Console.WriteLine($"Block count: {blockCount}");
         var queue = new Queue<float>(section);
         var blocks = new List<Block>();
         for (var blockIndex = 0; blockIndex < blockCount; blockIndex++)
         {
             var block = new Block();
-            for (var i = 0; i < Constants.blockSize; i++)
+            for (var i = 0; i < blockSize; i++)
             {
                 var value = queue.Dequeue() * Constants.FT_QUANT;
                 block.Values.Add(value);
@@ -38,12 +38,31 @@ internal class Blocker
             }
 
             block.Divisor = divisor;
+
             Console.WriteLine($"Block {blockIndex}: Divisor: {divisor} Min: {block.Values.Min()} Max: {block.Values.Max()}");
         }
 
         if (queue.Count > 0)
         {
             throw new Exception("Didnt read all from queue");
+        }
+
+        var divisorBins = Enumerable.Range(0, 5).ToArray();
+        var divisorSum = 0f;
+        foreach (var block in blocks)
+        {
+            divisorBins[block.Divisor]++;
+            divisorSum += block.Divisor;
+        }
+
+        var avgDivisor = divisorSum / blockCount;
+        Console.WriteLine($"Avg divisor: {avgDivisor}");
+
+        for (int i = 0; i < 5; i++)
+        {
+            var bin = divisorBins[i];
+            var percentage = bin * 100f / blockCount;
+            Console.WriteLine($"Div {i}: {bin} ({percentage:0.0}%)");
         }
 
         return blocks;

@@ -15,7 +15,7 @@ internal class Program
         sections = permutor.Permute(sections);
         
         var blocker = new Blocker();
-        var blocks = blocker.BlockSection(sections.Floats[0]);
+        var blocks = blocker.BlockSection(sections.Floats[0], Constants.BLOCK_SIZE);
 
         var serializer = new Serializer();
         var result = serializer.Serialize(sections, blocks);
