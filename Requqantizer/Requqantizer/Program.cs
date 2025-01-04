@@ -12,7 +12,7 @@ internal class Program
         var sections = reader.ReadBoth(pathShorts, pathFloats);
 
         var permutor = new Permutor();
-        permutor.Permute(sections);
+        sections = permutor.Permute(sections);
         
         var blocker = new Blocker();
         var blocks = blocker.BlockSection(sections.Floats[0]);
