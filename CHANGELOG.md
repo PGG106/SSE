@@ -126,3 +126,28 @@ Score of sse-magics vs sse-dev: 11445 - 7372 - 18413  [0.555] 37230
 ...      White vs Black: 16892 - 1925 - 18413  [0.701] 37230
 Elo difference: 38.2 +/- 2.5, LOS: 100.0 %, DrawRatio: 49.5 %
 ```
+
+### 0.8
+
+Change MAX_PLY from 128 to 64
+
+65304 bytes
+
+ad007539cec52de9368bc2e2b30fb83f  nn.net
+70907d0c8fc74b047906065829ee2e50  Alexandria
+
+```
+5844361 nodes 3125000 nps
+```
+
+```c
+Max observed memory: 4.7 MB
+```
+
+```c
+Score of sse-dev vs sse-magics: 1527 - 1425 - 3048  [0.508] 6000
+...      sse-dev playing White: 1383 - 123 - 1494  [0.710] 3000
+...      sse-dev playing Black: 144 - 1302 - 1554  [0.307] 3000
+...      White vs Black: 2685 - 267 - 3048  [0.702] 6000
+Elo difference: 5.9 +/- 6.2, LOS: 97.0 %, DrawRatio: 50.8 %
+```
