@@ -3,7 +3,7 @@
 #ifdef _MSC_VER
 #define SMALL
 #else
-#define SMALL __attribute__((optimize("Os")))
+#define SMALL __attribute__((optimize("Oz")))
 #endif
 
 #if !NOSTDLIB

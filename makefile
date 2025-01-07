@@ -182,6 +182,7 @@ small: cleanall
 	md5sum $(EXE)
 	xz -k -9 $(EXE)
 	xz -k -9 $(NETWORK_NAME)
+	dos2unix main.py
 	tar -cf submission.tar $(EXE).xz $(NETWORK_NAME).xz main.py
 	ls -la submission.tar
 	zopfli --i1000 submission.tar

@@ -24,7 +24,7 @@ SMALL void Optimum(struct SearchInfo* info, int time, int inc) {
     }
 }
 
-bool StopEarly(const struct SearchInfo* info) {
+SMALL bool StopEarly(const struct SearchInfo* info) {
     // check if we used all the nodes/movetime we had or if we used more than our lowerbound of time
     return (info->timeset) && GetTimeMs() > info->stoptimeOpt;
 }

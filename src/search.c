@@ -43,9 +43,9 @@ static bool StdinHasData()
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
     SearchPosition(1, depth, td);
-    printf("bestmove ");
+    puts_nonewline("bestmove ");
     PrintMove(return_bestmove);
-    printf("\n");
+    puts("");
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
@@ -80,7 +80,6 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
 // Returns true if the position is a 2-fold repetition, false otherwise
 bool IsRepetition(const struct Position* pos) {
     assert(pos->hisPly >= Position_get50MrCounter(pos));
-    int counter = 0;
     // How many moves back should we look at most, aka our distance to the last irreversible move
     int distance = min(Position_get50MrCounter(pos), Position_getPlyFromNull(pos));
     // Get the point our search should start from
@@ -96,9 +95,7 @@ bool IsRepetition(const struct Position* pos) {
 
 // Returns true if the position is a draw via the 50mr rule
 bool Is50MrDraw(struct Position* pos) {
-
     if (Position_get50MrCounter(pos) >= 100) {
-
         // If there's no risk we are being checkmated return true
         if (!Position_getCheckers(pos))
             return true;
@@ -128,8 +125,7 @@ bool IsDraw(struct Position* pos) {
         || MaterialDraw(pos);
 }
 
-SMALL void init_thread_data(struct ThreadData* td)
-{
+SMALL void init_thread_data(struct ThreadData* td) {
     td->pos.side = -1;
     td->pos.hisPly = 0;
     td->pos.posKey = 0ULL;
@@ -387,9 +383,9 @@ static int get_complexity(const int eval, const int rawEval) {
 static bool get_improving(const struct SearchStack *const ss, const bool inCheck) {
     if (inCheck)
         return false;
-    else if ((ss - 2)->staticEval != SCORE_NONE)
+    if ((ss - 2)->staticEval != SCORE_NONE)
         return ss->staticEval > (ss - 2)->staticEval;
-    else if ((ss - 4)->staticEval != SCORE_NONE)
+    if ((ss - 4)->staticEval != SCORE_NONE)
         return ss->staticEval > (ss - 4)->staticEval;
     return true;
 };

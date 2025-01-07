@@ -151,3 +151,12 @@ Score of sse-dev vs sse-magics: 1527 - 1425 - 3048  [0.508] 6000
 ...      White vs Black: 2685 - 267 - 3048  [0.702] 6000
 Elo difference: 5.9 +/- 6.2, LOS: 97.0 %, DrawRatio: 50.8 %
 ```
+
+### 0.9
+
+Reduce size, no functional change
+
+64881 bytes
+
+ad007539cec52de9368bc2e2b30fb83f  nn.net
+e905aa1e0a940b76711e9cc9937235b8  Alexandria
