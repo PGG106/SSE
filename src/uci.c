@@ -60,7 +60,7 @@ SMALL Move ParseMove(const char* moveString, struct Position* pos) {
             return move;
         }
     }
-    printf("Illegal move parsed: %s", (size_t)moveString);
+    assert(false);
 
     // return illegal move
     return NOMOVE;

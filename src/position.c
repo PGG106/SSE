@@ -23,7 +23,6 @@ const int castling_rights[64] = {
 SMALL void square_to_coordinates(char *buf, const int sq) {
     buf[0] = 'a' + sq % 8;
     buf[1] = '8' - sq / 8;
-    buf[2] = '\0';
 }
 
 // Reset the position to a clean state

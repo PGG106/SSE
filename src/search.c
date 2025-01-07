@@ -43,9 +43,9 @@ static bool StdinHasData()
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
     SearchPosition(1, depth, td);
-    printf("bestmove ");
+    puts_nonewline("bestmove ");
     PrintMove(return_bestmove);
-    printf("\n");
+    puts("");
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
