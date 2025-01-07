@@ -151,7 +151,7 @@ struct SearchInfo {
 extern const int castling_rights[64];
 
 // convert squares to coordinates
-extern const char* const square_to_coordinates[64];
+void square_to_coordinates(char *buf, int sq);
 
 void ResetBoard(struct Position* pos);
 void ResetInfo(struct SearchInfo* info);

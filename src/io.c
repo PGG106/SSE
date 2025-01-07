@@ -3,8 +3,10 @@
 #include "piece_data.h"
 
 SMALL void PrintMove(const Move move) {
-    const char* from = square_to_coordinates[From(move)];
-    const char* to = square_to_coordinates[To(move)];
+    char from[3];
+    char to[3];
+    square_to_coordinates(from, From(move));
+    square_to_coordinates(to, To(move));
 
     if (isPromo(move))
         printf("%s%s%c", (const size_t)from, (const size_t)to, promoted_pieces(getPromotedPiecetype(move)));
