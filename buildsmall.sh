@@ -27,6 +27,8 @@ do
 	mv -f $TARGET-smallest.xz $TARGET.xz
 done
 
+dos2unix main.py
+
 tar -cf submission.tar Alexandria.xz nn.net.xz main.py
 ls -la submission.tar
 zopfli --i1000 submission.tar
