@@ -34,6 +34,14 @@ typedef unsigned long long uint64_t;
 typedef int64_t ssize_t;
 typedef uint64_t size_t;
 
+#if defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__)
+typedef unsigned long uintptr_t; // 64-bit platforms
+#elif defined(__i386__) || defined(_M_IX86) || defined(__arm__)
+typedef unsigned int uintptr_t;  // 32-bit platforms
+#else
+#error "Unsupported architecture for uintptr_t typedef"
+#endif
+
 enum {
     stdin = 0,
     stdout = 1,
@@ -69,7 +77,6 @@ ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3);
 void exit(const int returnCode);
 int strlen(const char* const restrict string);
 void puts(const char* const restrict string);
-void puts_nonewline(const char* const restrict string);
 void fflush(int fd);
 bool strcmp(const char* restrict lhs, const char* restrict rhs);
 int atoi(const char* restrict string);
@@ -86,3 +93,5 @@ double log(double x);
 char* fgets(char* string0, int count, int file);
 int poll(struct pollfd* fds, unsigned int nfds, int timeout);
 #endif
+
+void puts_nonewline(const char* const restrict string);

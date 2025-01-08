@@ -6,6 +6,10 @@ inline uint64_t GetTimeMs() {
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_sec * 1000 + t.tv_nsec / 1000000;
 }
+
+SMALL void puts_nonewline(const char* const restrict string) {
+    fputs(string, stdout);
+}
 #else
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {

@@ -1,6 +1,6 @@
 #include "bench.h"
 
-#if BENCH
+#ifdef UCI
 #include "ttable.h"
 #include "init.h"
 #include "eval.h"
@@ -64,7 +64,6 @@ const char* benchmarkfens[bench_count] = {
     "8/P6p/2K1q1pk/2Q5/4p3/8/7P/8 w - - 4 44",
     "7k/8/7P/5B2/5K2/8/8/8 b - - 0 175"
 };
-
 
 void StartBench(int depth) {
     // init all

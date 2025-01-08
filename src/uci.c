@@ -146,12 +146,6 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
 
 // main UCI loop
 SMALL void UciLoop() {
-#if BENCH
-    int benchDepth = 14;
-    StartBench(benchDepth);
-    return;
-#endif
-
     struct ThreadData td;
     init_thread_data(&td);
 
@@ -209,6 +203,8 @@ SMALL void UciLoop() {
             // print engine info
             puts("id name SSE 0.5");
             puts("id author Zuppa and Gedas based on Alexandria\n");
+            puts("option name Hash type spin default 1 min 1 max 1");
+            puts("option name Threads type spin default 1 min 1 max 1");
             puts("uciok");
             fflush(stdout);
         }
@@ -222,6 +218,9 @@ SMALL void UciLoop() {
             // print position eval
             printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
             printf("Scaled eval: %i\n", EvalPosition(&td.pos));
+        }
+        else if (!strcmp(token, "bench")) {
+            StartBench(14);
         }
         else printf("Unknown command: %s\n", (size_t)input);
 #endif

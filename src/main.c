@@ -1,18 +1,33 @@
 #include "init.h"
+#include "bench.h"
 #include "uci.h"
 
-#if NOSTDLIB
-SMALL void _start() {
+#ifdef NOSTDLIB
+SMALL __attribute__((naked)) void _start() {
+#ifdef UCI
+    register long* stack asm("rsp");
+    int argc = (int)*stack;
+    char** argv = (char**)(stack + 1);
+#endif
 #else
-SMALL int main() {
+SMALL int main(int argc, char **argv) {
 #endif
 
-    // Tables for move generation and precompute reduction values
+#ifdef UCI
+    bool bench = argc > 1 && !strcmp(argv[1], "bench");
+#endif
     InitAll();
-    // connect to the GUI
-    UciLoop();
+#ifdef UCI
+    if (bench) {
+        StartBench(14);
+    } else {
+#endif
+        UciLoop();
+#ifdef UCI
+    }
+#endif
 
-#if NOSTDLIB
+#ifdef NOSTDLIB
     exit(0);
 #else
     return 0;
