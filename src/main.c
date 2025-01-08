@@ -1,4 +1,5 @@
 #include "init.h"
+#include "bench.h"
 #include "uci.h"
 
 #ifdef NOSTDLIB
@@ -12,16 +13,17 @@ SMALL __attribute__((naked)) void _start() {
 SMALL int main(int argc, char **argv) {
 #endif
 
-#if UCI
-    if (argc > 1 && !strcmp(argv[1], "bench")) {
-        puts("benching");
+#ifdef UCI
+    bool bench = argc > 1 && !strcmp(argv[1], "bench");
+    InitAll();
+    if (bench) {
+        StartBench(14);
+    } else {
+#endif
+        UciLoop();
+#ifdef UCI
     }
 #endif
-
-    // Tables for move generation and precompute reduction values
-    InitAll();
-    // connect to the GUI
-    UciLoop();
 
 #ifdef NOSTDLIB
     exit(0);
