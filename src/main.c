@@ -2,29 +2,20 @@
 #include "uci.h"
 
 #ifdef NOSTDLIB
-SMALL void _start() {
+SMALL __attribute__((naked)) void _start() {
 #ifdef UCI
-    int argc;
-    char** argv;
-    char** envp;
-
-    // Get the address of argc, argv, and envp from the stack
-    asm volatile(
-        "movq (%%rsp), %%rax\n"  // Read 8 bytes at RSP into RAX
-        "movl %%eax, %0\n"       // Move the low 32 bits of RAX into 'argc'
-        : "=r" (argc)            // output: put final value in a general register => then stored in argc
-        : /* no inputs */
-        : "rax", "memory"
-        );
-
-    argv = (char**)((uintptr_t)&argc + sizeof(argc)); // argv comes right after argc
+    register long* stack asm("rsp");
+    int argc = (int)*stack;
+    char** argv = (char**)(stack + 1);
 #endif
 #else
 SMALL int main(int argc, char **argv) {
 #endif
 
 #if UCI
-    printf("%i", argc);
+    if (argc > 1 && !strcmp(argv[1], "bench")) {
+        puts("benching");
+    }
 #endif
 
     // Tables for move generation and precompute reduction values
