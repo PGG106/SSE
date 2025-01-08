@@ -3,7 +3,11 @@
 #ifdef _MSC_VER
 #define SMALL
 #else
+#if __GNUC__ > 12
 #define SMALL __attribute__((optimize("Oz")))
+#else
+#define SMALL __attribute__((optimize("Os")))
+#endif
 #endif
 
 #if !NOSTDLIB
