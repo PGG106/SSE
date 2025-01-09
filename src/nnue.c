@@ -196,14 +196,15 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 #endif
 }
 
-
+#ifdef OB
+SMALL void NNUE_init(const char* nnpath) {
+#else
 SMALL void NNUE_init() {
-    // open the nn file
-
 #if KAGGLE
     const char* nnpath = "//kaggle_simulations//agent//nn.net";
 #else
     const char* nnpath = "nn.net";
+#endif
 #endif
     int nn = open(nnpath, 0, 0644); // Default permissions: -rw-r--r--
     if (nn < 0)

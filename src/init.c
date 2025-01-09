@@ -165,7 +165,9 @@ SMALL void InitAll() {
     InitReductions();
     // Init TT
     InitTT(1);
-    NNUE_init();
+#ifndef OB
+    NNUE_init(NULL);
+#endif
 }
 
 SMALL void InitNewGame(struct ThreadData* td) {

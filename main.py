@@ -7,7 +7,7 @@ with lzma.open(f"{f}.xz", 'rb') as c:
 with open(f, 'wb') as o:
     o.write(d)
 
-f="./Alexandria" if os.path.exists("./Alexandria") else "/kaggle_simulations/agent/Alexandria"
+f="./sse" if os.path.exists("./sse") else "/kaggle_simulations/agent/sse"
 with lzma.open(f"{f}.xz", 'rb') as c:
     d=c.read()
 with open(f, 'wb') as o:

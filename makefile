@@ -4,7 +4,7 @@ _THIS     := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 _ROOT     := $(_THIS)
 EVALFILE   = $(NETWORK_NAME)
 CC        := gcc-14
-TARGET    := Alexandria
+TARGET    := sse
 WARNINGS   = -Wall -Wcast-qual -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wnull-dereference -Wlogical-op -Wold-style-cast -Wundef -pedantic
 CFLAGS  :=  -O3 -flto -fno-exceptions -fno-stack-protector -DNDEBUG $(WARNINGS)
 NATIVE     	 = -march=native
@@ -15,7 +15,7 @@ VNNI512FLAGS = -DUSE_VNNI512 -DUSE_AVX512 -DUSE_SIMD -mavx512f -mavx512bw -mavx5
 
 
 # engine name
-NAME      := Alexandria
+NAME      := sse
 
 TMPDIR = .tmp
 
@@ -38,6 +38,10 @@ endif
 #UCI build
 ifeq ($(UCI), true)
 	CFLAGS += -DUCI
+endif
+
+ifeq ($(OB), true)
+	CFLAGS += -DOB
 endif
 
 # Detect Clang

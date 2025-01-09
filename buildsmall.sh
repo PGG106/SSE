@@ -1,12 +1,12 @@
 #!/bin/bash
 
 make cleanall build=x86-64-avx2 KAGGLE=true NOSTDLIB=true
-sstrip Alexandria
-ls -la Alexandria
+sstrip sse
+ls -la sse
 md5sum nn.net
-md5sum Alexandria
+md5sum sse
 
-for TARGET in nn.net Alexandria
+for TARGET in nn.net sse
 do
 	echo Finding best compression parameters for $TARGET
 	SMALLEST=1000000
@@ -29,7 +29,7 @@ done
 
 dos2unix main.py
 
-tar -cf submission.tar Alexandria.xz nn.net.xz main.py
+tar -cf submission.tar sse.xz nn.net.xz main.py
 ls -la submission.tar
 zopfli --i1000 submission.tar
 ls -la submission.tar.gz

@@ -205,6 +205,7 @@ SMALL void UciLoop() {
             puts("id author Zuppa and Gedas based on Alexandria\n");
             puts("option name Hash type spin default 1 min 1 max 1");
             puts("option name Threads type spin default 1 min 1 max 1");
+            puts("option name EvalFile type string default <empty>");
             puts("uciok");
             fflush(stdout);
         }
@@ -222,6 +223,23 @@ SMALL void UciLoop() {
         else if (!strcmp(token, "bench")) {
             StartBench(14);
         }
+
+        else if (!strcmp(token, "quit")) {
+            exit(0);
+        }
+
+#ifdef OB
+        else if (!strcmp(token, "setoption")) {
+            next_token(input, &input_index, token); // "name"
+            next_token(input, &input_index, token); // option name
+            if (!strcmp(token, "EvalFile")) {
+                next_token(input, &input_index, token); // "value"
+                next_token(input, &input_index, token); // value
+                NNUE_init(token);
+            }
+        }
+#endif
+
         else printf("Unknown command: %s\n", (size_t)input);
 #endif
     }
