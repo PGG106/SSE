@@ -206,7 +206,6 @@ SMALL void NNUE_init() {
     const char* nnpath = "nn.net";
 #endif
 #endif
-    puts(nnpath);
     int nn = open(nnpath, 0, 0644); // Default permissions: -rw-r--r--
     if (nn < 0)
     {
