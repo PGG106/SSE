@@ -40,6 +40,8 @@ SMALL int main(int argc, char **argv) {
         next_token(input, &input_index, token); // value
         next_token(input, &input_index, token);
         NNUE_init(token);
+        StartBench(14);
+        exit(0);
 #endif
         UciLoop();
 #ifdef UCI
