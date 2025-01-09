@@ -40,6 +40,10 @@ ifeq ($(UCI), true)
 	CFLAGS += -DUCI
 endif
 
+ifeq ($(OB), true)
+	CFLAGS += -DOB
+endif
+
 # Detect Clang
 ifeq ($(CC), clang)
 #CFLAGS = -funroll-loops -O3 -flto -fuse-ld=lld -fno-exceptions -std=gnu++2a -DNDEBUG // TODO: restore clang

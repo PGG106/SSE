@@ -22,7 +22,7 @@ jobs:
     - name: Clone SSE
       uses: actions/checkout@v3
     - name: Build SSE ${{ matrix.flags }}
-      run: make build=x86-64-avx2 CC=gcc UCI=true NOSTDLIB=true NOPONDER=true ${{ matrix.nnue_flags }}=1 ${{ matrix.cpu_flags }}=1
+      run: make build=x86-64-avx2 CC=gcc UCI=true NOSTDLIB=true NOPONDER=true OB=true ${{ matrix.nnue_flags }}=1 ${{ matrix.cpu_flags }}=1
     - name: Archive ${{ matrix.nnue_flags }}-${{ matrix.cpu_flags }}
       uses: actions/upload-artifact@v3
       with:

@@ -91,7 +91,12 @@ inline void Accumulator_ClearSubIndex(struct Accumulator* accumulator) {
     accumulator->perspective[BLACK].NNUESub_size = 0;
 }
 
+#ifdef OB
+void NNUE_init(const char *path);
+#else
 void NNUE_init();
+#endif
+
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
 void NNUE_update(struct Accumulator* acc, struct Position* pos);
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
