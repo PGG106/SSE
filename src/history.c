@@ -118,16 +118,12 @@ void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, cons
     assert(newWeight <= CORRHIST_WEIGHT_SCALE);
 
     updateSingleCorrHistScore(&sd->pawnCorrHist[pos->side][pos->pawnKey % CORRHIST_SIZE], scaledDiff, newWeight);
-    updateSingleCorrHistScore(&sd->whiteNonPawnCorrHist[pos->side][pos->whiteNonPawnKey % CORRHIST_SIZE], scaledDiff, newWeight);
-    updateSingleCorrHistScore(&sd->blackNonPawnCorrHist[pos->side][pos->blackNonPawnKey % CORRHIST_SIZE], scaledDiff, newWeight);
 }
 
 int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval) {
     int adjustment = 0;
 
     adjustment += sd->pawnCorrHist[pos->side][pos->pawnKey % CORRHIST_SIZE];
-    adjustment += sd->whiteNonPawnCorrHist[pos->side][pos->whiteNonPawnKey % CORRHIST_SIZE];
-    adjustment += sd->blackNonPawnCorrHist[pos->side][pos->blackNonPawnKey % CORRHIST_SIZE];
 
     return clamp(rawEval + adjustment / CORRHIST_GRAIN, -MATE_FOUND + 1, MATE_FOUND - 1);
 }
