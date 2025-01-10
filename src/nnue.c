@@ -251,16 +251,4 @@ SMALL void NNUE_init() {
         net.L1Biases[i] = *(int16_t*)ptr;
         ptr += 2;
     }
-
-    int16_t transposedL1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
-    for (int weight = 0; weight < 2 * L1_SIZE; ++weight)
-    {
-        for (int bucket = 0; bucket < OUTPUT_BUCKETS; ++bucket)
-        {
-            const int srcIdx = weight * OUTPUT_BUCKETS + bucket;
-            const int dstIdx = bucket * 2 * L1_SIZE + weight;
-            transposedL1Weights[dstIdx] = net.L1Weights[srcIdx];
-        }
-    }
-    memcpy(net.L1Weights, transposedL1Weights, L1_SIZE * sizeof(int16_t) * 2 * OUTPUT_BUCKETS);
 }

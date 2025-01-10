@@ -3,7 +3,7 @@
 static class Constants
 {
     public const int NUM_INPUTS = 768;
-    public const int L1_SIZE = 80;
+    public const int L1_SIZE = 96;
     public const int OUTPUT_BUCKETS = 8;
 
     public const int FT_QUANT = 255;
