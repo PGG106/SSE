@@ -126,8 +126,6 @@ int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* 
     int adjustment = 0;
 
     adjustment += sd->pawnCorrHist[pos->side][pos->pawnKey % CORRHIST_SIZE];
-    adjustment += sd->whiteNonPawnCorrHist[pos->side][pos->whiteNonPawnKey % CORRHIST_SIZE];
-    adjustment += sd->blackNonPawnCorrHist[pos->side][pos->blackNonPawnKey % CORRHIST_SIZE];
 
     return clamp(rawEval + adjustment / CORRHIST_GRAIN, -MATE_FOUND + 1, MATE_FOUND - 1);
 }
