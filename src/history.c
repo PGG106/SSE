@@ -43,6 +43,13 @@ void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move
     sd->searchHistory[pos->side][FromTo(move)] += scaledBonus;
 }
 
+void updateOppHHScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
+    // Scale bonus to fix it in a [-HH_MAX;HH_MAX] range
+    const int scaledBonus = bonus - sd->searchHistory[pos->side ^ 1][FromTo(move)] * abs(bonus) / HH_MAX;
+    // Update move score
+    sd->searchHistory[pos->side ^ 1][FromTo(move)] += scaledBonus;
+}
+
 void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
     // Scale bonus to fix it in a [-CAPTHIST_MAX;CAPTHIST_MAX] range
     const int scaledBonus = bonus - GetCapthistScore(pos, sd, move) * abs(bonus) / CAPTHIST_MAX;
