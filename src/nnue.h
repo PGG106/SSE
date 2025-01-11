@@ -75,8 +75,8 @@ inline void Accumulator_AppendAddIndex(struct Accumulator *accumulator, int piec
 }
 
 inline void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
-    assert(accumulator->perspective[WHITE].NNUESub_size() <= 1);
-    assert(accumulator->perspective[BLACK].NNUESub_size() <= 1);
+    assert(accumulator->perspective[WHITE].NNUESub_size <= 1);
+    assert(accumulator->perspective[BLACK].NNUESub_size <= 1);
     accumulator->perspective[WHITE].NNUESub[accumulator->perspective[WHITE].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
     accumulator->perspective[BLACK].NNUESub[accumulator->perspective[BLACK].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
 }
