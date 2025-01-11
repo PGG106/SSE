@@ -9,7 +9,7 @@ static class Constants
     public const int FT_QUANT = 255;
     public const int L1_QUANT = 64;
 
-    public const int blockSize = L1_SIZE * 4;
+    public const int blockSize = L1_SIZE;
 
     public static int[] SectionSizes = new[]
     {

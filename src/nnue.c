@@ -218,7 +218,7 @@ SMALL void NNUE_init() {
     int8_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
 
     const int ft_size = NUM_INPUTS * L1_SIZE;
-    const int blockSize = L1_SIZE * 4;
+    const int blockSize = L1_SIZE;
     const int blockCount = ft_size / blockSize;
 
     int currentIndex = 0;
