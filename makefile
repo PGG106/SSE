@@ -25,10 +25,6 @@ ifeq ($(KAGGLE), true)
 	CFLAGS += -DKAGGLE
 endif
 
-ifeq ($(NOPONDER), true)
-	CFLAGS += -DNOPONDER
-endif
-
 ifeq ($(NOSTDLIB), true)
 	CFLAGS += -nostdlib -ffreestanding -fno-tree-loop-distribute-patterns -static -DNOSTDLIB
 else

@@ -4,6 +4,7 @@
 #include "eval.h"
 #include "init.h"
 #include "io.h"
+#include "options.h"
 #include "movegen.h"
 #include "position.h"
 #include "time_manager.h"
@@ -144,6 +145,13 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
     pos->accumStackHead = 1;
 }
 
+#if UCI
+static bool next_next_token(const char* str, int* index, char* token) {
+    next_token(str, index, token);
+    return next_token(str, index, token);
+}
+#endif
+
 // main UCI loop
 SMALL void UciLoop() {
     struct ThreadData td;
@@ -204,7 +212,7 @@ SMALL void UciLoop() {
             puts("id name SSE 0.5");
             puts("id author Zuppa and Gedas based on Alexandria\n");
             puts("option name Hash type spin default 1 min 1 max 1");
-            puts("option name Threads type spin default 1 min 1 max 1");
+            puts("option name Threads type spin default 1 min 1 max 2");
             puts("option name EvalFile type string default <empty>");
             puts("uciok");
             fflush(stdout);
@@ -228,17 +236,17 @@ SMALL void UciLoop() {
             exit(0);
         }
 
-#ifdef OB
         else if (!strcmp(token, "setoption")) {
-            next_token(input, &input_index, token); // "name"
-            next_token(input, &input_index, token); // option name
+            next_next_token(input, &input_index, token);
+            if (!strcmp(token, "Threads")) {
+                next_next_token(input, &input_index, token);
+                options.Threads = atoi(token);
+            }
             if (!strcmp(token, "EvalFile")) {
-                next_token(input, &input_index, token); // "value"
-                next_token(input, &input_index, token); // value
+                next_next_token(input, &input_index, token);
                 NNUE_init(token);
             }
         }
-#endif
 
         else printf("Unknown command: %s\n", (size_t)input);
 #endif
