@@ -721,22 +721,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             int reducedDepth = newDepth - depthReduction;
             // search current move with reduced depth:
             score = -Negamax(-alpha - 1, -alpha, reducedDepth, true, td, ss + 1);
-
-            // if we failed high on a reduced node we'll search with a reduced window and full depth
-            if (score > alpha && newDepth > reducedDepth) {
-                // Based on the value returned by our reduced search see if we should search deeper or shallower, 
-                // this is an exact yoink of what SF does and frankly i don't care lmao
-                const bool doDeeperSearch = score > (bestScore + 53 + 2 * newDepth);
-                const bool doShallowerSearch = score < (bestScore + newDepth);
-                newDepth += doDeeperSearch - doShallowerSearch;
-                if (newDepth > reducedDepth)
-                    score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
-
-                int bonus = score > alpha ? history_bonus(depth)
-                                          : -history_bonus(depth);
-
-                updateCHScore(ss, move, bonus);
-            }
         }
         // If we skipped LMR and this isn't the first move of the node we'll search with a reduced window and full depth
         else if (!pvNode || totalMoves > 1) {
