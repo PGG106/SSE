@@ -649,15 +649,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 }
                 else if (singularScore >= beta)
                     return singularScore;
-
-                // If we didn't successfully extend and our TT score is above beta reduce the search depth
-                else if (ttScore >= beta)
-                    extension = -2;
-
-                // If we are expecting a fail-high both based on search states from previous plies and based on TT bound
-                // but our TT move is not singular and our TT score is failing low, reduce the search depth
-                else if (cutNode)
-                    extension = -1;
             }
         }
         // we adjust the search depth based on potential extensions
@@ -699,6 +690,9 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 // Reduce less if we have been on the PV
                 if (ttPv)
                     depthReduction -= 1 + cutNode;
+
+                if (complexity > 50)
+                    depthReduction -= 1;
 
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
                 depthReduction -= moveHistory / 8192;
