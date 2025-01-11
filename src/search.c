@@ -75,7 +75,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
             td->info.timeset = false;
             td->info.stopped = false;
             td->pondering = true;
-            SearchPosition(1, MAXDEPTH - 2, td);
+            SearchPosition(1, MAXDEPTH, td);
             UnmakeMove(ponder_move, &td->pos);
         }
         UnmakeMove(return_bestmove, &td->pos);

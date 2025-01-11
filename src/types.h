@@ -17,7 +17,7 @@ typedef uint16_t PackedMove;
 
 static const Move NOMOVE = 0;
 #define MAXPLY 64
-static const int MAXDEPTH = MAXPLY;
+static const int MAXDEPTH = MAXPLY - 2;
 static const int MATE_SCORE = 32000;
 static const int MATE_FOUND = MATE_SCORE - MAXPLY;
 static const int SCORE_NONE = 32001;
