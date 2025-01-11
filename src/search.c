@@ -61,6 +61,9 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     if (options.Threads == 2) {
 #endif
         // start pondering
+        NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
+        td->pos.accumStackHead = 1;
+
         MakeMove(true, return_bestmove, &td->pos);
         struct TTEntry tte;
         bool probed = ProbeTTEntry(td->pos.posKey, &tte);
@@ -72,7 +75,7 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
             td->info.timeset = false;
             td->info.stopped = false;
             td->pondering = true;
-            SearchPosition(1, MAXDEPTH, td);
+            SearchPosition(1, MAXDEPTH - 2, td);
             UnmakeMove(ponder_move, &td->pos);
         }
         UnmakeMove(return_bestmove, &td->pos);
