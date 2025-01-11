@@ -7,6 +7,7 @@
 #include "makemove.h"
 #include "ttable.h"
 #include "io.h"
+#include "options.h"
 #include "movepicker.h"
 #include "time_manager.h"
 
@@ -56,24 +57,28 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
-#ifndef NOPONDER
-    // start pondering
-    MakeMove(true, return_bestmove, &td->pos);
-    struct TTEntry tte;
-    bool probed = ProbeTTEntry(td->pos.posKey, &tte);
-    Move ponder_move = NOMOVE;
-    if (probed)
-        ponder_move = MoveFromTT(&td->pos, tte.move);
-    if(IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos,ponder_move)){
-    MakeMove(true, ponder_move, &td->pos);
-    td->info.timeset = false;
-    td->info.stopped = false;
-    td->pondering = true;
-    SearchPosition(1, MAXDEPTH, td);
-    UnmakeMove(ponder_move, &td->pos);
+#ifdef UCI
+    if (options.Threads == 2) {
+#endif
+        // start pondering
+        MakeMove(true, return_bestmove, &td->pos);
+        struct TTEntry tte;
+        bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+        Move ponder_move = NOMOVE;
+        if (probed)
+            ponder_move = MoveFromTT(&td->pos, tte.move);
+        if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
+            MakeMove(true, ponder_move, &td->pos);
+            td->info.timeset = false;
+            td->info.stopped = false;
+            td->pondering = true;
+            SearchPosition(1, MAXDEPTH, td);
+            UnmakeMove(ponder_move, &td->pos);
+        }
+        UnmakeMove(return_bestmove, &td->pos);
+        td->pondering = false;
+#ifdef UCI
     }
-    UnmakeMove(return_bestmove, &td->pos);
-    td->pondering = false;
 #endif
 }
 
