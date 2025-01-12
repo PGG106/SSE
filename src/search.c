@@ -68,9 +68,8 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
         struct TTEntry tte;
         bool probed = ProbeTTEntry(td->pos.posKey, &tte);
         Move ponder_move = NOMOVE;
-        if (probed)
+        if (probed){
             ponder_move = MoveFromTT(&td->pos, tte.move);
-        if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
             MakeMove(true, ponder_move, &td->pos);
             td->info.timeset = false;
             td->info.stopped = false;
