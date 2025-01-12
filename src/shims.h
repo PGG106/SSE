@@ -4,9 +4,9 @@
 #define SMALL
 #else
 #if __GNUC__ > 12
-#define SMALL __attribute__((optimize("Oz")))
+#define SMALL
 #else
-#define SMALL __attribute__((optimize("Os")))
+#define SMALL
 #endif
 #endif
 
