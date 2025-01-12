@@ -641,7 +641,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                     if (!pvNode
                         && singularScore < singularBeta - 17
                         && ss->doubleExtensions <= 11) {
-                        extension = 2 + (!isTactical(ttMove) && singularScore < singularBeta - 100);
+                        extension = 2;
                         ss->doubleExtensions = (ss - 1)->doubleExtensions + 1;
                         depth += depth < 10;
                     }
