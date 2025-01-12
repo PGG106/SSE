@@ -381,13 +381,6 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
     return score;
 }
 
-static int get_complexity(const int eval, const int rawEval) {
-    if (eval == 0 || rawEval == 0)
-        return 0;
-
-    return 100 * abs(eval - rawEval) / abs(eval);
-}
-
 static bool get_improving(const struct SearchStack *const ss, const bool inCheck) {
     if (inCheck)
         return false;
@@ -506,8 +499,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         // Save the eval into the TT
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
-
-    const int complexity = get_complexity(eval, rawEval);
 
     // Improving is a very important modifier to many heuristics. It checks if our static eval has improved since our last move.
     // As we don't evaluate in check, we look for the first ply we weren't in check between 2 and 4 plies ago. If we find that
@@ -707,9 +698,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 // Reduce less if we have been on the PV
                 if (ttPv)
                     depthReduction -= 1 + cutNode;
-
-                if (complexity > 50)
-                    depthReduction -= 1;
 
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
                 depthReduction -= moveHistory / 8192;
