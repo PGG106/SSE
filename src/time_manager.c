@@ -7,7 +7,7 @@
 // Calculate how much time to spend on searching a move
 SMALL void Optimum(struct SearchInfo* info, int time, int inc) {
     // Reserve some time overhead to avoid timing out in the engine-gui communication process
-    const int safety_overhead = min(600, time / 2);
+    const int safety_overhead = min(600, time * 3 / 4);
     time -= safety_overhead;
     // else if we received wtime/btime we calculate an over and upper bound for the time usage based on fixed coefficients
     if (info->timeset) {
