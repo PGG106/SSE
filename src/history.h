@@ -38,4 +38,4 @@ void updateCapthistScore(const struct Position* pos, struct SearchData* sd, cons
 
 // Corrhist stuff
 void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff);
-int  adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval);
+int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const struct SearchStack* ss, const int rawEval);

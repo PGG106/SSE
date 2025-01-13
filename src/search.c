@@ -484,7 +484,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     else if (ttHit) {
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
-        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the tt score as a more accurate form of eval
         if (ttScore != SCORE_NONE
@@ -496,7 +496,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     else {
         // If we don't have anything in the TT we have to call evalposition
         rawEval = EvalPosition(pos);
-        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
         // Save the eval into the TT
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
@@ -859,7 +859,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
-        ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, rawEval);
+        ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the TT score as a more accurate form of eval
         if (ttScore != SCORE_NONE
@@ -871,7 +871,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     // If we don't have any useful info in the TT just call Evalpos
     else {
         rawEval = EvalPosition(pos);
-        bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
         // Save the eval into the TT
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
