@@ -1,4 +1,5 @@
 #include "magic.h"
+#include "hyperbola.h"
 
 // get bishop attacks
 Bitboard GetBishopAttacks(const int square, Bitboard occupancy) {
@@ -9,17 +10,6 @@ Bitboard GetBishopAttacks(const int square, Bitboard occupancy) {
 
     // return bishop attacks
     return bishop_attacks[square][occupancy];
-}
-
-// get rook attacks
-Bitboard GetRookAttacks(const int square, Bitboard occupancy) {
-    // get rook attacks assuming current board occupancy
-    occupancy &= rook_masks[square];
-    occupancy *= rook_magic_numbers[square];
-    occupancy >>= 64 - rook_relevant_bits;
-
-    // return rook attacks
-    return rook_attacks[square][occupancy];
 }
 
 // get queen attacks

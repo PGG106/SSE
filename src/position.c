@@ -2,6 +2,7 @@
 
 #include "attack.h"
 #include "magic.h"
+#include "hyperbola.h"
 #include "init.h"
 #include "io.h"
 #include "piece_data.h"

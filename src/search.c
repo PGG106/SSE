@@ -4,6 +4,7 @@
 #include "movegen.h"
 #include "eval.h"
 #include "magic.h"
+#include "hyperbola.h"
 #include "makemove.h"
 #include "ttable.h"
 #include "io.h"

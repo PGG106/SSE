@@ -2,6 +2,7 @@
 
 #include "bitboard.h"
 #include "magic.h"
+#include "hyperbola.h"
 
 #include "shims.h"
 
@@ -33,31 +34,6 @@ Bitboard bishop_attacks[64][512];
 
 // rook attacks rable [square][occupancies]
 Bitboard rook_attacks[64][4096];
-
-// rook magic numbers
-const Bitboard rook_magic_numbers[64] = {
-    0x8a80104000800020ULL, 0x84020100804000ULL, 0x800a1000048020ULL,
-    0xc4100020b1000200ULL, 0x400440002080420ULL, 0xa8004002a801200ULL,
-    0x840140c80400100ULL, 0x10000820c412300ULL, 0x10800212400820ULL,
-    0x8050190002800ULL, 0x1080800102000ULL, 0x41080080201001ULL,
-    0x20820040800890aULL, 0x10800200008440ULL, 0x3200800418a0022ULL,
-    0x250060600201100ULL, 0x4440002400860020ULL, 0x1004402800084000ULL,
-    0x41404c0140004ULL, 0x5000400908001400ULL, 0x20841000830ULL,
-    0x830a0101000500ULL, 0x14040a002804040ULL, 0x4400101008854220ULL,
-    0xe008025220022600ULL, 0x440244008603000ULL, 0x8024004009000ULL,
-    0x801009002100002ULL, 0x400200200010811ULL, 0x3204020044012400ULL,
-    0x2100088200100ULL, 0x20800a004091041ULL, 0x210c224200241ULL,
-    0x200a0c02040080ULL, 0x4d8028104c0800ULL, 0x813c0a0002900012ULL,
-    0x8104200208020ULL, 0x240400a000a04080ULL, 0x802199100100042ULL,
-    0x62c4c0020100280ULL, 0x20104280800820ULL, 0x20c8010080a80200ULL,
-    0x1114084080464008ULL, 0x2000025430001805ULL, 0x1404c4a100110008ULL,
-    0x8400012008ULL, 0x3045140080022010ULL, 0x8040028410080100ULL,
-    0x220200310204820ULL, 0x200082244048202ULL, 0x90984c0208022ULL,
-    0x8000110120040900ULL, 0x9000402400080084ULL, 0x2402100100038020ULL,
-    0x98400600008028ULL, 0x111000040200cULL, 0x102402208108102ULL,
-    0x440041482204101ULL, 0x4004402000040811ULL, 0x804a000810402002ULL,
-    0x8000209020401ULL, 0x440341108009002ULL, 0x8825084204ULL,
-    0x2084002112428402ULL };
 
 // bishop magic numbers
 const Bitboard bishop_magic_numbers[64] = {
@@ -215,26 +191,6 @@ SMALL Bitboard MaskBishopAttacks(int square) {
     return attacks;
 }
 
-// mask rook attacks
-SMALL Bitboard MaskRookAttacks(int square) {
-    // result attacks bitboard
-    Bitboard attacks = 0ULL;
-    // init target rank & files
-    int tr = square / 8;
-    int tf = square % 8;
-    // mask relevant rook occupancy bits
-    for (int r = tr + 1; r <= 6; r++)
-        attacks |= (1ULL << (r * 8 + tf));
-    for (int r = tr - 1; r >= 1; r--)
-        attacks |= (1ULL << (r * 8 + tf));
-    for (int f = tf + 1; f <= 6; f++)
-        attacks |= (1ULL << (tr * 8 + f));
-    for (int f = tf - 1; f >= 1; f--)
-        attacks |= (1ULL << (tr * 8 + f));
-    // return attack map
-    return attacks;
-}
-
 // generate bishop attacks on the fly
 SMALL Bitboard BishopAttacksOnTheFly(int square, Bitboard block) {
     // result attacks bitboard
@@ -264,41 +220,6 @@ SMALL Bitboard BishopAttacksOnTheFly(int square, Bitboard block) {
     for (int r = tr - 1, f = tf - 1; r >= 0 && f >= 0; r--, f--) {
         attacks |= (1ULL << (r * 8 + f));
         if ((1ULL << (r * 8 + f)) & block)
-            break;
-    }
-    // return attack map
-    return attacks;
-}
-
-// generate rook attacks on the fly
-SMALL Bitboard RookAttacksOnTheFly(int square, Bitboard block) {
-    // result attacks bitboard
-    Bitboard attacks = 0ULL;
-    // init target rank & files
-    int tr = square / 8;
-    int tf = square % 8;
-    // generate rook attacks
-    for (int r = tr + 1; r <= 7; r++) {
-        attacks |= (1ULL << (r * 8 + tf));
-        if ((1ULL << (r * 8 + tf)) & block)
-            break;
-    }
-
-    for (int r = tr - 1; r >= 0; r--) {
-        attacks |= (1ULL << (r * 8 + tf));
-        if ((1ULL << (r * 8 + tf)) & block)
-            break;
-    }
-
-    for (int f = tf + 1; f <= 7; f++) {
-        attacks |= (1ULL << (tr * 8 + f));
-        if ((1ULL << (tr * 8 + f)) & block)
-            break;
-    }
-
-    for (int f = tf - 1; f >= 0; f--) {
-        attacks |= (1ULL << (tr * 8 + f));
-        if ((1ULL << (tr * 8 + f)) & block)
             break;
     }
     // return attack map

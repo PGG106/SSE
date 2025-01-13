@@ -2,6 +2,7 @@
 
 #include "attack.h"
 #include "magic.h"
+#include "hyperbola.h"
 #include "makemove.h"
 #include "move.h"
 #include "position.h"
