@@ -3,6 +3,7 @@
 #include "position.h"
 #include "attack.h"
 #include "magic.h"
+#include "hyperbola.h"
 #include "search.h"
 #include "ttable.h"
 #include "history.h"
@@ -99,29 +100,6 @@ SMALL void InitAttackTables() {
 
             // init bishop attacks
             bishop_attacks[square][magic_index] = BishopAttacksOnTheFly(square, occupancy);
-        }
-
-        rook_masks[square] = MaskRookAttacks(square);
-
-        // init rook mask
-        Bitboard rook_mask = rook_masks[square];
-
-        // init relevant occupancy bit count
-        relevant_bits_count = CountBits(rook_mask);
-
-        // init occupancy indices
-        occupancy_indices = 1 << relevant_bits_count;
-
-        // loop over occupancy indices
-        for (int index = 0; index < occupancy_indices; index++) {
-            // init current occupancy variation
-            Bitboard occupancy = SetOccupancy(index, relevant_bits_count, rook_mask);
-
-            // init magic index
-            uint64_t magic_index = (occupancy * rook_magic_numbers[square]) >> (64 - rook_relevant_bits);
-
-            // init rook attacks
-            rook_attacks[square][magic_index] = RookAttacksOnTheFly(square, occupancy);
         }
     }
 }
