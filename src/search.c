@@ -480,25 +480,10 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     else if (excludedMove) {
         eval = rawEval = ss->staticEval;
     }
-    // get an evaluation of the position:
-    else if (ttHit) {
-        // If the value in the TT is valid we use that, otherwise we call the static evaluation function
-        rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
-        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
-
-        // We can also use the tt score as a more accurate form of eval
-        if (ttScore != SCORE_NONE
-            && ((ttBound == HFUPPER && ttScore < eval)
-                || (ttBound == HFLOWER && ttScore > eval)
-                || ttBound == HFEXACT))
-            eval = ttScore;
-    }
     else {
         // If we don't have anything in the TT we have to call evalposition
         rawEval = EvalPosition(pos);
         eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
-        // Save the eval into the TT
-        StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
 
     // Improving is a very important modifier to many heuristics. It checks if our static eval has improved since our last move.
