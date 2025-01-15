@@ -20,6 +20,7 @@
 #define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 
 Move return_bestmove = NOMOVE;
+Move ponder_move = NOMOVE;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
 SMALL void ClearForSearch(struct ThreadData* td) {
@@ -68,7 +69,6 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
         MakeMove(true, return_bestmove, &td->pos);
         struct TTEntry tte;
         bool probed = ProbeTTEntry(td->pos.posKey, &tte);
-        Move ponder_move = NOMOVE;
         if (probed)
             ponder_move = MoveFromTT(&td->pos, tte.move);
         if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
@@ -438,8 +438,12 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        // raed input
+        // read input
+        char input[256];
+        fgets(input, sizeof(input), stdin)
         // parse move
+        Move move = ParseMove(input, pos);
+        if(move != ponder_move)
         // if != ponder_move (make it global)
         {
             // stop, read uci as normal, start search from scratch
@@ -448,6 +452,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         }
         // else
         // read input, get new search time
+        // first line will ask us to set a position, we don't really care
+        fgets(input, sizeof(input), stdin)
+        // this is tm stuff, it's good, we need it
+        fgets(input, sizeof(input), stdin)
+        ParseGo(input, info, pos);
         td->pondering = false;
         // continue search as normal from now on
     }
