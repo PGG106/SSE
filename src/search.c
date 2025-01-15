@@ -438,8 +438,17 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        td->info.stopped = true;
-        return 0;
+        // raed input
+        // parse move
+        // if != ponder_move (make it global)
+        {
+            td->info.stopped = true;
+            return 0;
+        }
+        // else
+        // read input, get new search time
+        td->pondering = false;
+        // continue search as normal from now on
     }
 
     if (!rootNode) {
