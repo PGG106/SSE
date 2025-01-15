@@ -442,6 +442,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         // parse move
         // if != ponder_move (make it global)
         {
+            // stop, read uci as normal, start search from scratch
             td->info.stopped = true;
             return 0;
         }
