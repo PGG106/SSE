@@ -16,8 +16,7 @@ void ClearTT() {
 }
 
 void InitTT(uint64_t MB) {
-    const uint64_t ONE_KB = 1024;
-    const uint64_t ONE_MB = ONE_KB * 1024;
+    const uint64_t ONE_MB = 1024;
     const uint64_t hashSize = ONE_MB * MB;
     TT.numBuckets = (hashSize / sizeof(struct TTBucket)) - 3;
 

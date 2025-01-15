@@ -142,7 +142,7 @@ SMALL void InitAll() {
     initHashKeys();
     InitReductions();
     // Init TT
-    InitTT(1);
+    InitTT(768);
 #ifndef OB
     NNUE_init(NULL);
 #endif

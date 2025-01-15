@@ -72,7 +72,7 @@ void StartBench(int depth) {
     init_thread_data(&td);
 
     uint64_t totalNodes = 0;
-    InitTT(64);
+    InitTT(65536);
     InitNewGame(&td);
     size_t start = GetTimeMs();
     for (int positions = 0; positions < bench_count; positions++) {
