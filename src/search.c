@@ -379,7 +379,7 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
                 fgets(input, sizeof(input), stdin);
                 // this is tm stuff, it's good, we need it
                 fgets(input, sizeof(input), stdin);
-                ParseGo(input, info, pos);
+                ParseGo(input, &td->info, &td->pos);
                 td->pondering = false;
                 // continue search as normal from now on
             }
