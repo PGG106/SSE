@@ -152,6 +152,10 @@ static bool next_next_token(const char* str, int* index, char* token) {
 }
 #endif
 
+#define PRINT_TUNE_OPTION(name) printf("option name %s type spin default %i min -32768 max 32767\n", #name, options.name)
+#define READ_TUNE_OPTION(name) else if (!strcmp(token, #name)) { next_next_token(input, &input_index, token); options.name = atoi(token); }
+#define PRINT_TUNE_INPUT(name) printf("%s, int, %i, %i, %i, %i, 0.002\n", #name, options.name, options.name##_min, options.name##_max, options.name##_step)
+
 // main UCI loop
 SMALL void UciLoop() {
     struct ThreadData td;
@@ -214,8 +218,13 @@ SMALL void UciLoop() {
             puts("option name Hash type spin default 1 min 1 max 1");
             puts("option name Threads type spin default 1 min 1 max 2");
             puts("option name EvalFile type string default <empty>");
+            PRINT_TUNE_OPTION(aspirationDelta);
             puts("uciok");
             fflush(stdout);
+        }
+
+        else if (!strcmp(token, "tune")) {
+            PRINT_TUNE_INPUT(aspirationDelta);
         }
 
         // parse UCI "ucinewgame" command
@@ -242,10 +251,11 @@ SMALL void UciLoop() {
                 next_next_token(input, &input_index, token);
                 options.Threads = atoi(token);
             }
-            if (!strcmp(token, "EvalFile")) {
+            else if (!strcmp(token, "EvalFile")) {
                 next_next_token(input, &input_index, token);
                 NNUE_init(token);
             }
+            READ_TUNE_OPTION(aspirationDelta)
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
