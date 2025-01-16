@@ -52,6 +52,31 @@ Move GetPonderMove(struct ThreadData* td){
     return ponder_move;
 }
 
+bool ponderCheck(struct ThreadData* td){
+    // read input
+    char input[256];
+    fgets(input, sizeof(input), stdin);
+    if(!strcmp("ponderhit\n", input))
+    {
+        printf("Got ponderhit");
+        // stop, read uci as normal, start search from scratch
+        td->info.stopped = true;
+        return 0;
+    }
+    else {
+        printf("Got pondermiss");
+        // read input, get new search time
+        // first line will ask us to set a position, we don't really care
+        fgets(input, sizeof(input), stdin);
+        // this is tm stuff, it's good, we need it
+        fgets(input, sizeof(input), stdin);
+        ParseGo(input, &td->info, &td->pos);
+        td->pondering = false;
+        // continue search as normal from now on
+    }
+}
+
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
@@ -363,26 +388,7 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         }
 
         if( td->pondering && StdinHasData()){
-            // read input
-            char input[256];
-            fgets(input, sizeof(input), stdin);
-            if(!strcmp("pondermiss", input))
-                // if != ponder_move (make it global)
-            {
-                // stop, read uci as normal, start search from scratch
-                td->info.stopped = true;
-                return 0;
-            }
-            else if(!strcmp("ponderhit", input)) {
-                // read input, get new search time
-                // first line will ask us to set a position, we don't really care
-                fgets(input, sizeof(input), stdin);
-                // this is tm stuff, it's good, we need it
-                fgets(input, sizeof(input), stdin);
-                ParseGo(input, &td->info, &td->pos);
-                td->pondering = false;
-                // continue search as normal from now on
-            }
+            ponderCheck(td);
         }
 
         // Stop calculating and return best move so far
@@ -464,26 +470,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        // read input
-        char input[256];
-        fgets(input, sizeof(input), stdin);
-        if(!strcmp("pondermiss", input))
-        // if != ponder_move (make it global)
-        {
-            // stop, read uci as normal, start search from scratch
-            td->info.stopped = true;
-            return 0;
-        }
-       else if(!strcmp("ponderhit", input)) {
-            // read input, get new search time
-            // first line will ask us to set a position, we don't really care
-            fgets(input, sizeof(input), stdin);
-            // this is tm stuff, it's good, we need it
-            fgets(input, sizeof(input), stdin);
-            ParseGo(input, info, pos);
-            td->pondering = false;
-            // continue search as normal from now on
-        }
+        ponderCheck(td);
     }
 
     if (!rootNode) {
@@ -867,26 +854,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     }
 
     if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        // read input
-        char input[256];
-        fgets(input, sizeof(input), stdin);
-        if(!strcmp("pondermiss", input))
-            // if != ponder_move (make it global)
-        {
-            // stop, read uci as normal, start search from scratch
-            td->info.stopped = true;
-            return 0;
-        }
-        else if(!strcmp("ponderhit", input)) {
-            // read input, get new search time
-            // first line will ask us to set a position, we don't really care
-            fgets(input, sizeof(input), stdin);
-            // this is tm stuff, it's good, we need it
-            fgets(input, sizeof(input), stdin);
-            ParseGo(input, info, pos);
-            td->pondering = false;
-            // continue search as normal from now on
-        }
+        ponderCheck(td);
     }
 
     // If position is a draw return a draw score
