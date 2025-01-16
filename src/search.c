@@ -58,13 +58,7 @@ bool ponderCheck(struct ThreadData* td){
     fgets(input, sizeof(input), stdin);
     if(!strcmp("ponderhit\n", input))
     {
-        printf("Got ponderhit");
-        // stop, read uci as normal, start search from scratch
-        td->info.stopped = true;
-        return 0;
-    }
-    else {
-        printf("Got pondermiss");
+        printf("Got ponderhit\n");
         // read input, get new search time
         // first line will ask us to set a position, we don't really care
         fgets(input, sizeof(input), stdin);
@@ -73,9 +67,13 @@ bool ponderCheck(struct ThreadData* td){
         ParseGo(input, &td->info, &td->pos);
         td->pondering = false;
         // continue search as normal from now on
+        return false;
+    }
+    else {
+        printf("Got pondermiss\n");
+        return true;
     }
 }
-
 
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
@@ -100,23 +98,27 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
 #ifdef UCI
     if (options.Threads == 2) {
 #endif
-        // start pondering
-        NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
-        td->pos.accumStackHead = 1;
-        MakeMove(true, return_bestmove, &td->pos);
-        if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
-            MakeMove(true, ponder_move, &td->pos);
-            td->info.timeset = false;
-            td->info.stopped = false;
-            td->pondering = true;
-            SearchPosition(1, MAXDEPTH, td);
-            UnmakeMove(ponder_move, &td->pos);
-        }
-        UnmakeMove(return_bestmove, &td->pos);
-        td->pondering = false;
+    PonderSearch();
 #ifdef UCI
     }
 #endif
+}
+
+void PonderSearch(){
+    // start pondering
+    NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
+    td->pos.accumStackHead = 1;
+    MakeMove(true, return_bestmove, &td->pos);
+    if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
+        MakeMove(true, ponder_move, &td->pos);
+        td->info.timeset = false;
+        td->info.stopped = false;
+        td->pondering = true;
+        SearchPosition(1, MAXDEPTH, td);
+        UnmakeMove(ponder_move, &td->pos);
+    }
+    UnmakeMove(return_bestmove, &td->pos);
+    td->pondering = false;
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
@@ -388,7 +390,11 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         }
 
         if( td->pondering && StdinHasData()){
-            ponderCheck(td);
+            if(ponderCheck(td)){
+                // stop, read uci as normal, start search from scratch
+                td->info.stopped = true;
+                return 0;
+            }
         }
 
         // Stop calculating and return best move so far
@@ -470,7 +476,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
 
     if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        ponderCheck(td);
+        if(ponderCheck(td)){
+            // stop, read uci as normal, start search from scratch
+            td->info.stopped = true;
+            return 0;
+        }
     }
 
     if (!rootNode) {
@@ -854,7 +864,11 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     }
 
     if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        ponderCheck(td);
+        if(ponderCheck(td)){
+            // stop, read uci as normal, start search from scratch
+            td->info.stopped = true;
+            return 0;
+        }
     }
 
     // If position is a draw return a draw score
