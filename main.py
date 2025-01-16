@@ -27,4 +27,4 @@ def chess_bot(b):
         l = p.stdout.readline()
         if l != "\n":
             break
-    return l.split()[-1]
+    return l.split()[-3]
