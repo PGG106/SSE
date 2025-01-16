@@ -612,9 +612,9 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                     skipQuiets = true;
                 }
             }
-
+            int see_margin = isQuiet ? options.SEE_QUIET_MARGIN * lmrDepth :  options.SEE_NOISY_MARGIN * lmrDepth * lmrDepth;
             // See pruning: prune all the moves that have a SEE score that is lower than our threshold
-            if (!SEE(pos, move, see_margin[min(lmrDepth, 63)][isQuiet]))
+            if (!SEE(pos, move, see_margin))
                 continue;
         }
 

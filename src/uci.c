@@ -202,7 +202,7 @@ SMALL void UciLoop() {
             RootSearch(MAXDEPTH, &td);
         }
 
-#if UCI
+# if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
@@ -232,6 +232,8 @@ SMALL void UciLoop() {
             PRINT_TUNE_OPTION(LMR_QUIET_DIVISOR);
             PRINT_TUNE_OPTION(LMR_NOISY_BASE);
             PRINT_TUNE_OPTION(LMR_NOISY_DIVISOR);
+            PRINT_TUNE_OPTION(SEE_QUIET_MARGIN);
+            PRINT_TUNE_OPTION(SEE_NOISY_MARGIN);
             puts("uciok");
             fflush(stdout);
         }
@@ -251,6 +253,8 @@ SMALL void UciLoop() {
             PRINT_TUNE_INPUT(LMR_QUIET_DIVISOR);
             PRINT_TUNE_INPUT(LMR_NOISY_BASE);
             PRINT_TUNE_INPUT(LMR_NOISY_DIVISOR);
+            PRINT_TUNE_INPUT(SEE_QUIET_MARGIN);
+            PRINT_TUNE_INPUT(SEE_NOISY_MARGIN);
         }
 
         // parse UCI "ucinewgame" command
@@ -295,6 +299,8 @@ SMALL void UciLoop() {
             READ_TUNE_OPTION(LMR_QUIET_DIVISOR)
             READ_TUNE_OPTION(LMR_NOISY_BASE)
             READ_TUNE_OPTION(LMR_NOISY_DIVISOR)
+            READ_TUNE_OPTION(SEE_QUIET_MARGIN)
+            READ_TUNE_OPTION(SEE_NOISY_MARGIN)
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
