@@ -43,7 +43,7 @@ void InitTT(uint64_t MB);
 
 bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte);
 
-void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV);
+void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, const int bound, const int depth, const bool pv, const bool wasPV);
 
 uint64_t Index(const ZobristKey posKey);
 

@@ -496,8 +496,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         // If we don't have anything in the TT we have to call evalposition
         rawEval = EvalPosition(pos);
         eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
-        // Save the eval into the TT
-        StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
 
     // Improving is a very important modifier to many heuristics. It checks if our static eval has improved since our last move.
@@ -797,7 +795,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && !(bound == HFUPPER && bestScore >= ss->staticEval)) {
             updateCorrHistScore(pos, sd, ss, depth, bestScore - ss->staticEval);
         }
-        StoreTTEntry(pos->posKey, MoveToTT(bestMove), ScoreToTT(bestScore, ss->ply), rawEval, bound, depth, pvNode, ttPv);
+        StoreTTEntry(pos->posKey, MoveToTT(bestMove), ScoreToTT(bestScore, ss->ply), bound, depth, pvNode, ttPv);
     }
 
     return bestScore;
@@ -855,7 +853,6 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     }
     // If we have a ttHit with a valid eval use that
     else if (ttHit) {
-
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = EvalPosition(pos);
         ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
@@ -871,8 +868,6 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     else {
         rawEval = EvalPosition(pos);
         bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
-        // Save the eval into the TT
-        StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
 
     // Stand pat
@@ -949,7 +944,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     // Set the TT bound based on whether we failed high, for qsearch we never use the exact bound
     int bound = bestScore >= beta ? HFLOWER : HFUPPER;
 
-    StoreTTEntry(pos->posKey, MoveToTT(bestmove), ScoreToTT(bestScore, ss->ply), rawEval, bound, 0, pvNode, ttPv);
+    StoreTTEntry(pos->posKey, MoveToTT(bestmove), ScoreToTT(bestScore, ss->ply), bound, 0, pvNode, ttPv);
 
     return bestScore;
 }

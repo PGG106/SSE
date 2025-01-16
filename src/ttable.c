@@ -54,7 +54,7 @@ bool ProbeTTEntry(const ZobristKey posKey, struct TTEntry* tte) {
     return tte->ttKey == (TTKey)posKey;
 }
 
-void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, int eval, const int bound, const int depth, const bool pv, const bool wasPV) {
+void StoreTTEntry(const ZobristKey key, const PackedMove move, int score, const int bound, const int depth, const bool pv, const bool wasPV) {
     // Calculate index based on the position key and get the entry that already fills that index
     const uint64_t index = Index(key);
     const TTKey key16 = (TTKey)key;
