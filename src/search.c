@@ -724,7 +724,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 // this is an exact yoink of what SF does and frankly i don't care lmao
                 const bool doDeeperSearch = score > (bestScore + options.DO_DEEPER_BASE_MARGIN + 2 * newDepth);
                 const bool doShallowerSearch = score < (bestScore + newDepth);
-                newDepth += doDeeperSearch - doShallowerSearch;
+                newDepth += doDeeperSearch - doShallowerSearch; // fix
                 if (newDepth > reducedDepth)
                     score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
 
