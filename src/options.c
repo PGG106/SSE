@@ -34,5 +34,8 @@ struct Options options = {
     // PART 3
     TUNE_VALUES(SEE_QUIET_MARGIN, -80, -150, -20, 5)
     TUNE_VALUES(SEE_NOISY_MARGIN, -30, -100, -1, 3)
+    // part 4
+    TUNE_VALUES(FUTILITY_COEFF_0, 250, 40, 300, 10)
+    TUNE_VALUES(FUTILITY_COEFF_1, 150, 40, 200, 10)
 
 };

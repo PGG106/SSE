@@ -234,6 +234,8 @@ SMALL void UciLoop() {
             PRINT_TUNE_OPTION(LMR_NOISY_DIVISOR);
             PRINT_TUNE_OPTION(SEE_QUIET_MARGIN);
             PRINT_TUNE_OPTION(SEE_NOISY_MARGIN);
+            PRINT_TUNE_OPTION(FUTILITY_COEFF_0);
+            PRINT_TUNE_OPTION(FUTILITY_COEFF_1);
             puts("uciok");
             fflush(stdout);
         }
@@ -255,6 +257,8 @@ SMALL void UciLoop() {
             PRINT_TUNE_INPUT(LMR_NOISY_DIVISOR);
             PRINT_TUNE_INPUT(SEE_QUIET_MARGIN);
             PRINT_TUNE_INPUT(SEE_NOISY_MARGIN);
+            PRINT_TUNE_INPUT(FUTILITY_COEFF_0);
+            PRINT_TUNE_INPUT(FUTILITY_COEFF_1);
         }
 
         // parse UCI "ucinewgame" command
@@ -301,6 +305,8 @@ SMALL void UciLoop() {
             READ_TUNE_OPTION(LMR_NOISY_DIVISOR)
             READ_TUNE_OPTION(SEE_QUIET_MARGIN)
             READ_TUNE_OPTION(SEE_NOISY_MARGIN)
+            READ_TUNE_OPTION(FUTILITY_COEFF_0)
+            READ_TUNE_OPTION(FUTILITY_COEFF_1)
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
