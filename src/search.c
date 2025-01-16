@@ -482,8 +482,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     }
     // get an evaluation of the position:
     else if (ttHit) {
-        // If the value in the TT is valid we use that, otherwise we call the static evaluation function
-        rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
+        rawEval = EvalPosition(pos);
         eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the tt score as a more accurate form of eval
@@ -858,7 +857,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     else if (ttHit) {
 
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
-        rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
+        rawEval = EvalPosition(pos);
         ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the TT score as a more accurate form of eval
