@@ -202,7 +202,7 @@ SMALL void UciLoop() {
             RootSearch(MAXDEPTH, &td);
         }
 
-#if UCI
+
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
@@ -218,13 +218,29 @@ SMALL void UciLoop() {
             puts("option name Hash type spin default 1 min 1 max 1");
             puts("option name Threads type spin default 1 min 1 max 2");
             puts("option name EvalFile type string default <empty>");
-            PRINT_TUNE_OPTION(aspirationDelta);
+            PRINT_TUNE_OPTION(RFP_MARGIN);
+            PRINT_TUNE_OPTION(NMP_REDUCTION_EVAL_DIVISOR);
+            PRINT_TUNE_OPTION(RAZORING_COEFF_0);
+            PRINT_TUNE_OPTION(DOUBLE_EXTENSION_MARGIN);
+            PRINT_TUNE_OPTION(HISTORY_QUIET_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(HISTORY_NOISY_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(DO_DEEPER_BASE_MARGIN);
+            PRINT_TUNE_OPTION(DO_DEEPER_DEPTH_MARGIN);
+            PRINT_TUNE_OPTION(QS_FUTILITY);
             puts("uciok");
             fflush(stdout);
         }
 
         else if (!strcmp(token, "tune")) {
-            PRINT_TUNE_INPUT(aspirationDelta);
+            PRINT_TUNE_OPTION(RFP_MARGIN);
+            PRINT_TUNE_OPTION(NMP_REDUCTION_EVAL_DIVISOR);
+            PRINT_TUNE_OPTION(RAZORING_COEFF_0);
+            PRINT_TUNE_OPTION(DOUBLE_EXTENSION_MARGIN);
+            PRINT_TUNE_OPTION(HISTORY_QUIET_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(HISTORY_NOISY_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(DO_DEEPER_BASE_MARGIN);
+            PRINT_TUNE_OPTION(DO_DEEPER_DEPTH_MARGIN);
+            PRINT_TUNE_OPTION(QS_FUTILITY);
         }
 
         // parse UCI "ucinewgame" command
@@ -255,7 +271,15 @@ SMALL void UciLoop() {
                 next_next_token(input, &input_index, token);
                 NNUE_init(token);
             }
-            READ_TUNE_OPTION(aspirationDelta)
+            READ_TUNE_OPTION(RFP_MARGIN);
+            READ_TUNE_OPTION(NMP_REDUCTION_EVAL_DIVISOR);
+            READ_TUNE_OPTION(RAZORING_COEFF_0);
+            READ_TUNE_OPTION(DOUBLE_EXTENSION_MARGIN);
+            READ_TUNE_OPTION(HISTORY_QUIET_LMR_DIVISOR);
+            READ_TUNE_OPTION(HISTORY_NOISY_LMR_DIVISOR);
+            READ_TUNE_OPTION(DO_DEEPER_BASE_MARGIN);
+            READ_TUNE_OPTION(DO_DEEPER_DEPTH_MARGIN);
+            READ_TUNE_OPTION(QS_FUTILITY);
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
