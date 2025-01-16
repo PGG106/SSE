@@ -227,6 +227,11 @@ SMALL void UciLoop() {
             PRINT_TUNE_OPTION(DO_DEEPER_BASE_MARGIN);
             PRINT_TUNE_OPTION(DO_DEEPER_DEPTH_MARGIN);
             PRINT_TUNE_OPTION(QS_FUTILITY);
+            PRINT_TUNE_OPTION(HISTORY_BONUS_MAX);
+            PRINT_TUNE_OPTION(LMR_QUIET_BASE);
+            PRINT_TUNE_OPTION(LMR_QUIET_DIVISOR);
+            PRINT_TUNE_OPTION(LMR_NOISY_BASE);
+            PRINT_TUNE_OPTION(LMR_NOISY_DIVISOR);
             puts("uciok");
             fflush(stdout);
         }
@@ -241,6 +246,11 @@ SMALL void UciLoop() {
             PRINT_TUNE_INPUT(DO_DEEPER_BASE_MARGIN);
             PRINT_TUNE_INPUT(DO_DEEPER_DEPTH_MARGIN);
             PRINT_TUNE_INPUT(QS_FUTILITY);
+            PRINT_TUNE_INPUT(HISTORY_BONUS_MAX);
+            PRINT_TUNE_INPUT(LMR_QUIET_BASE);
+            PRINT_TUNE_INPUT(LMR_QUIET_DIVISOR);
+            PRINT_TUNE_INPUT(LMR_NOISY_BASE);
+            PRINT_TUNE_INPUT(LMR_NOISY_DIVISOR);
         }
 
         // parse UCI "ucinewgame" command
@@ -280,6 +290,11 @@ SMALL void UciLoop() {
             READ_TUNE_OPTION(DO_DEEPER_BASE_MARGIN)
             READ_TUNE_OPTION(DO_DEEPER_DEPTH_MARGIN)
             READ_TUNE_OPTION(QS_FUTILITY)
+            READ_TUNE_OPTION(HISTORY_BONUS_MAX)
+            READ_TUNE_OPTION(LMR_QUIET_BASE)
+            READ_TUNE_OPTION(LMR_QUIET_DIVISOR)
+            READ_TUNE_OPTION(LMR_NOISY_BASE)
+            READ_TUNE_OPTION(LMR_NOISY_DIVISOR)
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
