@@ -514,7 +514,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && abs(eval) < MATE_FOUND
             && (ttMove == NOMOVE || isTactical(ttMove))
             && eval - options.RFP_MARGIN * (depth - improving - canIIR) >= beta)
-            return eval - 91 * (depth - improving - canIIR);
+            return eval - options.RFP_MARGIN * (depth - improving - canIIR);
 
         // Null move pruning: If our position is so good that we can give the opponent a free move and still fail high,
         // return early. At higher depth we do a reduced search with null move pruning disabled (ie verification search)
