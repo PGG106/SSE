@@ -377,7 +377,7 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         else
             break;
         // Progressively increase how much the windows are increased by at each fail
-        delta *= 1.44;
+        delta *= options.DELTA_RESIZE / 100.0;
     }
     return score;
 }
@@ -594,7 +594,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && bestScore > -MATE_FOUND) {
 
             // lmrDepth is the current depth minus the reduction the move would undergo in lmr, this is helpful because it helps us discriminate the bad moves with more accuracy
-            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] + moveHistory / 8192);
+            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] + moveHistory / options.LMR_DEPTH_HISTORY_DIVISOR);
 
             if (!skipQuiets) {
 
