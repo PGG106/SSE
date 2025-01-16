@@ -24,7 +24,7 @@ def chess_bot(b):
         p = subprocess.Popen(f, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=1)
     t = int(b.remainingOverageTime * 1000)
     # Treat delay as inc
-    if b.opponentMove == pondermove:
+    if b.lastMove == pondermove:
         p.stdin.write(f"ponderhit\n")
     else:
         p.stdin.write(f"pondermiss\n")
