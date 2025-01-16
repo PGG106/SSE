@@ -202,7 +202,7 @@ SMALL void UciLoop() {
             RootSearch(MAXDEPTH, &td);
         }
 
-
+#if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
