@@ -18,7 +18,11 @@ GetScore: this is simply a getter for a specific entry of the history table
 */
 
 int history_bonus(const int depth) {
-    return min(16 * depth * depth + 32 * depth + 16, options.HISTORY_BONUS_MAX);
+    return min(16 * depth * depth + 32 * depth + options.HISTORY_BONUS_OFFSET, options.HISTORY_BONUS_MAX);
+}
+
+int history_malus(const int depth) {
+    return min(16 * depth * depth + 32 * depth + options.HISTORY_MALUS_OFFSET, options.HISTORY_MALUS_MAX);
 }
 
 void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
@@ -56,6 +60,7 @@ void updateCapthistScore(const struct Position* pos, struct SearchData* sd, cons
 // Update all histories
 void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct SearchStack* ss, const int depth, const Move bestMove, const struct MoveList* quietMoves, const struct MoveList* noisyMoves, const bool rootNode) {
     const int bonus = history_bonus(depth);
+    const int malus = history_malus(depth);
     if (!isTactical(bestMove))
     {
         // increase bestMove HH and CH score
@@ -67,8 +72,8 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
             // For all the quiets moves that didn't cause a cut-off decrease the HH score
             const Move move = quietMoves->moves[i].move;
             if (move == bestMove) continue;
-            updateHHScore(pos, sd, move, -bonus);
-            updateCHScore(ss, move, -bonus);
+            updateHHScore(pos, sd, move, -malus);
+            updateCHScore(ss, move, -malus);
         }
     }
     else {
@@ -79,7 +84,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
     for (int i = 0; i < noisyMoves->count; i++) {
         const Move move = noisyMoves->moves[i].move;
         if (move == bestMove) continue;
-        updateCapthistScore(pos, sd, move, -bonus);
+        updateCapthistScore(pos, sd, move, -malus);
     }
 }
 

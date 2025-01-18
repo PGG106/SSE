@@ -729,7 +729,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                     score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
 
                 int bonus = score > alpha ? history_bonus(depth)
-                                          : -history_bonus(depth);
+                                          : -history_malus(depth);
 
                 updateCHScore(ss, move, bonus);
             }

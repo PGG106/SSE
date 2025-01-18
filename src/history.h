@@ -22,6 +22,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
 
 // Fuction that returns the history bonus
 int history_bonus(const int depth);
+int history_malus(const int depth);
 
 // Getters for the history heuristics
 int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move);
