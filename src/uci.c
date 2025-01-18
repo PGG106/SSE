@@ -152,6 +152,10 @@ static bool next_next_token(const char* str, int* index, char* token) {
 }
 #endif
 
+#define PRINT_TUNE_OPTION(name) printf("option name %s type spin default %i min -32768 max 32767\n", #name, options.name)
+#define READ_TUNE_OPTION(name) else if (!strcmp(token, #name)) { next_next_token(input, &input_index, token); options.name = atoi(token); }
+#define PRINT_TUNE_INPUT(name) printf("%s, int, %i, %i, %i, %i, 0.002\n", #name, options.name, options.name##_min, options.name##_max, options.name##_step)
+
 // main UCI loop
 SMALL void UciLoop() {
     struct ThreadData td;
@@ -198,7 +202,7 @@ SMALL void UciLoop() {
             RootSearch(MAXDEPTH, &td);
         }
 
-#if UCI
+# if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
@@ -214,8 +218,49 @@ SMALL void UciLoop() {
             puts("option name Hash type spin default 1 min 1 max 1");
             puts("option name Threads type spin default 1 min 1 max 2");
             puts("option name EvalFile type string default <empty>");
+            PRINT_TUNE_OPTION(RFP_MARGIN);
+            PRINT_TUNE_OPTION(NMP_REDUCTION_EVAL_DIVISOR);
+            PRINT_TUNE_OPTION(RAZORING_COEFF_0);
+            PRINT_TUNE_OPTION(DOUBLE_EXTENSION_MARGIN);
+            PRINT_TUNE_OPTION(HISTORY_QUIET_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(HISTORY_NOISY_LMR_DIVISOR);
+            PRINT_TUNE_OPTION(DO_DEEPER_BASE_MARGIN);
+            PRINT_TUNE_OPTION(QS_FUTILITY);
+            PRINT_TUNE_OPTION(HISTORY_BONUS_MAX);
+            PRINT_TUNE_OPTION(LMR_QUIET_BASE);
+            PRINT_TUNE_OPTION(LMR_QUIET_DIVISOR);
+            PRINT_TUNE_OPTION(LMR_NOISY_BASE);
+            PRINT_TUNE_OPTION(LMR_NOISY_DIVISOR);
+            PRINT_TUNE_OPTION(SEE_QUIET_MARGIN);
+            PRINT_TUNE_OPTION(SEE_NOISY_MARGIN);
+            PRINT_TUNE_OPTION(FUTILITY_COEFF_0);
+            PRINT_TUNE_OPTION(FUTILITY_COEFF_1);
+            PRINT_TUNE_OPTION(LMR_DEPTH_HISTORY_DIVISOR);
+            PRINT_TUNE_OPTION(DELTA_RESIZE);
             puts("uciok");
             fflush(stdout);
+        }
+
+        else if (!strcmp(token, "tune")) {
+            PRINT_TUNE_INPUT(RFP_MARGIN);
+            PRINT_TUNE_INPUT(NMP_REDUCTION_EVAL_DIVISOR);
+            PRINT_TUNE_INPUT(RAZORING_COEFF_0);
+            PRINT_TUNE_INPUT(DOUBLE_EXTENSION_MARGIN);
+            PRINT_TUNE_INPUT(HISTORY_QUIET_LMR_DIVISOR);
+            PRINT_TUNE_INPUT(HISTORY_NOISY_LMR_DIVISOR);
+            PRINT_TUNE_INPUT(DO_DEEPER_BASE_MARGIN);
+            PRINT_TUNE_INPUT(QS_FUTILITY);
+            PRINT_TUNE_INPUT(HISTORY_BONUS_MAX);
+            PRINT_TUNE_INPUT(LMR_QUIET_BASE);
+            PRINT_TUNE_INPUT(LMR_QUIET_DIVISOR);
+            PRINT_TUNE_INPUT(LMR_NOISY_BASE);
+            PRINT_TUNE_INPUT(LMR_NOISY_DIVISOR);
+            PRINT_TUNE_INPUT(SEE_QUIET_MARGIN);
+            PRINT_TUNE_INPUT(SEE_NOISY_MARGIN);
+            PRINT_TUNE_INPUT(FUTILITY_COEFF_0);
+            PRINT_TUNE_INPUT(FUTILITY_COEFF_1);
+            PRINT_TUNE_INPUT(LMR_DEPTH_HISTORY_DIVISOR);
+            PRINT_TUNE_INPUT(DELTA_RESIZE);
         }
 
         // parse UCI "ucinewgame" command
@@ -242,10 +287,29 @@ SMALL void UciLoop() {
                 next_next_token(input, &input_index, token);
                 options.Threads = atoi(token);
             }
-            if (!strcmp(token, "EvalFile")) {
+            else if (!strcmp(token, "EvalFile")) {
                 next_next_token(input, &input_index, token);
                 NNUE_init(token);
             }
+            READ_TUNE_OPTION(RFP_MARGIN)
+            READ_TUNE_OPTION(NMP_REDUCTION_EVAL_DIVISOR)
+            READ_TUNE_OPTION(RAZORING_COEFF_0)
+            READ_TUNE_OPTION(DOUBLE_EXTENSION_MARGIN)
+            READ_TUNE_OPTION(HISTORY_QUIET_LMR_DIVISOR)
+            READ_TUNE_OPTION(HISTORY_NOISY_LMR_DIVISOR)
+            READ_TUNE_OPTION(DO_DEEPER_BASE_MARGIN)
+            READ_TUNE_OPTION(QS_FUTILITY)
+            READ_TUNE_OPTION(HISTORY_BONUS_MAX)
+            READ_TUNE_OPTION(LMR_QUIET_BASE)
+            READ_TUNE_OPTION(LMR_QUIET_DIVISOR)
+            READ_TUNE_OPTION(LMR_NOISY_BASE)
+            READ_TUNE_OPTION(LMR_NOISY_DIVISOR)
+            READ_TUNE_OPTION(SEE_QUIET_MARGIN)
+            READ_TUNE_OPTION(SEE_NOISY_MARGIN)
+            READ_TUNE_OPTION(FUTILITY_COEFF_0)
+            READ_TUNE_OPTION(FUTILITY_COEFF_1)
+            READ_TUNE_OPTION(LMR_DEPTH_HISTORY_DIVISOR)
+            READ_TUNE_OPTION(DELTA_RESIZE)
         }
 
         else printf("Unknown command: %s\n", (size_t)input);
