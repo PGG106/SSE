@@ -14,17 +14,17 @@
 
 #include "shims.h"
 
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
 #define abs(x) ((x) < 0 ? -(x) : (x))
-#define clamp(a,b,c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
+#define clamp(a, b, c) (((a) < (b)) ? (b) : ((a) > (c)) ? (c) : (a))
 
 Move return_bestmove = NOMOVE;
 
 // ClearForSearch handles the cleaning of the post and the info parameters to start search from a clean state
-SMALL void ClearForSearch(struct ThreadData* td) {
+SMALL void ClearForSearch(struct ThreadData *td) {
     // Extract data structures from ThreadData
-    struct SearchInfo* info = &td->info;
+    struct SearchInfo *info = &td->info;
     memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 
     // Reset plies and search info
@@ -33,15 +33,14 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
-static bool StdinHasData()
-{
+static bool StdinHasData() {
     struct pollfd fds;
     fds.fd = 0;
     fds.events = POLLIN;
     return poll(&fds, 1, 0);
 }
 
-Move GetPonderMove(struct ThreadData* td){
+Move GetPonderMove(struct ThreadData *td) {
     Move ponder_move = NOMOVE;
     MakeMove(true, return_bestmove, &td->pos);
     struct TTEntry tte;
@@ -52,12 +51,11 @@ Move GetPonderMove(struct ThreadData* td){
     return ponder_move;
 }
 
-bool ponderCheck(struct ThreadData* td){
+bool ponderCheck(struct ThreadData *td) {
     // read input
     char input[256];
     fgets(input, sizeof(input), stdin);
-    if(!strcmp("ponderhit\n", input))
-    {
+    if (!strcmp("ponderhit\n", input)) {
         printf("Got ponderhit\n");
         // read input, get new search time
         // first line will ask us to set a position, we don't really care
@@ -68,15 +66,52 @@ bool ponderCheck(struct ThreadData* td){
         td->pondering = false;
         // continue search as normal from now on
         return false;
-    }
-    else {
+    } else {
         printf("Got pondermiss\n");
         return true;
     }
 }
 
+void PonderSearch() {
+    // start pondering
+    NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
+    td->pos.accumStackHead = 1;
+    MakeMove(true, return_bestmove, &td->pos);
+    if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
+        MakeMove(true, ponder_move, &td->pos);
+        td->info.timeset = false;
+        td->info.stopped = false;
+        td->pondering = true;
+        SearchPosition(1, MAXDEPTH, td);
+        UnmakeMove(ponder_move, &td->pos);
+    }
+    UnmakeMove(return_bestmove, &td->pos);
+    td->pondering = false;
+}
+
+void RootPonderSearch(struct ThreadData *td) {
+    PonderSearch(td);
+    if (pondermiss) {
+        // we weren't promoted to a real search, we have no bestmove to return,
+        // just go to back and let the next rootSearch call handle it
+        return;
+    } else if (ponderhit) {
+        while(ponderhit){
+        // we were promoted to a real search so we have a bestmove to return
+        puts_nonewline("bestmove ");
+        PrintMove(return_bestmove);
+        Move ponder_move = GetPonderMove(td);
+        puts_nonewline(" ponder ");
+        PrintMove(ponder_move);
+        puts("");
+        fflush(stdout);
+        PonderSearch(td);
+        }
+    }
+}
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
-SMALL void RootSearch(int depth, struct ThreadData* td) {
+SMALL void RootSearch(int depth, struct ThreadData *td) {
     // MainThread search
     SearchPosition(1, depth, td);
     puts_nonewline("bestmove ");
@@ -98,31 +133,14 @@ SMALL void RootSearch(int depth, struct ThreadData* td) {
 #ifdef UCI
     if (options.Threads == 2) {
 #endif
-    PonderSearch();
+    RootPonderSearch(td);
 #ifdef UCI
     }
 #endif
 }
 
-void PonderSearch(){
-    // start pondering
-    NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
-    td->pos.accumStackHead = 1;
-    MakeMove(true, return_bestmove, &td->pos);
-    if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
-        MakeMove(true, ponder_move, &td->pos);
-        td->info.timeset = false;
-        td->info.stopped = false;
-        td->pondering = true;
-        SearchPosition(1, MAXDEPTH, td);
-        UnmakeMove(ponder_move, &td->pos);
-    }
-    UnmakeMove(return_bestmove, &td->pos);
-    td->pondering = false;
-}
-
 // Returns true if the position is a 2-fold repetition, false otherwise
-bool IsRepetition(const struct Position* pos) {
+bool IsRepetition(const struct Position *pos) {
     assert(pos->hisPly >= Position_get50MrCounter(pos));
     // How many moves back should we look at most, aka our distance to the last irreversible move
     int distance = min(Position_get50MrCounter(pos), Position_getPlyFromNull(pos));
@@ -138,7 +156,7 @@ bool IsRepetition(const struct Position* pos) {
 }
 
 // Returns true if the position is a draw via the 50mr rule
-bool Is50MrDraw(struct Position* pos) {
+bool Is50MrDraw(struct Position *pos) {
     if (Position_get50MrCounter(pos) >= 100) {
         // If there's no risk we are being checkmated return true
         if (!Position_getCheckers(pos))
@@ -162,14 +180,14 @@ bool Is50MrDraw(struct Position* pos) {
 }
 
 // If we triggered any of the rules that forces a draw or we know the position is a draw return a draw score
-bool IsDraw(struct Position* pos) {
+bool IsDraw(struct Position *pos) {
     // if it's a 3-fold repetition, the fifty moves rule kicked in or there isn't enough material on the board to give checkmate then it's a draw
     return IsRepetition(pos)
-        || Is50MrDraw(pos)
-        || MaterialDraw(pos);
+           || Is50MrDraw(pos)
+           || MaterialDraw(pos);
 }
 
-SMALL void init_thread_data(struct ThreadData* td) {
+SMALL void init_thread_data(struct ThreadData *td) {
     td->pos.side = -1;
     td->pos.hisPly = 0;
     td->pos.posKey = 0ULL;
@@ -179,7 +197,7 @@ SMALL void init_thread_data(struct ThreadData* td) {
     td->pos.historyStackHead = 0ULL;
 
     memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
-    memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
+    memset(&td->nodeSpentTable, 0, sizeof(td->nodeSpentTable));
 
     for (int i = 0; i < 2; i++) {
         td->pos.occupancies[i] = 0;
@@ -210,8 +228,7 @@ SMALL void init_thread_data(struct ThreadData* td) {
 
     memset(&td->sd, 0, sizeof(struct SearchData));
 
-    for (int i = 0; i < MAXPLY; i++)
-    {
+    for (int i = 0; i < MAXPLY; i++) {
         for (int j = 0; j < 2; j++) {
             td->pos.accumStack[i].perspective[j].pov = j;
             td->pos.accumStack[i].perspective[j].NNUEAdd_size = 0;
@@ -222,20 +239,22 @@ SMALL void init_thread_data(struct ThreadData* td) {
 }
 
 // returns a bitboard of all the attacks to a specific square
-static inline Bitboard AttacksTo(const struct Position* pos, int to, Bitboard occ) {
+static inline Bitboard
+
+AttacksTo(const struct Position *pos, int to, Bitboard occ) {
     Bitboard attackingBishops = GetPieceBB(pos, BISHOP) | GetPieceBB(pos, QUEEN);
     Bitboard attackingRooks = GetPieceBB(pos, ROOK) | GetPieceBB(pos, QUEEN);
 
     return (pawn_attacks[WHITE][to] & Position_GetPieceColorBB(pos, PAWN, BLACK))
-        | (pawn_attacks[BLACK][to] & Position_GetPieceColorBB(pos, PAWN, WHITE))
-        | (knight_attacks[to] & GetPieceBB(pos, KNIGHT))
-        | (king_attacks[to] & GetPieceBB(pos, KING))
-        | (GetBishopAttacks(to, occ) & attackingBishops)
-        | (GetRookAttacks(to, occ) & attackingRooks);
+           | (pawn_attacks[BLACK][to] & Position_GetPieceColorBB(pos, PAWN, WHITE))
+           | (knight_attacks[to] & GetPieceBB(pos, KNIGHT))
+           | (king_attacks[to] & GetPieceBB(pos, KING))
+           | (GetBishopAttacks(to, occ) & attackingBishops)
+           | (GetRookAttacks(to, occ) & attackingRooks);
 }
 
 // inspired by the Weiss engine
-bool SEE(const struct Position* pos, const int move, const int threshold) {
+bool SEE(const struct Position *pos, const int move, const int threshold) {
 
     // We can't win any material from castling, nor can we lose any
     if (isCastle(move))
@@ -319,7 +338,7 @@ bool SEE(const struct Position* pos, const int move, const int threshold) {
 }
 
 // SearchPosition is the actual function that handles the search, it sets up the variables needed for the search, calls the AspirationWindowSearch function and handles the console output
-SMALL void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td) {
+SMALL void SearchPosition(int startDepth, int finalDepth, struct ThreadData *td) {
     // variable used to store the score of the best move found by the search (while the move itself can be retrieved from the triangular PV table)
     int score = 0;
     int averageScore = SCORE_NONE;
@@ -334,8 +353,8 @@ SMALL void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td)
         averageScore = averageScore == SCORE_NONE ? score : (averageScore + score) / 2;
 
         // use the previous search to adjust some of the time management parameters, do not scale movetime time controls
-        if (   td->RootDepth > 7
-               && td->info.timeset) {
+        if (td->RootDepth > 7
+            && td->info.timeset) {
             ScaleTm(td);
         }
 
@@ -350,11 +369,11 @@ SMALL void SearchPosition(int startDepth, int finalDepth, struct ThreadData* td)
     }
 }
 
-SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td) {
+SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData *td) {
     int score;
     td->RootDepth = depth;
-    struct SearchData* sd = &td->sd;
-    struct SearchStack stack[MAXDEPTH + 4], * ss = stack + 4;
+    struct SearchData *sd = &td->sd;
+    struct SearchStack stack[MAXDEPTH + 4], *ss = stack + 4;
     // Explicitly clean stack
     for (int i = -4; i < MAXDEPTH; i++) {
         ss[i].move = NOMOVE;
@@ -389,8 +408,8 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
-        if( td->pondering && StdinHasData()){
-            if(ponderCheck(td)){
+        if (td->pondering && StdinHasData()) {
+            if (ponderCheck(td)) {
                 // stop, read uci as normal, start search from scratch
                 td->info.stopped = true;
                 return 0;
@@ -407,12 +426,11 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             depth = td->RootDepth;
         }
 
-        // We fell outside the window, so try again with a bigger window
+            // We fell outside the window, so try again with a bigger window
         else if (score >= beta) {
             beta = min(score + delta, MAXSCORE);
             depth = max(depth - 1, td->RootDepth - 5);
-        }
-        else
+        } else
             break;
         // Progressively increase how much the windows are increased by at each fail
         delta *= 1.44;
@@ -431,11 +449,11 @@ static bool get_improving(const struct SearchStack *const ss, const bool inCheck
 };
 
 // Negamax alpha beta search
-int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData* td, struct SearchStack* ss) {
+int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadData *td, struct SearchStack *ss) {
     // Extract data structures from ThreadData
-    struct Position* pos = &td->pos;
-    struct SearchData* sd = &td->sd;
-    struct SearchInfo* info = &td->info;
+    struct Position *pos = &td->pos;
+    struct SearchData *sd = &td->sd;
+    struct SearchInfo *info = &td->info;
 
     // Initialize the node
     const bool inCheck = Position_getCheckers(pos);
@@ -475,8 +493,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
-    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        if(ponderCheck(td)){
+    if (td->pondering && info->nodes % 4096 == 0 && StdinHasData()) {
+        if (ponderCheck(td)) {
             // stop, read uci as normal, start search from scratch
             td->info.stopped = true;
             return 0;
@@ -495,7 +513,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     const bool ttHit = !excludedMove && ProbeTTEntry(Position_getPoskey(pos), &tte);
     const int ttScore = ttHit ? ScoreFromTT(tte.score, ss->ply) : SCORE_NONE;
     const Move ttMove = ttHit ? MoveFromTT(pos, tte.move) : NOMOVE;
-    const uint8_t ttBound = ttHit ? BoundFromTT(tte.ageBoundPV) : (uint8_t)HFNONE;
+    const uint8_t ttBound = ttHit ? BoundFromTT(tte.ageBoundPV) : (uint8_t) HFNONE;
     const uint8_t ttDepth = tte.depth;
     // If we found a value in the TT for this position, and the depth is equal or greater we can return it (pv nodes are excluded)
     if (!pvNode
@@ -517,11 +535,10 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     // If we are in check or searching a singular extension we avoid pruning before the move loop
     if (inCheck) {
         eval = rawEval = ss->staticEval = SCORE_NONE;
-    }
-    else if (excludedMove) {
+    } else if (excludedMove) {
         eval = rawEval = ss->staticEval;
     }
-    // get an evaluation of the position:
+        // get an evaluation of the position:
     else if (ttHit) {
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
@@ -533,8 +550,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 || (ttBound == HFLOWER && ttScore > eval)
                 || ttBound == HFEXACT))
             eval = ttScore;
-    }
-    else {
+    } else {
         // If we don't have anything in the TT we have to call evalposition
         rawEval = EvalPosition(pos);
         eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
@@ -589,8 +605,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             }
         }
         // Razoring
-        if (depth <= 5 && eval + 256 * depth < alpha)
-        {
+        if (depth <= 5 && eval + 256 * depth < alpha) {
             const int razorScore = Quiescence(alpha, beta, td, ss);
             if (razorScore <= alpha)
                 return razorScore;
@@ -635,7 +650,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && bestScore > -MATE_FOUND) {
 
             // lmrDepth is the current depth minus the reduction the move would undergo in lmr, this is helpful because it helps us discriminate the bad moves with more accuracy
-            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] + moveHistory / 8192);
+            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] +
+                                        moveHistory / 8192);
 
             if (!skipQuiets) {
 
@@ -687,16 +703,15 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                         ss->doubleExtensions = (ss - 1)->doubleExtensions + 1;
                         depth += depth < 10;
                     }
-                }
-                else if (singularScore >= beta)
+                } else if (singularScore >= beta)
                     return singularScore;
 
-                // If we didn't successfully extend and our TT score is above beta reduce the search depth
+                    // If we didn't successfully extend and our TT score is above beta reduce the search depth
                 else if (ttScore >= beta)
                     extension = -2;
 
-                // If we are expecting a fail-high both based on search states from previous plies and based on TT bound
-                // but our TT move is not singular and our TT score is failing low, reduce the search depth
+                    // If we are expecting a fail-high both based on search states from previous plies and based on TT bound
+                    // but our TT move is not singular and our TT score is failing low, reduce the search depth
                 else if (cutNode)
                     extension = -1;
             }
@@ -743,8 +758,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
                 depthReduction -= moveHistory / 8192;
-            }
-            else {
+            } else {
                 // Fuck
                 if (cutNode)
                     depthReduction += 2;
@@ -776,7 +790,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 updateCHScore(ss, move, bonus);
             }
         }
-        // If we skipped LMR and this isn't the first move of the node we'll search with a reduced window and full depth
+            // If we skipped LMR and this isn't the first move of the node we'll search with a reduced window and full depth
         else if (!pvNode || totalMoves > 1) {
             score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
         }
@@ -826,8 +840,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     // If we are in neither of these 2 cases, it is stalemate.
     if (totalMoves == 0) {
         return excludedMove ? -MAXSCORE
-            : inCheck ? -MATE_SCORE + ss->ply
-            : 0;
+                            : inCheck ? -MATE_SCORE + ss->ply
+                                      : 0;
     }
     // Set the TT bound based on whether we failed high or raised alpha
     int bound = bestScore >= beta ? HFLOWER : alpha != old_alpha ? HFEXACT : HFUPPER;
@@ -839,17 +853,18 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && !(bound == HFUPPER && bestScore >= ss->staticEval)) {
             updateCorrHistScore(pos, sd, ss, depth, bestScore - ss->staticEval);
         }
-        StoreTTEntry(pos->posKey, MoveToTT(bestMove), ScoreToTT(bestScore, ss->ply), rawEval, bound, depth, pvNode, ttPv);
+        StoreTTEntry(pos->posKey, MoveToTT(bestMove), ScoreToTT(bestScore, ss->ply), rawEval, bound, depth, pvNode,
+                     ttPv);
     }
 
     return bestScore;
 }
 
 // Quiescence search to avoid the horizon effect
-int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* ss) {
-    struct Position* pos = &td->pos;
-    struct SearchData* sd = &td->sd;
-    struct SearchInfo* info = &td->info;
+int Quiescence(int alpha, int beta, struct ThreadData *td, struct SearchStack *ss) {
+    struct Position *pos = &td->pos;
+    struct SearchData *sd = &td->sd;
+    struct SearchInfo *info = &td->info;
     const bool inCheck = Position_getCheckers(pos);
     bool pvNode = beta - alpha > 1;
     // tte is an TT entry, it will store the values fetched from the TT
@@ -863,8 +878,8 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
-    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
-        if(ponderCheck(td)){
+    if (td->pondering && info->nodes % 4096 == 0 && StdinHasData()) {
+        if (ponderCheck(td)) {
             // stop, read uci as normal, start search from scratch
             td->info.stopped = true;
             return 0;
@@ -883,7 +898,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     const bool ttHit = ProbeTTEntry(Position_getPoskey(pos), &tte);
     const int ttScore = ttHit ? ScoreFromTT(tte.score, ss->ply) : SCORE_NONE;
     const Move ttMove = ttHit ? MoveFromTT(pos, tte.move) : NOMOVE;
-    const uint8_t ttBound = ttHit ? BoundFromTT(tte.ageBoundPV) : (uint8_t)HFNONE;
+    const uint8_t ttBound = ttHit ? BoundFromTT(tte.ageBoundPV) : (uint8_t) HFNONE;
     // If we found a value in the TT for this position, we can return it (pv nodes are excluded)
     if (!pvNode
         && ttScore != SCORE_NONE
@@ -898,7 +913,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         rawEval = ss->staticEval = SCORE_NONE;
         bestScore = -MAXSCORE;
     }
-    // If we have a ttHit with a valid eval use that
+        // If we have a ttHit with a valid eval use that
     else if (ttHit) {
 
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
@@ -912,7 +927,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
                 || ttBound == HFEXACT))
             bestScore = ttScore;
     }
-    // If we don't have any useful info in the TT just call Evalpos
+        // If we don't have any useful info in the TT just call Evalpos
     else {
         rawEval = EvalPosition(pos);
         bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
