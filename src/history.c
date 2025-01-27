@@ -18,7 +18,7 @@ GetScore: this is simply a getter for a specific entry of the history table
 */
 
 int history_bonus(const int depth) {
-    return min(16 * depth * depth + 32 * depth + 16, options.HISTORY_BONUS_MAX);
+    return min(16 * depth * depth + 32 * depth + 16, 1926);
 }
 
 void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
