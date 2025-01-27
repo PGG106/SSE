@@ -612,9 +612,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                     skipQuiets = true;
                 }
             }
-            int see_margin = isQuiet ? -79 * lmrDepth :  -30 * lmrDepth * lmrDepth;
             // See pruning: prune all the moves that have a SEE score that is lower than our threshold
-            if (!SEE(pos, move, see_margin))
+            if (!SEE(pos, move, see_margin[lmrDepth][isQuiet]))
                 continue;
         }
 
@@ -677,7 +676,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
-            int depthReduction = isQuiet ?  0.89 + log(min(depth,63)) * log(min(totalMoves,63)) / 2.27 : -0.35 + log(depth) * log(totalMoves) / 2.11;
+            int depthReduction = reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)];
             if (isQuiet) {
                 // Fuck
                 if (cutNode)
