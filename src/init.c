@@ -121,15 +121,14 @@ SMALL void initializeLookupTables() {
 // PreCalculate the logarithms used in the reduction calculation
 SMALL void InitReductions() {
     for (int depth = 0; depth < 64; depth++) {
-
-        see_margin[depth][1] = -80.0 * depth; // Quiet moves
+        see_margin[depth][1] = -79.0 * depth; // Quiet moves
         see_margin[depth][0] = -30.0 * depth * depth; // Non quiets
     }
 
     for (int i = 1; i < 64; i++) {
         for (int j = 1; j < 64; j++) {
-            reductions[0][i][j] = -0.25 + log(i) * log(j) / 2.25;
-            reductions[1][i][j] = +1.00 + log(i) * log(j) / 2.00;
+            reductions[0][i][j] = -0.35 + log(i) * log(j) / 2.11;
+            reductions[1][i][j] = +0.89 + log(i) * log(j) / 2.27;
         }
     }
 }

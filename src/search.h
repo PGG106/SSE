@@ -23,7 +23,6 @@ struct SearchData {
     short whiteNonPawnCorrHist[2][CORRHIST_SIZE];
     short blackNonPawnCorrHist[2][CORRHIST_SIZE];
     short contHist[2][6 * 64][6 * 64];
-    short contCorrHist[2][6 * 64][6 * 64];
 };
 
 // a collection of all the data a thread needs to conduct a search
