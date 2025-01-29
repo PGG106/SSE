@@ -366,11 +366,13 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         if (score <= alpha) {
             beta = (alpha + beta) / 2;
             alpha = max(-MAXSCORE, score - delta);
+            depth = td->RootDepth;
         }
 
         // We fell outside the window, so try again with a bigger window
         else if (score >= beta) {
             beta = min(score + delta, MAXSCORE);
+            depth = max(depth - 1, 1);
         }
         else
             break;
