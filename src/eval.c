@@ -47,7 +47,6 @@ int EvalPosition(struct Position* pos) {
     int eval = EvalPositionRaw(pos);
     eval = ScaleMaterial(pos, eval);
     eval = eval * (200 - Position_get50MrCounter(pos)) / 200;
-    eval = (eval / 16) * 16 - 1 + (pos->posKey & 0x2);
     // Clamp eval to avoid it somehow being a mate score
     eval = clamp(eval, -MATE_FOUND + 1, MATE_FOUND - 1);
     return eval;
