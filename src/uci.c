@@ -11,6 +11,7 @@
 #include "search.h"
 
 #include "shims.h"
+#include "threads.h"
 
 // Parse a move from algebraic notation to the engine's internal encoding
 SMALL Move ParseMove(const char* moveString, struct Position* pos) {
@@ -150,8 +151,42 @@ static bool next_next_token(const char* str, int* index, char* token) {
     next_token(str, index, token);
     return next_token(str, index, token);
 }
-#endif
 
+void* checkStop(void* param) {
+    struct ThreadData* td = param;
+    char input[256];
+    while (true) {
+
+        if (fgets(input, sizeof(input), stdin) == NULL)
+        {
+            break;
+        }
+
+        // make sure input is available
+        if (input[0] == '\0') {
+            continue;
+        }
+
+        size_t len = strlen(input);
+        if (input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+
+        char token[128];
+        int input_index = 0;
+        next_token(input, &input_index, token);
+
+        // parse UCI "position" command
+        if (!strcmp(token, "stop")) {
+            td->info.stopped = true;
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
+// main UCI loop
+SMALL void UciLoop() {
 #define PRINT_TUNE_OPTION(name) printf("option name %s type spin default %i min -32768 max 32767\n", #name, options.name)
 #define READ_TUNE_OPTION(name) else if (!strcmp(token, #name)) { next_next_token(input, &input_index, token); options.name = atoi(token); }
 #define PRINT_TUNE_INPUT(name) printf("%s, int, %i, %i, %i, %i, 0.002\n", #name, options.name, options.name##_min, options.name##_max, options.name##_step)
@@ -199,6 +234,7 @@ SMALL void UciLoop() {
             // call parse go function
             bool search = ParseGo(input, &td.info, &td.pos);
             // Start search in a separate thread
+            createThread(checkStop, (void*)&td);
             RootSearch(MAXDEPTH, &td);
         }
 

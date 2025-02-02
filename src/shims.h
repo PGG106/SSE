@@ -99,3 +99,4 @@ int poll(struct pollfd* fds, unsigned int nfds, int timeout);
 #endif
 
 void puts_nonewline(const char* const restrict string);
+
