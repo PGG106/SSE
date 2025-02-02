@@ -151,6 +151,7 @@ static bool next_next_token(const char* str, int* index, char* token) {
     next_token(str, index, token);
     return next_token(str, index, token);
 }
+#endif
 
 void* checkStop(void* param) {
     struct ThreadData* td = param;
@@ -185,8 +186,7 @@ void* checkStop(void* param) {
     return NULL;
 }
 
-// main UCI loop
-SMALL void UciLoop() {
+
 #define PRINT_TUNE_OPTION(name) printf("option name %s type spin default %i min -32768 max 32767\n", #name, options.name)
 #define READ_TUNE_OPTION(name) else if (!strcmp(token, #name)) { next_next_token(input, &input_index, token); options.name = atoi(token); }
 #define PRINT_TUNE_INPUT(name) printf("%s, int, %i, %i, %i, %i, 0.002\n", #name, options.name, options.name##_min, options.name##_max, options.name##_step)
