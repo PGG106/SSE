@@ -64,3 +64,5 @@ bool IsDraw(struct Position* pos);
 
 bool IsRepetition(const struct Position* pos); // remove this later, make static
 bool Is50MrDraw(struct Position* pos); // remove this later, make static
+
+bool StdinHasData();

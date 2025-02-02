@@ -33,7 +33,7 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
-static bool StdinHasData()
+ bool StdinHasData()
 {
     struct pollfd fds;
     fds.fd = 0;
@@ -354,11 +354,6 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
-        if( td->pondering && StdinHasData()){
-            td->info.stopped = true;
-            return 0;
-        }
-
         // Stop calculating and return best move so far
         if (td->info.stopped) break;
 
@@ -433,11 +428,6 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
-        td->info.stopped = true;
-        return 0;
-    }
-
-    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }
@@ -816,11 +806,6 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
     // check if more than Maxtime passed and we have to stop
     if (TimeOver(&td->info)) {
-        td->info.stopped = true;
-        return 0;
-    }
-
-    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
         td->info.stopped = true;
         return 0;
     }

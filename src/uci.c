@@ -155,54 +155,12 @@ static bool next_next_token(const char* str, int* index, char* token) {
 
 void* checkStop(void* param) {
     struct ThreadData* td = param;
-    char input[256];
     while (true) {
-
-        if (fgets(input, sizeof(input), stdin) == NULL)
-        {
-            break;
-        }
-
-        // make sure input is available
-        if (input[0] == '\0') {
-            continue;
-        }
-
-        size_t len = strlen(input);
-        if (input[len - 1] == '\n') {
-            input[len - 1] = '\0';
-        }
-
-        char token[128];
-        int input_index = 0;
-        next_token(input, &input_index, token);
-
-        // parse UCI "isready" command
-        if (!strcmp(token, "isready")) {
-            puts("readyok");
-            fflush(stdout);
-            continue;
-        }
-
-            // parse UCI "uci" command
-        else if (!strcmp(token, "uci")) {
-            // print engine info
-            puts("id name SSE 0.5");
-            puts("id author Zuppa and Gedas based on Alexandria\n");
-            puts("option name Hash type spin default 1 min 1 max 1");
-            puts("option name Threads type spin default 1 min 1 max 2");
-            puts("option name EvalFile type string default <empty>");
-            puts("uciok");
-            fflush(stdout);
-        }
-
-        // parse UCI "position" command
-       else {
+        if(StdinHasData()){
             td->info.stopped = true;
-            return NULL;
+            return 0;
         }
     }
-    return NULL;
 }
 
 
