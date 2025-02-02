@@ -3,7 +3,7 @@
 #include "move.h"
 #include "position.h"
 #include "search.h"
-
+#include "options.h"
 #include "shims.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
@@ -18,14 +18,14 @@ GetScore: this is simply a getter for a specific entry of the history table
 */
 
 int history_bonus(const int depth) {
-    return min(16 * depth * depth + 32 * depth + 16, 1200);
+    return min(16 * depth * depth + 32 * depth + 16, 1926);
 }
 
 void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
     if ((ss - offset)->move) {
         // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
         const int scaledBonus = bonus - GetSingleCHScore(ss, move, offset) * abs(bonus) / CH_MAX;
-        (*((ss - offset)->contHistEntry))[PieceTo(move)] += scaledBonus;
+        (*((ss - offset)->contHistEntry))[PieceTypeTo(move)] += scaledBonus;
     }
 }
 
@@ -96,7 +96,7 @@ int GetCHScore(const struct SearchStack* ss, const Move move) {
 }
 
 int GetSingleCHScore(const struct SearchStack* ss, const Move move, const int offset) {
-    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTo(move)]
+    return (ss - offset)->move ? (*((ss - offset)->contHistEntry))[PieceTypeTo(move)]
                                : 0;
 }
 
@@ -108,9 +108,8 @@ int GetCapthistScore(const struct Position* pos, const struct SearchData* sd, co
     return sd->captHist[PieceTo(move)][capturedPiece];
 }
 
-void updateSingleCorrHistScore(int *entry, const int scaledDiff, const int newWeight) {
-    *entry = (*entry * (CORRHIST_WEIGHT_SCALE - newWeight) + scaledDiff * newWeight) / CORRHIST_WEIGHT_SCALE;
-    *entry = clamp(*entry, -CORRHIST_MAX, CORRHIST_MAX);
+void updateSingleCorrHistScore(short *entry, const int scaledDiff, const int newWeight) {
+    *entry = clamp((*entry * (CORRHIST_WEIGHT_SCALE - newWeight) + scaledDiff * newWeight) / CORRHIST_WEIGHT_SCALE, -CORRHIST_MAX, CORRHIST_MAX);
 }
 
 void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, const struct SearchStack* ss, const int depth, const int diff) {
@@ -123,7 +122,7 @@ void updateCorrHistScore(const struct Position* pos, struct SearchData* sd, cons
     updateSingleCorrHistScore(&sd->blackNonPawnCorrHist[pos->side][pos->blackNonPawnKey % CORRHIST_SIZE], scaledDiff, newWeight);
 }
 
-int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const int rawEval) {
+int adjustEvalWithCorrHist(const struct Position* pos, const struct SearchData* sd, const struct SearchStack* ss, const int rawEval) {
     int adjustment = 0;
 
     adjustment += sd->pawnCorrHist[pos->side][pos->pawnKey % CORRHIST_SIZE];

@@ -3,13 +3,13 @@
 #include "piece_data.h"
 
 SMALL void PrintMove(const Move move) {
-    const char* from = square_to_coordinates[From(move)];
-    const char* to = square_to_coordinates[To(move)];
-
-    if (isPromo(move))
-        printf("%s%s%c", (const size_t)from, (const size_t)to, promoted_pieces(getPromotedPiecetype(move)));
-    else
-        printf("%s%s", (const size_t)from, (const size_t)to);
+    char buffer[6] = { 0 };
+    square_to_coordinates(buffer, From(move));
+    square_to_coordinates(buffer+2,To(move));
+    if (isPromo(move)) {
+        buffer[4] = promoted_pieces(getPromotedPiecetype(move));
+    }
+    puts_nonewline(buffer);
 }
 
 SMALL bool next_token(const char* str, int* index, char* token)

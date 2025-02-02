@@ -70,13 +70,14 @@ void Pov_Accumulator_addSubSub(struct Pov_Accumulator* accumulator, struct Pov_A
     }
 }
 
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm) {
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm, const int outputBucket) {
     // this function takes the net output for the current accumulators and returns the eval of the position
     // according to the net
 
     const int16_t* us = board_accumulator->perspective[stm].values;
     const int16_t* them = board_accumulator->perspective[stm ^ 1].values;
-    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[0], net.L1Biases[0]);
+    const int32_t bucketOffset = 2 * L1_SIZE * outputBucket;
+    return NNUE_ActivateFTAndAffineL1(us, them, &net.L1Weights[bucketOffset], net.L1Biases[outputBucket]);
 }
 
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos) {
@@ -195,14 +196,15 @@ int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const
 #endif
 }
 
-
+#ifdef OB
+SMALL void NNUE_init(const char* nnpath) {
+#else
 SMALL void NNUE_init() {
-    // open the nn file
-
 #if KAGGLE
     const char* nnpath = "//kaggle_simulations//agent//nn.net";
 #else
     const char* nnpath = "nn.net";
+#endif
 #endif
     int nn = open(nnpath, 0, 0644); // Default permissions: -rw-r--r--
     if (nn < 0)
@@ -216,7 +218,7 @@ SMALL void NNUE_init() {
     int8_t *ptr = mmap(NULL, len * sizeof(int16_t), 1, 2, nn, 0);
 
     const int ft_size = NUM_INPUTS * L1_SIZE;
-    const int blockSize = L1_SIZE * 4;
+    const int blockSize = L1_SIZE;
     const int blockCount = ft_size / blockSize;
 
     int currentIndex = 0;
@@ -245,5 +247,20 @@ SMALL void NNUE_init() {
         net.L1Weights[i] = *ptr;
         ptr++;
     }
-    net.L1Biases[0] = *(int16_t*)ptr; // Just assume 1 output bucket for now
+    for(int i= 0; i < OUTPUT_BUCKETS; i++){
+        net.L1Biases[i] = *(int16_t*)ptr;
+        ptr += 2;
+    }
+
+    int16_t transposedL1Weights[L1_SIZE * 2 * OUTPUT_BUCKETS];
+    for (int weight = 0; weight < 2 * L1_SIZE; ++weight)
+    {
+        for (int bucket = 0; bucket < OUTPUT_BUCKETS; ++bucket)
+        {
+            const int srcIdx = weight * OUTPUT_BUCKETS + bucket;
+            const int dstIdx = bucket * 2 * L1_SIZE + weight;
+            transposedL1Weights[dstIdx] = net.L1Weights[srcIdx];
+        }
+    }
+    memcpy(net.L1Weights, transposedL1Weights, L1_SIZE * sizeof(int16_t) * 2 * OUTPUT_BUCKETS);
 }

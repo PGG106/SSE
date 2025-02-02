@@ -439,6 +439,7 @@ FodyWeavers.xsd
 
 # Others
 Alexandria*
+sse*
 perf.data
 perf.data.old
 

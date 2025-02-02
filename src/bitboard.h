@@ -13,7 +13,7 @@ static int GetLsbIndex(Bitboard bitboard) {
     return __builtin_ctzll(bitboard);;
 }
 
-inline int popLsb(Bitboard *bitboard) {
+static int popLsb(Bitboard *bitboard) {
     assert(bitboard);
     int square = GetLsbIndex(*bitboard);
     *bitboard &= *bitboard - 1;

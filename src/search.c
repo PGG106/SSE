@@ -3,10 +3,12 @@
 #include "attack.h"
 #include "movegen.h"
 #include "eval.h"
+#include "magic.h"
 #include "hyperbola.h"
 #include "makemove.h"
 #include "ttable.h"
 #include "io.h"
+#include "options.h"
 #include "movepicker.h"
 #include "time_manager.h"
 
@@ -31,44 +33,62 @@ SMALL void ClearForSearch(struct ThreadData* td) {
     info->seldepth = 0;
 }
 
+static bool StdinHasData()
+{
+    struct pollfd fds;
+    fds.fd = 0;
+    fds.events = POLLIN;
+    return poll(&fds, 1, 0);
+}
+
 // Starts the search process, this is ideally the point where you can start a multithreaded search
 SMALL void RootSearch(int depth, struct ThreadData* td) {
     // MainThread search
     SearchPosition(1, depth, td);
-    printf("bestmove ");
+    puts_nonewline("bestmove ");
     PrintMove(return_bestmove);
-    printf("\n");
+    puts("");
     fflush(stdout);
 
     // Hack for Kaggle for full repetition detection
-#if KAGGLE
+#ifdef KAGGLE
     MakeMove(true, return_bestmove, &td->pos);
     ZobristKey opponent_hash = td->pos.posKey;
     UnmakeMove(return_bestmove, &td->pos);
     td->pos.played_positions[td->pos.played_positions_size++] = td->pos.posKey;
     td->pos.played_positions[td->pos.played_positions_size++] = opponent_hash;
 #endif
-    // start pondering
-    MakeMove(true, return_bestmove, &td->pos);
-    struct TTEntry tte;
-    bool probed = ProbeTTEntry(td->pos.posKey, &tte);
-    Move ponder_move = NOMOVE;
-    if (probed)
-        ponder_move = MoveFromTT(&td->pos, tte.move);
-    MakeMove(true, ponder_move, &td->pos);
-    td->info.timeset = false;
-    td->info.stopped = false;
-    td->pondering = true;
-    SearchPosition(1, MAXDEPTH, td);
-    UnmakeMove(ponder_move, &td->pos);
-    UnmakeMove(return_bestmove, &td->pos);
-    td->pondering = false;
+#ifdef UCI
+    if (options.Threads == 2) {
+#endif
+        // start pondering
+        NNUE_accumulate(&td->pos.accumStack[0], &td->pos);
+        td->pos.accumStackHead = 1;
+
+        MakeMove(true, return_bestmove, &td->pos);
+        struct TTEntry tte;
+        bool probed = ProbeTTEntry(td->pos.posKey, &tte);
+        Move ponder_move = NOMOVE;
+        if (probed)
+            ponder_move = MoveFromTT(&td->pos, tte.move);
+        if (IsPseudoLegal(&td->pos, ponder_move) && IsLegal(&td->pos, ponder_move)) {
+            MakeMove(true, ponder_move, &td->pos);
+            td->info.timeset = false;
+            td->info.stopped = false;
+            td->pondering = true;
+            SearchPosition(1, MAXDEPTH, td);
+            UnmakeMove(ponder_move, &td->pos);
+        }
+        UnmakeMove(return_bestmove, &td->pos);
+        td->pondering = false;
+#ifdef UCI
+    }
+#endif
 }
 
 // Returns true if the position is a 2-fold repetition, false otherwise
 bool IsRepetition(const struct Position* pos) {
     assert(pos->hisPly >= Position_get50MrCounter(pos));
-    int counter = 0;
     // How many moves back should we look at most, aka our distance to the last irreversible move
     int distance = min(Position_get50MrCounter(pos), Position_getPlyFromNull(pos));
     // Get the point our search should start from
@@ -77,24 +97,14 @@ bool IsRepetition(const struct Position* pos) {
     for (int index = 4; index <= distance; index += 2)
         // if we found the same position hashkey as the current position
         if (pos->played_positions[startingPoint - index] == pos->posKey) {
-
-            // we found a 2-fold repetition within the search tree
-            if (index < pos->historyStackHead)
-                return true;
-
-            counter++;
-            // we found a 3-fold repetition which occurred in part before or at root
-            if (counter >= 2)
-                return true;
+            return true;
         }
     return false;
 }
 
 // Returns true if the position is a draw via the 50mr rule
 bool Is50MrDraw(struct Position* pos) {
-
     if (Position_get50MrCounter(pos) >= 100) {
-
         // If there's no risk we are being checkmated return true
         if (!Position_getCheckers(pos))
             return true;
@@ -124,8 +134,7 @@ bool IsDraw(struct Position* pos) {
         || MaterialDraw(pos);
 }
 
-SMALL void init_thread_data(struct ThreadData* td)
-{
+SMALL void init_thread_data(struct ThreadData* td) {
     td->pos.side = -1;
     td->pos.hisPly = 0;
     td->pos.posKey = 0ULL;
@@ -136,9 +145,6 @@ SMALL void init_thread_data(struct ThreadData* td)
 
     memset(&td->pos.bitboards, 0, sizeof(Bitboard) * 12);
     memset(&td->nodeSpentTable,0,sizeof(td->nodeSpentTable));
-    //for (int i = 0; i < 12; i++) {
-    //    td->pos.bitboards[i] = 0;
-    //}
 
     for (int i = 0; i < 2; i++) {
         td->pos.occupancies[i] = 0;
@@ -316,16 +322,15 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
     struct SearchStack stack[MAXDEPTH + 4], * ss = stack + 4;
     // Explicitly clean stack
     for (int i = -4; i < MAXDEPTH; i++) {
-        (ss + i)->move = NOMOVE;
-        (ss + i)->excludedMove = NOMOVE;
-        (ss + i)->searchKiller = NOMOVE;
-        (ss + i)->staticEval = SCORE_NONE;
-        (ss + i)->doubleExtensions = 0;
-        (ss + i)->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
+        ss[i].move = NOMOVE;
+        ss[i].excludedMove = NOMOVE;
+        ss[i].searchKiller = NOMOVE;
+        ss[i].staticEval = SCORE_NONE;
+        ss[i].doubleExtensions = 0;
+        ss[i].contHistEntry = &sd->contHist[td->pos.side ^ ((i + 4) % 2)][PieceTo(NOMOVE)];
     }
     for (int i = 0; i < MAXDEPTH; i++) {
-        (ss + i)->ply = i;
-        (ss + i)->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
+        ss[i].ply = i;
     }
     // We set an expected window for the score at the next search depth, this window is not 100% accurate so we might need to try a bigger window and re-search the position
     int delta = 12;
@@ -349,6 +354,11 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
             break;
         }
 
+        if( td->pondering && StdinHasData()){
+            td->info.stopped = true;
+            return 0;
+        }
+
         // Stop calculating and return best move so far
         if (td->info.stopped) break;
 
@@ -367,24 +377,17 @@ SMALL int AspirationWindowSearch(int prev_eval, int depth, struct ThreadData* td
         else
             break;
         // Progressively increase how much the windows are increased by at each fail
-        delta *= 1.44;
+        delta *= 1.46;
     }
     return score;
-}
-
-static int get_complexity(const int eval, const int rawEval) {
-    if (eval == 0 || rawEval == 0)
-        return 0;
-
-    return 100 * abs(eval - rawEval) / abs(eval);
 }
 
 static bool get_improving(const struct SearchStack *const ss, const bool inCheck) {
     if (inCheck)
         return false;
-    else if ((ss - 2)->staticEval != SCORE_NONE)
+    if ((ss - 2)->staticEval != SCORE_NONE)
         return ss->staticEval > (ss - 2)->staticEval;
-    else if ((ss - 4)->staticEval != SCORE_NONE)
+    if ((ss - 4)->staticEval != SCORE_NONE)
         return ss->staticEval > (ss - 4)->staticEval;
     return true;
 };
@@ -434,6 +437,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         return 0;
     }
 
+    if( td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
+        td->info.stopped = true;
+        return 0;
+    }
+
     if (!rootNode) {
         // Mate distance pruning
         alpha = max(alpha, -MATE_SCORE + ss->ply);
@@ -476,7 +484,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     else if (ttHit) {
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
-        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the tt score as a more accurate form of eval
         if (ttScore != SCORE_NONE
@@ -488,12 +496,10 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
     else {
         // If we don't have anything in the TT we have to call evalposition
         rawEval = EvalPosition(pos);
-        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        eval = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
         // Save the eval into the TT
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
-
-    const int complexity = get_complexity(eval, rawEval);
 
     // Improving is a very important modifier to many heuristics. It checks if our static eval has improved since our last move.
     // As we don't evaluate in check, we look for the first ply we weren't in check between 2 and 4 plies ago. If we find that
@@ -507,8 +513,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         if (depth < 10
             && abs(eval) < MATE_FOUND
             && (ttMove == NOMOVE || isTactical(ttMove))
-            && eval - 91 * (depth - improving - canIIR) >= beta)
-            return eval - 91 * (depth - improving - canIIR);
+            && eval - 125 * (depth - improving - canIIR) >= beta)
+            return eval - 125 * (depth - improving - canIIR);
 
         // Null move pruning: If our position is so good that we can give the opponent a free move and still fail high,
         // return early. At higher depth we do a reduced search with null move pruning disabled (ie verification search)
@@ -522,15 +528,15 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             && BoardHasNonPawns(pos, pos->side)) {
 
             ss->move = NOMOVE;
-            const int R = 4 + depth / 3 + min((eval - beta) / 200, 3);
-            ss->contHistEntry = &sd->contHist[PieceTo(NOMOVE)];
+            const int R = 4 + depth / 3 + min((eval - beta) / 220, 3);
+            ss->contHistEntry = &sd->contHist[!pos->side][PieceTo(NOMOVE)];
 
             MakeNullMove(pos);
-
             // Search moves at a reduced depth to find beta cutoffs.
             int nmpScore = -Negamax(-beta, -beta + 1, depth - R - canIIR, !cutNode, td, ss + 1);
-
             TakeNullMove(pos);
+
+            ss->contHistEntry = &sd->contHist[pos->side][PieceTo(NOMOVE)];
 
             // fail-soft beta cutoff
             if (nmpScore >= beta) {
@@ -538,22 +544,11 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 if (nmpScore > MATE_FOUND)
                     nmpScore = beta;
 
-                // If we don't have to do a verification search just return the score
-                if (td->nmpPlies || depth < 15)
-                    return nmpScore;
-
-                // Verification search to avoid zugzwangs: if we are at an high enough depth we perform another reduced search without nmp for at least nmpPlies
-                td->nmpPlies = ss->ply + (depth - R) * 2 / 3;
-                int verificationScore = Negamax(beta - 1, beta, depth - R, false, td, ss);
-                td->nmpPlies = 0;
-
-                // If the verification search holds return the score
-                if (verificationScore >= beta)
-                    return nmpScore;
+                return nmpScore;
             }
         }
         // Razoring
-        if (depth <= 5 && eval + 256 * depth < alpha)
+        if (depth <= 5 && eval + 280 * depth < alpha)
         {
             const int razorScore = Quiescence(alpha, beta, td, ss);
             if (razorScore <= alpha)
@@ -598,11 +593,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         if (!rootNode
             && bestScore > -MATE_FOUND) {
 
-            int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
-                : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
-
             // lmrDepth is the current depth minus the reduction the move would undergo in lmr, this is helpful because it helps us discriminate the bad moves with more accuracy
-            const int lmrDepth = max(0, depth - depthReduction + moveHistory / 8192);
+            const int lmrDepth = max(0, depth - reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)] + moveHistory / 8072);
 
             if (!skipQuiets) {
 
@@ -616,13 +608,12 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 // Futility pruning: if the static eval is so low that even after adding a bonus we are still under alpha we can stop trying quiet moves
                 if (!inCheck
                     && lmrDepth < 11
-                    && ss->staticEval + 250 + 150 * lmrDepth <= alpha) {
+                    && ss->staticEval + 262 + 116 * lmrDepth <= alpha) {
                     skipQuiets = true;
                 }
             }
-
             // See pruning: prune all the moves that have a SEE score that is lower than our threshold
-            if (!SEE(pos, move, see_margin[min(lmrDepth, 63)][isQuiet]))
+            if (!SEE(pos, move, see_margin[lmrDepth][isQuiet]))
                 continue;
         }
 
@@ -676,7 +667,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
 
         // Play the move
         MakeMove(true, move, pos);
-        ss->contHistEntry = &sd->contHist[PieceTo(move)];
+        ss->contHistEntry = &sd->contHist[pos->side][PieceTypeTo(move)];
         // Add any played move to the matching list
         AddMoveNonScored(move, isQuiet ? &quietMoves : &noisyMoves);
 
@@ -685,11 +676,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
         const uint64_t nodesBeforeSearch = info->nodes;
         // Conditions to consider LMR. Calculate how much we should reduce the search depth.
         if (totalMoves > 1 + pvNode && depth >= 3 && (isQuiet || !ttPv)) {
-
-
-            int depthReduction = isQuiet ? +1.00 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.00
-                : -0.25 + log(min(depth, 63)) * log(min(totalMoves, 63)) / 2.25;
-
+            int depthReduction = reductions[isQuiet][min(depth, 63)][min(totalMoves, 63)];
             if (isQuiet) {
                 // Fuck
                 if (cutNode)
@@ -711,11 +698,8 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                 if (ttPv)
                     depthReduction -= 1 + cutNode;
 
-                if (complexity > 50)
-                    depthReduction -= 1;
-
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
-                depthReduction -= moveHistory / 8192;
+                depthReduction -= moveHistory / 8164;
             }
             else {
                 // Fuck
@@ -723,7 +707,7 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
                     depthReduction += 2;
 
                 // Decrease the reduction for moves that have a good history score and increase it for moves with a bad score
-                depthReduction -= moveHistory / 6144;
+                depthReduction -= moveHistory / 6044;
             }
 
             // adjust the reduction so that we can't drop into Qsearch and to prevent extensions
@@ -737,9 +721,9 @@ int Negamax(int alpha, int beta, int depth, const bool cutNode, struct ThreadDat
             if (score > alpha && newDepth > reducedDepth) {
                 // Based on the value returned by our reduced search see if we should search deeper or shallower, 
                 // this is an exact yoink of what SF does and frankly i don't care lmao
-                const bool doDeeperSearch = score > (bestScore + 53 + 2 * newDepth);
+                const bool doDeeperSearch = score > (bestScore + 9 + 2 * newDepth);
                 const bool doShallowerSearch = score < (bestScore + newDepth);
-                newDepth += doDeeperSearch - doShallowerSearch;
+                newDepth += doDeeperSearch - doShallowerSearch; // fix
                 if (newDepth > reducedDepth)
                     score = -Negamax(-alpha - 1, -alpha, newDepth, !cutNode, td, ss + 1);
 
@@ -836,6 +820,11 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         return 0;
     }
 
+    if(td->pondering && info->nodes % 4096 == 0 && StdinHasData()){
+        td->info.stopped = true;
+        return 0;
+    }
+
     // If position is a draw return a draw score
     if (MaterialDraw(pos))
         return 0;
@@ -868,7 +857,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
 
         // If the value in the TT is valid we use that, otherwise we call the static evaluation function
         rawEval = tte.eval != SCORE_NONE ? tte.eval : EvalPosition(pos);
-        ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, rawEval);
+        ss->staticEval = bestScore = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
 
         // We can also use the TT score as a more accurate form of eval
         if (ttScore != SCORE_NONE
@@ -880,7 +869,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
     // If we don't have any useful info in the TT just call Evalpos
     else {
         rawEval = EvalPosition(pos);
-        bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, rawEval);
+        bestScore = ss->staticEval = adjustEvalWithCorrHist(pos, sd, ss, rawEval);
         // Save the eval into the TT
         StoreTTEntry(pos->posKey, NOMOVE, SCORE_NONE, rawEval, HFNONE, 0, pvNode, ttPv);
     }
@@ -911,7 +900,7 @@ int Quiescence(int alpha, int beta, struct ThreadData* td, struct SearchStack* s
         // Futility pruning. If static eval is far below alpha, only search moves that win material.
         if (bestScore > -MATE_FOUND
             && !inCheck) {
-            const int futilityBase = ss->staticEval + 192;
+            const int futilityBase = ss->staticEval + 215;
             if (futilityBase <= alpha && !SEE(pos, move, 1)) {
                 bestScore = max(futilityBase, bestScore);
                 continue;

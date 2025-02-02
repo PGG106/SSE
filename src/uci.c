@@ -4,6 +4,7 @@
 #include "eval.h"
 #include "init.h"
 #include "io.h"
+#include "options.h"
 #include "movegen.h"
 #include "position.h"
 #include "time_manager.h"
@@ -61,7 +62,7 @@ SMALL Move ParseMove(const char* moveString, struct Position* pos) {
             return move;
         }
     }
-    printf("Illegal move parsed: %s", (size_t)moveString);
+    assert(false);
 
     // return illegal move
     return NOMOVE;
@@ -145,6 +146,12 @@ SMALL void ParsePosition(const char* command, struct Position* pos) {
     pos->accumStackHead = 1;
 }
 
+#if UCI
+static bool next_next_token(const char* str, int* index, char* token) {
+    next_token(str, index, token);
+    return next_token(str, index, token);
+}
+
 void* checkStop(void* param) {
     struct ThreadData* td = param;
     char input[256];
@@ -180,12 +187,12 @@ void* checkStop(void* param) {
 
 // main UCI loop
 SMALL void UciLoop() {
-#if BENCH
-    int benchDepth = 14;
-    StartBench(benchDepth);
-    return;
-#endif
+#define PRINT_TUNE_OPTION(name) printf("option name %s type spin default %i min -32768 max 32767\n", #name, options.name)
+#define READ_TUNE_OPTION(name) else if (!strcmp(token, #name)) { next_next_token(input, &input_index, token); options.name = atoi(token); }
+#define PRINT_TUNE_INPUT(name) printf("%s, int, %i, %i, %i, %i, 0.002\n", #name, options.name, options.name##_min, options.name##_max, options.name##_step)
 
+// main UCI loop
+SMALL void UciLoop() {
     struct ThreadData td;
     init_thread_data(&td);
 
@@ -231,7 +238,7 @@ SMALL void UciLoop() {
             RootSearch(MAXDEPTH, &td);
         }
 
-#if UCI
+# if UCI
         // parse UCI "isready" command
         else if (!strcmp(token, "isready")) {
             puts("readyok");
@@ -242,8 +249,11 @@ SMALL void UciLoop() {
         // parse UCI "uci" command
         else if (!strcmp(token, "uci")) {
             // print engine info
-            puts("id name SSE 0.1");
-            puts("id author Zuppa, CJ and Gedas\n");
+            puts("id name SSE 0.5");
+            puts("id author Zuppa and Gedas based on Alexandria\n");
+            puts("option name Hash type spin default 1 min 1 max 1");
+            puts("option name Threads type spin default 1 min 1 max 2");
+            puts("option name EvalFile type string default <empty>");
             puts("uciok");
             fflush(stdout);
         }
@@ -258,6 +268,26 @@ SMALL void UciLoop() {
             printf("Raw eval: %i\n", EvalPositionRaw(&td.pos));
             printf("Scaled eval: %i\n", EvalPosition(&td.pos));
         }
+        else if (!strcmp(token, "bench")) {
+            StartBench(14);
+        }
+
+        else if (!strcmp(token, "quit")) {
+            exit(0);
+        }
+
+        else if (!strcmp(token, "setoption")) {
+            next_next_token(input, &input_index, token);
+            if (!strcmp(token, "Threads")) {
+                next_next_token(input, &input_index, token);
+                options.Threads = atoi(token);
+            }
+            else if (!strcmp(token, "EvalFile")) {
+                next_next_token(input, &input_index, token);
+                NNUE_init(token);
+            }
+        }
+
         else printf("Unknown command: %s\n", (size_t)input);
 #endif
     }

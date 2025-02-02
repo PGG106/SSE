@@ -5,6 +5,7 @@
 #define NAME "Alexandria-7.1.1"
 
 extern int see_margin[64][2];
+extern int reductions[2][64][64];
 
 static const char* start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -15,8 +16,8 @@ typedef uint32_t Move;
 typedef uint16_t PackedMove;
 
 static const Move NOMOVE = 0;
-#define MAXPLY 128
-static const int MAXDEPTH = MAXPLY;
+#define MAXPLY 64
+static const int MAXDEPTH = MAXPLY - 2;
 static const int MATE_SCORE = 32000;
 static const int MATE_FOUND = MATE_SCORE - MAXPLY;
 static const int SCORE_NONE = 32001;

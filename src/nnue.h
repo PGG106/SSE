@@ -8,7 +8,7 @@
 #define NUM_INPUTS 768
 #define INPUT_BUCKETS 1
 #define L1_SIZE 80
-#define OUTPUT_BUCKETS 1
+#define OUTPUT_BUCKETS 8
 
 #define FT_QUANT 255
 #define L1_QUANT 64
@@ -75,8 +75,8 @@ inline void Accumulator_AppendAddIndex(struct Accumulator *accumulator, int piec
 }
 
 inline void Accumulator_AppendSubIndex(struct Accumulator* accumulator, int piece, int square, const int wkSq, const int bkSq, bool flip[2]) {
-    assert(accumulator->perspective[WHITE].NNUESub_size() <= 1);
-    assert(accumulator->perspective[BLACK].NNUESub_size() <= 1);
+    assert(accumulator->perspective[WHITE].NNUESub_size <= 1);
+    assert(accumulator->perspective[BLACK].NNUESub_size <= 1);
     accumulator->perspective[WHITE].NNUESub[accumulator->perspective[WHITE].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[WHITE], piece, square, wkSq, flip[WHITE]);
     accumulator->perspective[BLACK].NNUESub[accumulator->perspective[BLACK].NNUESub_size++] = Pov_Accumulator_GetIndex(&accumulator->perspective[BLACK], piece, square, bkSq, flip[BLACK]);
 }
@@ -91,8 +91,13 @@ inline void Accumulator_ClearSubIndex(struct Accumulator* accumulator) {
     accumulator->perspective[BLACK].NNUESub_size = 0;
 }
 
+#ifdef OB
+void NNUE_init(const char *path);
+#else
 void NNUE_init();
+#endif
+
 void NNUE_accumulate(struct Accumulator* board_accumulator, struct Position* pos);
 void NNUE_update(struct Accumulator* acc, struct Position* pos);
 int32_t NNUE_ActivateFTAndAffineL1(const int16_t* us, const int16_t* them, const int16_t* weights, const int16_t bias);
-int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm);
+int32_t NNUE_output(struct Accumulator* const board_accumulator, const int stm, const int outputBucket);

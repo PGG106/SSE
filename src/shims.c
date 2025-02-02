@@ -6,6 +6,10 @@ inline uint64_t GetTimeMs() {
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_sec * 1000 + t.tv_nsec / 1000000;
 }
+
+SMALL void puts_nonewline(const char* const restrict string) {
+    fputs(string, stdout);
+}
 #else
 
 ssize_t _sys(ssize_t call, ssize_t arg1, ssize_t arg2, ssize_t arg3) {
@@ -25,6 +29,15 @@ SMALL void* memset(void* ptr, int value, size_t n) {
     return ptr;
 }
 
+SMALL void* memcpy(void* dest, const void* src, size_t n) {
+    unsigned char* d = (unsigned char*)dest;
+    const unsigned char* s = (const unsigned char*)src;
+    while (n--) {
+        *d++ = *s++;
+    }
+    return dest;
+}
+
 SMALL void exit(const int returnCode) {
     _sys(60, returnCode, 0, 0);
 }
@@ -37,20 +50,20 @@ SMALL int strlen(const char* const restrict string) {
     return length;
 }
 
-static void write(int fd, void* data, int count) {
+SMALL static void write(int fd, void* data, int count) {
     _sys(1, fd, (size_t)data, count);
 }
 
-void puts(const char* const restrict string) {
+SMALL void puts(const char* const restrict string) {
     write(stdout, string, strlen(string));
     write(stdout, "\n", 1);
 }
 
-void puts_nonewline(const char* const restrict string) {
+SMALL void puts_nonewline(const char* const restrict string) {
     write(stdout, string, strlen(string));
 }
 
-void fflush(int fd) {
+SMALL void fflush(int fd) {
 
 }
 
@@ -78,7 +91,7 @@ SMALL int atoi(const char* restrict string) {
     }
 }
 
-void _printf(const char* format, const size_t* args) {
+SMALL void _printf(const char* format, const size_t* args) {
     int value;
     char buffer[16], * string;
 
@@ -203,7 +216,7 @@ SMALL char* strstr(const char* haystack, const char* needle) {
     return NULL;
 }
 
-double log(double x) {
+SMALL double log(double x) {
     const double M_SQRT1_2 = 0.70710678118654752440;
     const double M_SQRT2 = 1.41421356237309504880;
 

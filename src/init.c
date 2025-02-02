@@ -2,6 +2,7 @@
 
 #include "position.h"
 #include "attack.h"
+#include "magic.h"
 #include "hyperbola.h"
 #include "search.h"
 #include "ttable.h"
@@ -77,6 +78,29 @@ SMALL void InitAttackTables() {
 
         // init king attacks
         king_attacks[square] = MaskKingAttacks(square);
+
+        bishop_masks[square] = MaskBishopAttacks(square);
+
+        // init bishop mask
+        Bitboard bishop_mask = bishop_masks[square];
+
+        // get the relevant occupancy bit count
+        int relevant_bits_count = CountBits(bishop_mask);
+
+        // init occupancy indices
+        int occupancy_indices = 1 << relevant_bits_count;
+
+        // loop over occupancy indices
+        for (int index = 0; index < occupancy_indices; index++) {
+            // init current occupancy variation
+            Bitboard occupancy = SetOccupancy(index, relevant_bits_count, bishop_mask);
+
+            // init magic index
+            uint64_t magic_index = (occupancy * bishop_magic_numbers[square]) >> (64 - bishop_relevant_bits);
+
+            // init bishop attacks
+            bishop_attacks[square][magic_index] = BishopAttacksOnTheFly(square, occupancy);
+        }
     }
 }
 
@@ -96,12 +120,16 @@ SMALL void initializeLookupTables() {
 
 // PreCalculate the logarithms used in the reduction calculation
 SMALL void InitReductions() {
-
     for (int depth = 0; depth < 64; depth++) {
-
-        see_margin[depth][1] = -80.0 * depth; // Quiet moves
+        see_margin[depth][1] = -79.0 * depth; // Quiet moves
         see_margin[depth][0] = -30.0 * depth * depth; // Non quiets
+    }
 
+    for (int i = 1; i < 64; i++) {
+        for (int j = 1; j < 64; j++) {
+            reductions[0][i][j] = -0.35 + log(i) * log(j) / 2.11;
+            reductions[1][i][j] = +0.89 + log(i) * log(j) / 2.27;
+        }
     }
 }
 
@@ -114,7 +142,9 @@ SMALL void InitAll() {
     InitReductions();
     // Init TT
     InitTT(1);
-    NNUE_init();
+#ifndef OB
+    NNUE_init(NULL);
+#endif
 }
 
 SMALL void InitNewGame(struct ThreadData* td) {

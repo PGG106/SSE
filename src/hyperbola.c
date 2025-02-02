@@ -24,44 +24,6 @@ const Bitboard rank_bbs[] =
     0xFF00000000000000ULL
 };
 
-const Bitboard diagonal_bbs[] =
-{
-    0x1ULL,
-    0x102ULL,
-    0x10204ULL,
-    0x1020408ULL,
-    0x102040810ULL,
-    0x10204081020ULL,
-    0x1020408102040ULL,
-    0x102040810204080ULL,
-    0x204081020408000ULL,
-    0x408102040800000ULL,
-    0x810204080000000ULL,
-    0x1020408000000000ULL,
-    0x2040800000000000ULL,
-    0x4080000000000000ULL,
-    0x8000000000000000ULL
-};
-
-const Bitboard antidiagonal_bbs[] =
-{
-    0x80ULL,
-    0x8040ULL,
-    0x804020ULL,
-    0x80402010ULL,
-    0x8040201008ULL,
-    0x804020100804ULL,
-    0x80402010080402ULL,
-    0x8040201008040201ULL,
-    0x4020100804020100ULL,
-    0x2010080402010000ULL,
-    0x1008040201000000ULL,
-    0x804020100000000ULL,
-    0x402010000000000ULL,
-    0x201000000000000ULL,
-    0x100000000000000ULL
-};
-
 Bitboard ReverseBits(Bitboard bitboard)
 {
     const Bitboard temp1 = 0x5555555555555555ULL;
@@ -87,23 +49,9 @@ Bitboard MaskedSlide(const Bitboard allPieces, const Bitboard pieceBitboard, con
     return slide;
 }
 
-// get bishop attacks
-Bitboard GetBishopAttacks(int square, Bitboard occupancy) {
-    const Bitboard pieceBitboard = 1ULL << square;
-    const Bitboard diagonal = MaskedSlide(occupancy, pieceBitboard, diagonal_bbs[square / 8 + square % 8]);
-    const Bitboard antidiagonal = MaskedSlide(occupancy, pieceBitboard, antidiagonal_bbs[square / 8 + 7 - square % 8]);
-    return diagonal | antidiagonal;
-}
-
-// get rook attacks
 Bitboard GetRookAttacks(int square, Bitboard occupancy) {
     const Bitboard pieceBitboard = 1ULL << square;
     const Bitboard horizontal = MaskedSlide(occupancy, pieceBitboard, rank_bbs[square / 8]);
     const Bitboard vertical = MaskedSlide(occupancy, pieceBitboard, file_bbs[square % 8]);
     return horizontal | vertical;
-}
-
-// get queen attacks
-Bitboard GetQueenAttacks(const int square, Bitboard occupancy) {
-    return GetBishopAttacks(square, occupancy) | GetRookAttacks(square, occupancy);
 }
