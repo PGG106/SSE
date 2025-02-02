@@ -177,8 +177,27 @@ void* checkStop(void* param) {
         int input_index = 0;
         next_token(input, &input_index, token);
 
+        // parse UCI "isready" command
+        else if (!strcmp(token, "isready")) {
+            puts("readyok");
+            fflush(stdout);
+            continue;
+        }
+
+            // parse UCI "uci" command
+        else if (!strcmp(token, "uci")) {
+            // print engine info
+            puts("id name SSE 0.5");
+            puts("id author Zuppa and Gedas based on Alexandria\n");
+            puts("option name Hash type spin default 1 min 1 max 1");
+            puts("option name Threads type spin default 1 min 1 max 2");
+            puts("option name EvalFile type string default <empty>");
+            puts("uciok");
+            fflush(stdout);
+        }
+
         // parse UCI "position" command
-        if (strcmp(token, "")) {
+       else {
             td->info.stopped = true;
             return NULL;
         }
