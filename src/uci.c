@@ -178,7 +178,7 @@ void* checkStop(void* param) {
         next_token(input, &input_index, token);
 
         // parse UCI "isready" command
-        else if (!strcmp(token, "isready")) {
+        if (!strcmp(token, "isready")) {
             puts("readyok");
             fflush(stdout);
             continue;
