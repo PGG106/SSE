@@ -33,6 +33,7 @@ int GetHistoryScore(const struct Position* pos, const struct SearchData* sd, con
 void CleanHistories(struct SearchData* sd);
 // Updates history heuristics for a single move
 void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
+void updateHHScore2(struct SearchData* sd, const int side, const Move move, int bonus);
 void updateCHScore(struct SearchStack* ss, const Move move, const int bonus);
 void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, int bonus);
 

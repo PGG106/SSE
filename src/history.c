@@ -21,6 +21,10 @@ int history_bonus(const int depth) {
     return min(16 * depth * depth + 32 * depth + 16, 1926);
 }
 
+int GetHHScore2(const struct SearchData *sd, const int side, const Move move) {
+    return sd->searchHistory[side][FromTo(move)];
+}
+
 void updateSingleCHScore(struct SearchStack* ss, const Move move, const int bonus, const int offset) {
     if ((ss - offset)->move) {
         // Scale bonus to fix it in a [-CH_MAX;CH_MAX] range
@@ -41,6 +45,13 @@ void updateHHScore(const struct Position* pos, struct SearchData* sd, const Move
     const int scaledBonus = bonus - GetHHScore(pos, sd, move) * abs(bonus) / HH_MAX;
     // Update move score
     sd->searchHistory[pos->side][FromTo(move)] += scaledBonus;
+}
+
+void updateHHScore2(struct SearchData* sd, const int side, const Move move, int bonus) {
+    // Scale bonus to fix it in a [-HH_MAX;HH_MAX] range
+    const int scaledBonus = bonus - GetHHScore2(sd, side, move) * abs(bonus) / HH_MAX;
+    // Update move score
+    sd->searchHistory[side][FromTo(move)] += scaledBonus;
 }
 
 void updateCapthistScore(const struct Position* pos, struct SearchData* sd, const Move move, const int bonus) {
@@ -87,6 +98,7 @@ void UpdateHistories(const struct Position* pos, struct SearchData* sd, struct S
 int GetHHScore(const struct Position* pos, const struct SearchData* sd, const Move move) {
     return sd->searchHistory[pos->side][FromTo(move)];
 }
+
 
 // Returns the history score of a move
 int GetCHScore(const struct SearchStack* ss, const Move move) {
